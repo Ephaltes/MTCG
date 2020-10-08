@@ -1,4 +1,6 @@
 ﻿using System;
+using MTCG.Model;
+using MTCG.Model.BaseClass;
 
 namespace MTCG
 {
