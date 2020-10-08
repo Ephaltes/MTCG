@@ -8,20 +8,20 @@ namespace MTCG.Model
 {
     public class StackModell
     {
-        public List<CardModell> StackList;
-        public List<CardModell> LockedCardList;
+        private readonly List<CardModell> _stackList;
+        private readonly List<CardModell> _lockedCardList;
 
         public StackModell()
         {
-            StackList = new List<CardModell>();
-            LockedCardList = new List<CardModell>();
+            _stackList = new List<CardModell>();
+            _lockedCardList = new List<CardModell>();
         }
 
         public bool Add(CardModell card)
         {
             try
             {
-                StackList.Add(card);
+                _stackList.Add(card);
                 return true;
 
             }
@@ -30,6 +30,10 @@ namespace MTCG.Model
                 Console.WriteLine(e);
                 return false;
             }
+        }
+        public List<CardModell> GetDeck()
+        {
+            return _stackList;
         }
 
     }

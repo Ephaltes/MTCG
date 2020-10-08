@@ -8,7 +8,8 @@
         Wizard,
         Knight,
         Kraken,
-        FireElve
+        FireElve,
+        Orc
     }
 
     public abstract class MonsterCardModell : CardModell

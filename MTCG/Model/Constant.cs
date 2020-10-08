@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MTCG.Model
 {
-    class Constant
+    public class Constant
     {
         public const int MAXCARDSINDECK = 4;
     }
