@@ -27,6 +27,7 @@ namespace MTCG.Model.BaseClass
                 retVal.Add(Constant.AVAILABLECARDS[r]);
             }
 
+            Count--;
             return retVal;
         }
     }
