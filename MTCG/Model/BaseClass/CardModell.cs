@@ -15,6 +15,6 @@
 
         public CardType ElementType { get; set; } = CardType.Normal;
 
-        public abstract double CalculateDamge();
+        public abstract double CalculateDamge(CardModell enemyCard);
     }
 }

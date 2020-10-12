@@ -4,6 +4,6 @@
     {
         public CardType WeakAgainst { get; set; } = CardType.Fire;
         
-        public abstract override double CalculateDamge();
+        public abstract override double CalculateDamge(CardModell enemyCard);
     }
 }

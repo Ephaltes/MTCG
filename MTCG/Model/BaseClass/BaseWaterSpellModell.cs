@@ -11,7 +11,7 @@ namespace MTCG.Model.BaseClass
             ElementType = CardType.Water;
             WeakAgainst = CardType.Normal;
         }
-        public override double CalculateDamge()
+        public override double CalculateDamge(CardModell enemyCard)
         {
             throw new NotImplementedException();
         }

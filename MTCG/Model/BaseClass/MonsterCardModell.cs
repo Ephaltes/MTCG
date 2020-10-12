@@ -17,7 +17,7 @@
         public double Health=100;
         public MonsterType MonsterType { get; set; } = MonsterType.None;
 
-        public abstract override double CalculateDamge();
+        public abstract override double CalculateDamge(CardModell enemyCard);
 
     }
 }

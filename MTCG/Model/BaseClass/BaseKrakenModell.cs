@@ -8,7 +8,7 @@ namespace MTCG.Model.BaseClass
         {
             MonsterType = MonsterType.Kraken;
         }
-        public override double CalculateDamge()
+        public override double CalculateDamge(CardModell enemyCard)
         {
             throw new NotImplementedException();
         }

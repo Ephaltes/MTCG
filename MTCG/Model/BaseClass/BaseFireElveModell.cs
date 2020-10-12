@@ -9,7 +9,7 @@ namespace MTCG.Model.BaseClass
             MonsterType = MonsterType.FireElve;
         }
 
-        public override double CalculateDamge()
+        public override double CalculateDamge(CardModell enemyCard)
         {
             throw new NotImplementedException();
         }
