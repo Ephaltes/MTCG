@@ -31,6 +31,24 @@ namespace MTCG.Model
                 return false;
             }
         }
+
+        public bool Add(List<CardModell> cards)
+        {
+            try
+            {
+                foreach (var card in cards)
+                {
+                    _stackList.Add(card);
+                }
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            } 
+        }
         public List<CardModell> GetDeck()
         {
             return _stackList;
