@@ -21,7 +21,7 @@ namespace UnitTest
         public void Setup()
         {
         }
-
+#region no logic
         [Test]
         public void BaseDragon_MonsterType_IsDragon()
         {
@@ -163,6 +163,6 @@ namespace UnitTest
             //Assert
             Assert.That(result, Is.True);
         }
-
+#endregion
     }
 }
