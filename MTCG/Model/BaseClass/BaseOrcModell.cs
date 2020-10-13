@@ -2,15 +2,13 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseOrcModell : MonsterCardModell
+    public abstract class BaseOrcModell : MonsterCardModell
     {
         public BaseOrcModell()
         {
             MonsterType = MonsterType.Orc;
         }
-        public override double CalculateDamge(CardModell enemyCard)
-        {
-            throw new NotImplementedException();
-        }
+
+        public abstract override double CalculateDamge(CardModell enemyCard);
     }
 }

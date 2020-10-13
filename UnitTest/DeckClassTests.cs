@@ -1,5 +1,7 @@
 using MTCG.Model;
 using MTCG.Model.BaseClass;
+using MTCG.Model.MonsterTypes.Dragon;
+using MTCG.Model.MonsterTypes.Knight;
 using NUnit.Framework;
 
 namespace UnitTest
@@ -20,20 +22,20 @@ namespace UnitTest
         public void Add_BaseDragon_ToDeck()
         {
             //Arrange
-            var card = new BaseDragonModell();
+            var card = new RedDragon();
             //Act
             deck.Add(card);
             var deckList = deck.GetDeck();
             var result = deckList[0].GetType();
             //Assert
-            Assert.That(result == typeof(BaseDragonModell));
+            Assert.That(result.IsSubclassOf(typeof(BaseDragonModell)));
         }
         
         [Test]
         public void Remove_BaseDragon_FromDeck()
         {
             //Arrange
-            var card = new BaseDragonModell();
+            var card = new RedDragon();
             //Act
             deck.Add(card);
             deck.Remove(card);
@@ -46,8 +48,8 @@ namespace UnitTest
         public void AddTemp_BaseDragon_ToDeck()
         {
             //Arrange
-            var card = new BaseKnightModell();
-            var card2 = new BaseDragonModell();
+            var card = new GalaxyKnight();
+            var card2 = new RedDragon();
             //Act
             deck.Add(card);
             deck.AddTemp(card2);
@@ -60,8 +62,8 @@ namespace UnitTest
         public void RemoveTemp_BaseDragon_FromDeck()
         {
             //Arrange
-            var card = new BaseKnightModell();
-            var card2 = new BaseDragonModell();
+            var card = new GalaxyKnight();
+            var card2 = new RedDragon();
             //Act
             deck.Add(card);
             deck.AddTemp(card2);

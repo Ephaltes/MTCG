@@ -1,4 +1,14 @@
 using MTCG.Model.BaseClass;
+using MTCG.Model.MonsterTypes.Dragon;
+using MTCG.Model.MonsterTypes.FireElve;
+using MTCG.Model.MonsterTypes.Goblin;
+using MTCG.Model.MonsterTypes.Knight;
+using MTCG.Model.MonsterTypes.Kraken;
+using MTCG.Model.MonsterTypes.Orc;
+using MTCG.Model.MonsterTypes.Wizard;
+using MTCG.Model.SpellCards.Fire;
+using MTCG.Model.SpellCards.Normal;
+using MTCG.Model.SpellCards.Water;
 using NUnit.Framework;
 
 namespace UnitTest
@@ -16,7 +26,7 @@ namespace UnitTest
         public void BaseDragon_MonsterType_IsDragon()
         {
             //Arrange
-            MonsterCardModell monster = new BaseDragonModell();
+            MonsterCardModell monster = new RedDragon();
             //Act
             bool result = monster.MonsterType == MonsterType.Dragon;
             //Assert
@@ -27,7 +37,7 @@ namespace UnitTest
         public void BaseGoblin_MonsterType_IsGoblin()
         {
             //Arrange
-            MonsterCardModell monster = new BaseGoblinModell();
+            MonsterCardModell monster = new GoblinLackey();
             //Act
             bool result = monster.MonsterType == MonsterType.Goblin;
             //Assert
@@ -38,7 +48,7 @@ namespace UnitTest
         public void BaseWizard_MonsterType_IsWizard()
         {
             //Arrange
-            MonsterCardModell monster = new BaseWizardModell();
+            MonsterCardModell monster = new FireWizard();
             //Act
             bool result = monster.MonsterType == MonsterType.Wizard;
             //Assert
@@ -49,7 +59,7 @@ namespace UnitTest
         public void BaseKnight_MonsterType_IsKnight()
         {
             //Arrange
-            MonsterCardModell monster = new BaseKnightModell();
+            MonsterCardModell monster = new GalaxyKnight();
             //Act
             bool result = monster.MonsterType == MonsterType.Knight;
             //Assert
@@ -60,7 +70,7 @@ namespace UnitTest
         public void BaseFireElv_MonsterType_IsFireElve()
         {
             //Arrange
-            MonsterCardModell monster = new BaseFireElveModell();
+            MonsterCardModell monster = new WingEggElf();
             //Act
             bool result = monster.MonsterType == MonsterType.FireElve;
             //Assert
@@ -71,7 +81,7 @@ namespace UnitTest
         public void BaseKraken_MonsterType_IsKraken()
         {
             //Arrange
-            MonsterCardModell monster = new BaseKrakenModell();
+            MonsterCardModell monster = new DemonKraken();
             //Act
             bool result = monster.MonsterType == MonsterType.Kraken;
             //Assert
@@ -81,7 +91,7 @@ namespace UnitTest
         public void BaseOrc_MonsterType_IsOrc()
         {
             //Arrange
-            MonsterCardModell monster = new BaseOrcModell();
+            MonsterCardModell monster = new OrcWarrior();
             //Act
             bool result = monster.MonsterType == MonsterType.Orc;
             //Assert
@@ -92,7 +102,7 @@ namespace UnitTest
         public void BaseFireSpell_ElementType_IsFire()
         {
             //Arrange
-            SpellCardModell spell = new BaseFireSpellModell();
+            SpellCardModell spell = new Fireball();
             //Act
             bool result = spell.ElementType == CardType.Fire;
             //Assert
@@ -103,7 +113,7 @@ namespace UnitTest
         public void BaseFireSpell_WeakAgainst_Water()
         {
             //Arrange
-            SpellCardModell spell = new BaseFireSpellModell();
+            SpellCardModell spell = new Fireball();
             //Act
             bool result = spell.WeakAgainst == CardType.Water;
             //Assert
@@ -114,7 +124,7 @@ namespace UnitTest
         public void BaseWaterSpell_ElementType_IsWater()
         {
             //Arrange
-            SpellCardModell spell = new BaseWaterSpellModell();
+            SpellCardModell spell = new WaterGun();
             //Act
             bool result = spell.ElementType == CardType.Water;
             //Assert
@@ -125,7 +135,7 @@ namespace UnitTest
         public void BaseWaterSpell_WeakAgainst_Normal()
         {
             //Arrange
-            SpellCardModell spell = new BaseWaterSpellModell();
+            SpellCardModell spell = new WaterGun();
             //Act
             bool result = spell.WeakAgainst == CardType.Normal;
             //Assert
@@ -136,7 +146,7 @@ namespace UnitTest
         public void BaseNormalSpell_ElementType_IsNormal()
         {
             //Arrange
-            SpellCardModell spell = new BaseNormalSpellModell();
+            SpellCardModell spell = new Light();
             //Act
             bool result = spell.ElementType == CardType.Normal;
             //Assert
@@ -147,7 +157,7 @@ namespace UnitTest
         public void BaseNormalSpell_WeakAgainst_Fire()
         {
             //Arrange
-            SpellCardModell spell = new BaseNormalSpellModell();
+            SpellCardModell spell = new Light();
             //Act
             bool result = spell.WeakAgainst == CardType.Fire;
             //Assert

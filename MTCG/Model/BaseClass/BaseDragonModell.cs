@@ -2,7 +2,7 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseDragonModell : MonsterCardModell
+    public abstract class BaseDragonModell : MonsterCardModell
     {
 
         public BaseDragonModell()
@@ -10,9 +10,6 @@ namespace MTCG.Model.BaseClass
             MonsterType = MonsterType.Dragon;
         }
 
-        public override double CalculateDamge(CardModell enemyCard)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract override double CalculateDamge(CardModell enemyCard);
     }
 }

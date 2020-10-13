@@ -2,6 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using MTCG.Model.BaseClass;
+using MTCG.Model.MonsterTypes.Dragon;
+using MTCG.Model.MonsterTypes.FireElve;
+using MTCG.Model.MonsterTypes.Goblin;
+using MTCG.Model.MonsterTypes.Knight;
+using MTCG.Model.MonsterTypes.Kraken;
+using MTCG.Model.MonsterTypes.Orc;
+using MTCG.Model.MonsterTypes.Wizard;
+using MTCG.Model.SpellCards.Fire;
+using MTCG.Model.SpellCards.Normal;
+using MTCG.Model.SpellCards.Water;
 
 namespace MTCG.Model
 {
@@ -11,8 +21,8 @@ namespace MTCG.Model
         public const int MAXCARDSPERPACKAGE = 5;
         public static readonly CardModell[] AVAILABLECARDS = new CardModell[]
         {
-            new BaseDragonModell(), new BaseGoblinModell(), new BaseKnightModell(),new BaseKrakenModell(), new BaseOrcModell(), new BaseWizardModell(),
-            new BaseFireElveModell(), new BaseFireSpellModell(), new BaseNormalSpellModell(), new BaseWaterSpellModell()
+            new RedDragon(),  new WingEggElf(), new GoblinLackey(), new GalaxyKnight(), new DemonKraken(), new OrcWarrior(), new FireWizard(), 
+            new Fireball(), new Light(), new WaterGun()
         }; 
     }
 }

@@ -4,16 +4,14 @@ using System.Text;
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseNormalSpellModell:SpellCardModell
+    public abstract class BaseNormalSpellModell:SpellCardModell
     {
         public BaseNormalSpellModell()
         {
             ElementType = CardType.Normal;
             WeakAgainst = CardType.Fire;
         }
-        public override double CalculateDamge(CardModell enemyCard)
-        {
-            throw new NotImplementedException();
-        }
+
+        public abstract override double CalculateDamge(CardModell enemyCard);
     }
 }
