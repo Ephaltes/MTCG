@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Folder Include="Model\MonsterTypes\Dragon\" />
-    <Folder Include="Model\MonsterTypes\FireElve\" />
+    <Folder Include="Model\MonsterTypes\FireElf\" />
     <Folder Include="Model\MonsterTypes\Goblin\" />
     <Folder Include="Model\MonsterTypes\Kraken\" />
     <Folder Include="Model\MonsterTypes\Wizard\" />
