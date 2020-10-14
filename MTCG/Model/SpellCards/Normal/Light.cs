@@ -10,13 +10,17 @@ namespace MTCG.Model.SpellCards.Normal
             Description = "Story Light";
             Name = "Light";
             ElementType = CardType.Normal;
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
             Random rand = new Random();
 
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            {
+                return 0;
+            }
+            
             if ( enemyCard.GetType().IsSubclassOf(typeof(MonsterCardModell))  && enemyCard.ElementType == CardType.Water)
             {
                 return Damage*Constant.SPELLMULTIPLIER*rand.NextDouble();

@@ -10,7 +10,6 @@ namespace MTCG.Model.SpellCards.Water
             Description = "Story Water Gun";
             Name = "Water Gun";
             ElementType = CardType.Water;
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
@@ -24,9 +23,15 @@ namespace MTCG.Model.SpellCards.Water
             }
 
             if (enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)) &&
-                ((SpellCardModell) enemyCard).WeakAgainst == ElementType)
+                ((SpellCardModell) enemyCard).WeakAgainst == ElementType || 
+                enemyCard.GetType().IsSubclassOf(typeof(BaseKnightModell)))
             {
                 return 9999;
+            }
+            
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            {
+                return 0;
             }
             
             return Damage * rand.NextDouble();

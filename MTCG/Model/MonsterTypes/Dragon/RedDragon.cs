@@ -14,7 +14,8 @@ namespace MTCG.Model.MonsterTypes.Dragon
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            if (enemyCard.GetType().IsSubclassOf(typeof(BaseFireElfModell)))
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseFireElfModell)) 
+                || enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)) )
             {
                 return 0;
             }

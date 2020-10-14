@@ -278,7 +278,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -382,7 +382,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -394,7 +394,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -498,7 +498,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -510,7 +510,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -614,7 +614,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -626,7 +626,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -730,7 +730,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -742,7 +742,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -846,7 +846,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -858,7 +858,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -926,7 +926,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void FireSpell_Attack_NormalSpell()
@@ -937,7 +937,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void FireSpell_Attack_WaterSpell()
@@ -948,7 +948,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -962,7 +962,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -974,7 +974,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -1042,7 +1042,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void NormalSpell_Attack_NormalSpell()
@@ -1053,7 +1053,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void NormalSpell_Attack_WaterSpell()
@@ -1064,7 +1064,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -1078,7 +1078,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -1090,7 +1090,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         
         [Test]
@@ -1158,7 +1158,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void WaterSpell_Attack_NormalSpell()
@@ -1169,7 +1169,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void WaterSpell_Attack_WaterSpell()
@@ -1180,7 +1180,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         

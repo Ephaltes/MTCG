@@ -15,7 +15,8 @@ namespace MTCG.Model.MonsterTypes.Orc
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            if (enemyCard.GetType().IsSubclassOf(typeof(BaseWizardModell)))
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseWizardModell))
+                || enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)))
             {
                 return 0;
             }

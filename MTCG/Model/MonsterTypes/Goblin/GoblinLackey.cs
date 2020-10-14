@@ -15,7 +15,8 @@ namespace MTCG.Model.MonsterTypes.Goblin
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            if (enemyCard.GetType().IsSubclassOf(typeof(BaseDragonModell)))
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseDragonModell)) 
+                || enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)))
             {
                 return 0;
             }

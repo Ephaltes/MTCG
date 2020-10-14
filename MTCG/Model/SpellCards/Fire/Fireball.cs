@@ -25,6 +25,11 @@ namespace MTCG.Model.SpellCards.Fire
             {
                 return 9999;
             }
+
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            {
+                return 0;
+            }
             
             return Damage * rand.NextDouble();
         }
