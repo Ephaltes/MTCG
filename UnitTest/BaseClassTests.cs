@@ -1,6 +1,6 @@
 using MTCG.Model.BaseClass;
 using MTCG.Model.MonsterTypes.Dragon;
-using MTCG.Model.MonsterTypes.FireElve;
+using MTCG.Model.MonsterTypes.FireElf;
 using MTCG.Model.MonsterTypes.Goblin;
 using MTCG.Model.MonsterTypes.Knight;
 using MTCG.Model.MonsterTypes.Kraken;

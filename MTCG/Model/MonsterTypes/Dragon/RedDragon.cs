@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Dragon
 {
@@ -9,12 +10,20 @@ namespace MTCG.Model.MonsterTypes.Dragon
             Description = "Story Red Dragon";
             Name = "Red Dragon";
             ElementType = CardType.Fire;
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseFireElfModell)) 
+                || enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)) )
+            {
+                return 0;
+            }
+            
+            Random rand = new Random();
+
+            return Damage * AttackSpeed * rand.NextDouble();
+
         }
     }
 }

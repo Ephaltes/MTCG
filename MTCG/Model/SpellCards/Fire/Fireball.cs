@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.SpellCards.Fire
 {
@@ -8,12 +9,29 @@ namespace MTCG.Model.SpellCards.Fire
         {
             Description = "Story Fireball";
             Name = "Fireball";
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            Random rand = new Random();
+
+            if ( enemyCard.GetType().IsSubclassOf(typeof(MonsterCardModell))  && enemyCard.ElementType == CardType.Normal)
+            {
+                return Damage*Constant.SPELLMULTIPLIER*rand.NextDouble();
+            }
+
+            if (enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)) &&
+                ((SpellCardModell) enemyCard).WeakAgainst == ElementType)
+            {
+                return 9999;
+            }
+
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            {
+                return 0;
+            }
+            
+            return Damage * rand.NextDouble();
         }
     }
 }

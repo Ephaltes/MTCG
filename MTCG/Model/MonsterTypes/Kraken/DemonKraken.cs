@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Kraken
 {
@@ -9,12 +10,17 @@ namespace MTCG.Model.MonsterTypes.Kraken
             Description = "Story Demon Kraken";
             Name = "Demon Kraken";
             ElementType = CardType.Water;
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            if (enemyCard.GetType().IsSubclassOf(typeof(SpellCardModell)))
+            {
+                return 0;
+            }
+            
+            Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
         }
     }
 }

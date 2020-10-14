@@ -10,6 +10,7 @@ namespace MTCG.Model.BaseClass
         {
             ElementType = CardType.Normal;
             WeakAgainst = CardType.Fire;
+            Damage = 30;
         }
 
         public abstract override double CalculateDamge(CardModell enemyCard);

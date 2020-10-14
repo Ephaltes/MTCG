@@ -2,11 +2,14 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public abstract class BaseFireElveModell:MonsterCardModell
+    public abstract class BaseFireElfModell:MonsterCardModell
     {
-        public BaseFireElveModell()
+        public BaseFireElfModell()
         {
             MonsterType = MonsterType.FireElve;
+            Health = 125;
+            Damage = 5;
+            AttackSpeed = 3;
         }
 
         public abstract override double CalculateDamge(CardModell enemyCard);
