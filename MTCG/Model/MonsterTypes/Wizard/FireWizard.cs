@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Wizard
 {
@@ -14,7 +15,8 @@ namespace MTCG.Model.MonsterTypes.Wizard
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+           Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
         }
     }
 }

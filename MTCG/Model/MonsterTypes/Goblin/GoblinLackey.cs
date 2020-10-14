@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Goblin
 {
@@ -9,12 +10,18 @@ namespace MTCG.Model.MonsterTypes.Goblin
             Description = "Story Goblin Lackey";
             Name = "Goblin Lackey";
             ElementType = CardType.Normal;
-            Damage = 1;
+
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseDragonModell)))
+            {
+                return 0;
+            }
+            
+            Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
         }
     }
 }

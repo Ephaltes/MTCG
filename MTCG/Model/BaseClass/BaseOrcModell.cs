@@ -7,6 +7,9 @@ namespace MTCG.Model.BaseClass
         public BaseOrcModell()
         {
             MonsterType = MonsterType.Orc;
+            Health = 120;
+            Damage = 2.5;
+            AttackSpeed = 5;
         }
 
         public abstract override double CalculateDamge(CardModell enemyCard);

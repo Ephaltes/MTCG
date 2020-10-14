@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Orc
 {
@@ -14,7 +15,13 @@ namespace MTCG.Model.MonsterTypes.Orc
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseWizardModell)))
+            {
+                return 0;
+            }
+            
+            Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
         }
     }
 }

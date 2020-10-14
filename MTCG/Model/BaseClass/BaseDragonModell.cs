@@ -8,6 +8,9 @@ namespace MTCG.Model.BaseClass
         public BaseDragonModell()
         {
             MonsterType = MonsterType.Dragon;
+            Health = 200;
+            Damage = 20;
+            AttackSpeed = 1;
         }
 
         public abstract override double CalculateDamge(CardModell enemyCard);

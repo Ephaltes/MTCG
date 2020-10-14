@@ -1,4 +1,5 @@
-﻿using MTCG.Model.BaseClass;
+﻿using System;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Knight
 {
@@ -9,12 +10,12 @@ namespace MTCG.Model.MonsterTypes.Knight
             Description = "Story Galaxy Knight";
             Name = "Galaxy Knight";
             ElementType = CardType.Normal;
-            Damage = 1;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
         {
-            throw new System.NotImplementedException();
+            Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
         }
     }
 }
