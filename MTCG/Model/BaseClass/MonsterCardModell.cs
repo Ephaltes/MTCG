@@ -1,24 +1,21 @@
-﻿namespace MTCG.Model.BaseClass
-{
-    public enum MonsterType
-    {
-        None,
-        Goblin,
-        Dragon,
-        Wizard,
-        Knight,
-        Kraken,
-        FireElve,
-        Orc
-    }
+﻿using System;
 
-    public abstract class MonsterCardModell : CardModell
+namespace MTCG.Model.BaseClass
+{
+    public class MonsterCardModell : CardModell
     {
         public double Health=100;
         public double AttackSpeed = 1;
-        public MonsterType MonsterType { get; set; } = MonsterType.None;
 
-        public abstract override double CalculateDamge(CardModell enemyCard);
+        public MonsterCardModell()
+        {
+            ElementType = CardType.Normal;
+        }
+        public override double CalculateDamge(CardModell enemyCard)
+        {
+            Random rand = new Random();
+            return Damage * AttackSpeed * rand.NextDouble();
+        }
 
     }
 }

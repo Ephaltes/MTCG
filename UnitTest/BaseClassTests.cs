@@ -28,7 +28,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new RedDragon();
             //Act
-            bool result = monster.MonsterType == MonsterType.Dragon;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseDragonModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -39,7 +39,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new GoblinLackey();
             //Act
-            bool result = monster.MonsterType == MonsterType.Goblin;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseGoblinModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -50,7 +50,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new FireWizard();
             //Act
-            bool result = monster.MonsterType == MonsterType.Wizard;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseWizardModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -61,7 +61,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new GalaxyKnight();
             //Act
-            bool result = monster.MonsterType == MonsterType.Knight;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseKnightModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -72,7 +72,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new WingEggElf();
             //Act
-            bool result = monster.MonsterType == MonsterType.FireElve;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseFireElfModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -83,7 +83,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new DemonKraken();
             //Act
-            bool result = monster.MonsterType == MonsterType.Kraken;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseKrakenModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -93,7 +93,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new OrcWarrior();
             //Act
-            bool result = monster.MonsterType == MonsterType.Orc;
+            bool result = monster.GetType().IsSubclassOf(typeof(BaseOrcModell));
             //Assert
             Assert.That(result, Is.True);
         }
@@ -108,20 +108,9 @@ namespace UnitTest
             //Assert
             Assert.That(result, Is.True);
         }
-
+        
         [Test]
-        public void BaseFireSpell_WeakAgainst_Water()
-        {
-            //Arrange
-            SpellCardModell spell = new Fireball();
-            //Act
-            bool result = spell.WeakAgainst == CardType.Water;
-            //Assert
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public void BaseWaterSpell_ElementType_IsWater()
+        public void BaseFireSpell_ElementType_IsWater()
         {
             //Arrange
             SpellCardModell spell = new WaterGun();
@@ -130,20 +119,9 @@ namespace UnitTest
             //Assert
             Assert.That(result, Is.True);
         }
-
+        
         [Test]
-        public void BaseWaterSpell_WeakAgainst_Normal()
-        {
-            //Arrange
-            SpellCardModell spell = new WaterGun();
-            //Act
-            bool result = spell.WeakAgainst == CardType.Normal;
-            //Assert
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public void BaseNormalSpell_ElementType_IsNormal()
+        public void BaseFireSpell_ElementType_IsNormal()
         {
             //Arrange
             SpellCardModell spell = new Light();
@@ -152,17 +130,7 @@ namespace UnitTest
             //Assert
             Assert.That(result, Is.True);
         }
-
-        [Test]
-        public void BaseNormalSpell_WeakAgainst_Fire()
-        {
-            //Arrange
-            SpellCardModell spell = new Light();
-            //Act
-            bool result = spell.WeakAgainst == CardType.Fire;
-            //Assert
-            Assert.That(result, Is.True);
-        }
+        
 #endregion
     }
 }

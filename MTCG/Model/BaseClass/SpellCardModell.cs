@@ -1,9 +1,19 @@
-﻿namespace MTCG.Model.BaseClass
+﻿using System;
+
+namespace MTCG.Model.BaseClass
 {
-    public abstract class SpellCardModell : CardModell
+    public class SpellCardModell : CardModell
     {
-        public CardType WeakAgainst { get; set; } = CardType.Fire;
-        
-        public abstract override double CalculateDamge(CardModell enemyCard);
+        public override double CalculateDamge(CardModell enemyCard)
+        {
+            Random rand = new Random();
+
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            {
+                return 0;
+            }
+
+            return Damage * rand.NextDouble();
+        }
     }
 }

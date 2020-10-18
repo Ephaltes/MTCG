@@ -2,16 +2,23 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public abstract class BaseGoblinModell : MonsterCardModell
+    public class BaseGoblinModell : MonsterCardModell
     {
         public BaseGoblinModell()
         {
-            MonsterType = MonsterType.Goblin;
             Health = 100;
             Damage = 5;
             AttackSpeed = 5;
         }
 
-        public abstract override double CalculateDamge(CardModell enemyCard);
+        public new double CalculateDamge(CardModell enemyCard)
+        {
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseDragonModell)))
+            {
+                return 0;
+            }
+
+            return base.CalculateDamge(enemyCard);
+        }
     }
 }
