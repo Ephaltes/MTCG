@@ -2,16 +2,22 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public abstract class BaseOrcModell : MonsterCardModell
+    public class BaseOrcModell : MonsterCardModell
     {
         public BaseOrcModell()
         {
-            MonsterType = MonsterType.Orc;
             Health = 120;
             Damage = 2.5;
             AttackSpeed = 5;
         }
 
-        public abstract override double CalculateDamge(CardModell enemyCard);
+        public new double CalculateDamge(CardModell enemyCard)
+        {
+            if (enemyCard.GetType().IsSubclassOf(typeof(BaseWizardModell)))
+            {
+                return 0;
+            }
+            return base.CalculateDamge(enemyCard);
+        }
     }
 }
