@@ -12,7 +12,7 @@ namespace MTCG.Model.BaseClass
             AttackSpeed = 1;
         }
 
-        public new double CalculateDamge(CardModell enemyCard)
+        public override double CalculateDamge(CardModell enemyCard)
         {
             if (enemyCard.GetType().IsSubclassOf(typeof(BaseFireElfModell)))
             {

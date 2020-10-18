@@ -12,7 +12,7 @@ namespace MTCG.Model.BaseClass
             Damage = 50;
         }
 
-        public new double CalculateDamge(CardModell enemyCard)
+        public override double CalculateDamge(CardModell enemyCard)
         {
             Random rand  = new Random();
             if (ElementType == CardType.Water && enemyCard.GetType().IsSubclassOf(typeof(BaseKnightModell)))

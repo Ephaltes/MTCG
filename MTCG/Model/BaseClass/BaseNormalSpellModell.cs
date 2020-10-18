@@ -12,7 +12,7 @@ namespace MTCG.Model.BaseClass
             Damage = 30;
         }
         
-        public new  double CalculateDamge(CardModell enemyCard)
+        public override  double CalculateDamge(CardModell enemyCard)
         {
             Random rand = new Random();
             
