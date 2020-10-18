@@ -115,7 +115,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(fireball);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Dragon_Attack_NormalSpell()
@@ -126,7 +126,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(light);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Dragon_Attack_WaterSpell()
@@ -137,7 +137,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(watergun);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result  > 0);
         }
         #endregion
         
@@ -230,7 +230,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(fireball);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void FireElfAttack_NormalSpell()
@@ -241,7 +241,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(light);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void FireElfAttack_WaterSpell()
@@ -252,7 +252,7 @@ namespace UnitTest
             //Act
             var result = dragon.CalculateDamge(watergun);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -346,7 +346,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Goblin_Attack_NormalSpell()
@@ -357,7 +357,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Goblin_Attack_WaterSpell()
@@ -368,7 +368,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -462,7 +462,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Knight_Attack_NormalSpell()
@@ -473,7 +473,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Knight_Attack_WaterSpell()
@@ -484,7 +484,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -578,7 +578,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Kraken_Attack_NormalSpell()
@@ -589,7 +589,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Kraken_Attack_WaterSpell()
@@ -600,7 +600,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -694,7 +694,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Orc_Attack_NormalSpell()
@@ -705,7 +705,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Orc_Attack_WaterSpell()
@@ -716,7 +716,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
@@ -810,7 +810,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Wizard_Attack_NormalSpell()
@@ -821,7 +821,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <= 0);
+            Assert.That(result > 0);
         }
         [Test]
         public void Wizard_Attack_WaterSpell()
@@ -832,7 +832,7 @@ namespace UnitTest
             //Act
             var result = card1.CalculateDamge(card2);
             //Assert
-            Assert.That(result <=0);
+            Assert.That(result > 0);
         }
         #endregion
         
