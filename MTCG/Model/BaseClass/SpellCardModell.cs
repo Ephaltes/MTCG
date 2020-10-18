@@ -2,7 +2,7 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class SpellCardModell : CardModell
+    public abstract class SpellCardModell : CardModell
     {
         public override double CalculateDamge(CardModell enemyCard)
         {

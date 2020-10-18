@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseNormalSpellModell:SpellCardModell
+    public abstract class BaseNormalSpellModell:SpellCardModell
     {
         public BaseNormalSpellModell()
         {

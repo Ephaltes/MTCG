@@ -2,7 +2,7 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseGoblinModell : MonsterCardModell
+    public abstract class BaseGoblinModell : MonsterCardModell
     {
         public BaseGoblinModell()
         {

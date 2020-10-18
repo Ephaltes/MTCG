@@ -2,7 +2,7 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class MonsterCardModell : CardModell
+    public abstract class MonsterCardModell : CardModell
     {
         public double Health=100;
         public double AttackSpeed = 1;

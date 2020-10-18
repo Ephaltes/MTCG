@@ -2,7 +2,7 @@
 
 namespace MTCG.Model.BaseClass
 {
-    public class BaseDragonModell : MonsterCardModell
+    public abstract class BaseDragonModell : MonsterCardModell
     {
 
         public BaseDragonModell()
