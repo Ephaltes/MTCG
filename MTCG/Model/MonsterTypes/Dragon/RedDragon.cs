@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Dragon
             Health = 200;
             Damage = 20;
             AttackSpeed = 1;
+            CardId = CardId.RedDragon;
         }
     }
 }

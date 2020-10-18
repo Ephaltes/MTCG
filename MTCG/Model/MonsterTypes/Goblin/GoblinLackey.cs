@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Goblin
             Damage = 5;
             AttackSpeed = 5;
             Race = Race.Goblin;
+            CardId = CardId.GoblinLackey;
 
         }
         

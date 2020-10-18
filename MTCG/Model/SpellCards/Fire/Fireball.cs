@@ -11,6 +11,7 @@ namespace MTCG.Model.SpellCards.Fire
             Name = "Fireball";
             ElementType = ElementType.Fire;
             Damage = 50;
+            CardId = CardId.Fireball;
         }
     }
 }

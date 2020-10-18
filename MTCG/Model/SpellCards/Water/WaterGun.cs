@@ -11,6 +11,7 @@ namespace MTCG.Model.SpellCards.Water
             Name = "Water Gun";
             ElementType = ElementType.Water;
             Damage = 50;
+            CardId = CardId.WaterGun;
         }
     }
 }

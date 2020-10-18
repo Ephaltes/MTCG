@@ -11,6 +11,7 @@ namespace MTCG.Model.SpellCards.Normal
             Name = "Light";
             ElementType = ElementType.Normal;
             Damage = 30;
+            CardId = CardId.Light;
         }
     }
 }

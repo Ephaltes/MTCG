@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Wizard
             Damage = 15;
             AttackSpeed = 1;
             Race = Race.Wizard;
+            CardId = CardId.FireWizard;
         }
     }
 }

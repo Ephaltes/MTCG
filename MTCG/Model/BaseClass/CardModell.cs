@@ -15,13 +15,30 @@ namespace MTCG.Model.BaseClass
         MonsterCard,
         SpellCard
     }
-
+    
+    public enum CardId
+    {
+        Unknown,
+        RedDragon,
+        WingEggElf,
+        GoblinLackey,
+        GalaxyKnight,
+        DemonKraken,
+        OrcWarrior,
+        FireWizard,
+        Fireball,
+        Light,
+        WaterGun
+    }
+    
     public abstract class CardModell
     {
         private static readonly Random _random = new Random();
         public string Name { get; set; }
         public double Damage { get; set; }
         public string Description { get; set; }
+        
+        public CardId CardId { get; set; }
 
         public ElementType ElementType { get; set; } = ElementType.Normal;
         public CardType CardType { get; set; } = CardType.Unknown;
@@ -46,5 +63,6 @@ namespace MTCG.Model.BaseClass
         {
             return _random.NextDouble() * (Constant.MAXDICEROLL - Constant.MINDICEROLL) + Constant.MINDICEROLL;
         }
+        
     }
 }

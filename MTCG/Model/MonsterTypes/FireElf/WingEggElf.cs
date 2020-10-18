@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.FireElf
             Damage = 5;
             AttackSpeed = 3;
             Race = Race.FireElf;
+            CardId = CardId.WingEggElf;
         }
         
        

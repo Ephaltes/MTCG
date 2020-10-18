@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Orc
             Damage = 2.5;
             AttackSpeed = 5;
             Race = Race.Orc;
+            CardId = CardId.OrcWarrior;
         }
     }
 }

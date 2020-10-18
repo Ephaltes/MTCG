@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Knight
             Damage = 5;
             AttackSpeed = 2;
             Race = Race.Knight;
+            CardId = CardId.GalaxyKnight;
         }
         
       

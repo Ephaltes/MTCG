@@ -14,6 +14,7 @@ namespace MTCG.Model.MonsterTypes.Kraken
             Damage = 7.5;
             AttackSpeed = 1.2;
             Race = Race.Kraken;
+            CardId = CardId.DemonKraken;
         }
     }
 }
