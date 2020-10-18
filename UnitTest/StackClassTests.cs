@@ -28,9 +28,9 @@ namespace UnitTest
             //Act
             stack.Add(card);
             var stackList = stack.GetDeck();
-            var result = stackList[0].GetType();
+            var result = ((MonsterCardModell) stackList[0]).Race == Race.Dragon;
             //Assert
-            Assert.That(result.IsSubclassOf(typeof(BaseDragonModell)));
+            Assert.That(result);
         }
         
         [Test]

@@ -3,13 +3,18 @@ using MTCG.Model.BaseClass;
 
 namespace MTCG.Model.MonsterTypes.Goblin
 {
-    public class GoblinLackey:BaseGoblinModell
+    public class GoblinLackey:MonsterCardModell
     {
         public GoblinLackey()
         {
             Description = "Story Goblin Lackey";
             Name = "Goblin Lackey";
-            ElementType = CardType.Normal;
+            ElementType = BaseClass.ElementType.Normal;
+            Health = 100;
+            Damage = 5;
+            AttackSpeed = 5;
+            Race = Race.Goblin;
+            CardId = CardId.GoblinLackey;
 
         }
         

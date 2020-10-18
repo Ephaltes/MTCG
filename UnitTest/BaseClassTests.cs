@@ -28,7 +28,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new RedDragon();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseDragonModell));
+            bool result = monster.Race == Race.Dragon;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -39,7 +39,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new GoblinLackey();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseGoblinModell));
+            bool result = monster.Race == Race.Goblin;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -50,7 +50,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new FireWizard();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseWizardModell));
+            bool result = monster.Race == Race.Wizard;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -61,7 +61,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new GalaxyKnight();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseKnightModell));
+            bool result = monster.Race == Race.Knight;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -72,7 +72,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new WingEggElf();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseFireElfModell));
+            bool result = monster.Race == Race.FireElf;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -83,7 +83,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new DemonKraken();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseKrakenModell));
+            bool result = monster.Race == Race.Kraken;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -93,7 +93,7 @@ namespace UnitTest
             //Arrange
             MonsterCardModell monster = new OrcWarrior();
             //Act
-            bool result = monster.GetType().IsSubclassOf(typeof(BaseOrcModell));
+            bool result = monster.Race == Race.Orc;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -104,7 +104,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new Fireball();
             //Act
-            bool result = spell.ElementType == CardType.Fire;
+            bool result = spell.ElementType == ElementType.Fire;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -115,7 +115,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new WaterGun();
             //Act
-            bool result = spell.ElementType == CardType.Water;
+            bool result = spell.ElementType == ElementType.Water;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -126,7 +126,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new Light();
             //Act
-            bool result = spell.ElementType == CardType.Normal;
+            bool result = spell.ElementType == ElementType.Normal;
             //Assert
             Assert.That(result, Is.True);
         }

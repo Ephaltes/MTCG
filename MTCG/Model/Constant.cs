@@ -25,6 +25,8 @@ namespace MTCG.Model
             new Fireball(), new Light(), new WaterGun()
         };
 
-        public const double SPELLMULTIPLIER = 2;
+        public const double WEAKMULTIPLIER = 2;
+        public const double MINDICEROLL = 0.5;
+        public const double MAXDICEROLL = 1;
     }
 }
