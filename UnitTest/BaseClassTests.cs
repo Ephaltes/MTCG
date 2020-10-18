@@ -104,7 +104,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new Fireball();
             //Act
-            bool result = spell.ElementType == CardType.Fire;
+            bool result = spell.ElementType == ElementType.Fire;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -115,7 +115,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new WaterGun();
             //Act
-            bool result = spell.ElementType == CardType.Water;
+            bool result = spell.ElementType == ElementType.Water;
             //Assert
             Assert.That(result, Is.True);
         }
@@ -126,7 +126,7 @@ namespace UnitTest
             //Arrange
             SpellCardModell spell = new Light();
             //Act
-            bool result = spell.ElementType == CardType.Normal;
+            bool result = spell.ElementType == ElementType.Normal;
             //Assert
             Assert.That(result, Is.True);
         }

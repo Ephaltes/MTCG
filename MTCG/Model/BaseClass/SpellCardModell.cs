@@ -4,16 +4,31 @@ namespace MTCG.Model.BaseClass
 {
     public abstract class SpellCardModell : CardModell
     {
+        public SpellCardModell()
+        {
+            CardType = CardType.SpellCard;
+            ElementType = ElementType.Normal;
+        }
+        
         public override double CalculateDamge(CardModell enemyCard)
         {
-            Random rand = new Random();
-
-            if (enemyCard.GetType().IsSubclassOf(typeof(BaseKrakenModell)))
+            
+            if (enemyCard.CardType == CardType.MonsterCard && ((MonsterCardModell) enemyCard).Race == Race.Kraken)
             {
                 return 0;
             }
+            
+            if (enemyCard.CardType == CardType.MonsterCard && ((MonsterCardModell) enemyCard).Race == Race.Knight)
+            {
+                return 9999;
+            }
 
-            return Damage * rand.NextDouble();
+            if (EnemyIsWeakAgainstThisElement(enemyCard))
+            {
+                return Damage * DnDDiceRoll() * Constant.WEAKMULTIPLIER;
+            }
+
+            return Damage * DnDDiceRoll();
         }
     }
 }
