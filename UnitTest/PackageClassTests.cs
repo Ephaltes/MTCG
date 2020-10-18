@@ -17,7 +17,7 @@ namespace UnitTest
         public void Open_Package_IsMAXCARDSPERPACKAGE()
         {
             //Arrange
-            var package = new PackageModell("username");
+            var package = new PackageModell();
             //Act
             var list = package.Open();
             //Assert
@@ -27,7 +27,7 @@ namespace UnitTest
         public void Open_Package_No_Package_Left()
         {
             //Arrange
-            var package = new PackageModell("username");
+            var package = new PackageModell();
             //Act
             package.Open();
             var list = package.Open();
