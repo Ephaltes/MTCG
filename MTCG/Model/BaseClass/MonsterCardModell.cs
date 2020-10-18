@@ -15,6 +15,8 @@ namespace MTCG.Model.BaseClass
         {
             Random rand = new Random();
             return Damage * AttackSpeed * rand.NextDouble();
+            
+            //TODO: Elementbonus Monster vs Spellcard
         }
 
     }

@@ -7,7 +7,7 @@ namespace MTCG.Model.BaseClass
     {
         public int Count { get; set; }
 
-        public PackageModell(string username)
+        public PackageModell()
         {
             //logic set Package count from DB if not in database set count to 1
             Count = 1;
