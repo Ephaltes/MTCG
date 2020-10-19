@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Dragon
         {
             Description = "Story Red Dragon";
             Name = "Red Dragon";
-            ElementType = BaseClass.ElementType.Fire;
+            ElementType = ElementType.Fire;
             Race = Race.Dragon;
             Health = 200;
             Damage = 20;

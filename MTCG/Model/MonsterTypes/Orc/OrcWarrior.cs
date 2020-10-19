@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Orc
         {
             Description = "Story Orc Warrior";
             Name = "Orc Warrior";
-            ElementType = BaseClass.ElementType.Normal;
+            ElementType = ElementType.Normal;
             Health = 120;
             Damage = 2.5;
             AttackSpeed = 5;

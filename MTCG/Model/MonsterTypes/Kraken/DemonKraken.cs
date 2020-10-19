@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Kraken
         {
             Description = "Story Demon Kraken";
             Name = "Demon Kraken";
-            ElementType = BaseClass.ElementType.Water;
+            ElementType = ElementType.Water;
             Health = 175;
             Damage = 7.5;
             AttackSpeed = 1.2;

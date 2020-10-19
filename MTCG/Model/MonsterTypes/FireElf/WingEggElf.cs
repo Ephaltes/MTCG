@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.FireElf
         {
             Description = "Story Elf";
             Name = "Wing Egg Elf";
-            ElementType = BaseClass.ElementType.Normal;
+            ElementType = ElementType.Normal;
             Health = 125;
             Damage = 5;
             AttackSpeed = 3;

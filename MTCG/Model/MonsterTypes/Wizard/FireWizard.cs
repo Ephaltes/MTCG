@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Wizard
         {
             Description = "Story Fire Wizard";
             Name = "Fire Wizard";
-            ElementType = BaseClass.ElementType.Fire;
+            ElementType = ElementType.Fire;
             Health = 125;
             Damage = 15;
             AttackSpeed = 1;

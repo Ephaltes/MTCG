@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Goblin
         {
             Description = "Story Goblin Lackey";
             Name = "Goblin Lackey";
-            ElementType = BaseClass.ElementType.Normal;
+            ElementType = ElementType.Normal;
             Health = 100;
             Damage = 5;
             AttackSpeed = 5;

@@ -9,7 +9,7 @@ namespace MTCG.Model.MonsterTypes.Knight
         {
             Description = "Story Galaxy Knight";
             Name = "Galaxy Knight";
-            ElementType = BaseClass.ElementType.Normal;
+            ElementType = ElementType.Normal;
             Health = 150;
             Damage = 5;
             AttackSpeed = 2;
