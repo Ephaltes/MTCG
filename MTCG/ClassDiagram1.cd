@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="MTCG.Model.Constant" Collapsed="true">
-    <Position X="23.25" Y="0.5" Width="1.5" />
+    <Position X="6" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAAAAAAIAAAQIAAAAAAAAAAAAAAGAA=</HashCode>
       <FileName>Model\Constant.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MTCG.Model.DeckModell" Collapsed="true">
-    <Position X="25" Y="0.5" Width="1.5" />
+    <Position X="7.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAABAAQAAABAAAAAAAAAAAIAAAAABACAA=</HashCode>
       <FileName>Model\DeckModell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MTCG.Model.StackModell" Collapsed="true">
-    <Position X="23.25" Y="1.5" Width="1.5" />
+    <Position X="6" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAQAAQAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Model\StackModell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MTCG.Model.UserModell" Collapsed="true">
-    <Position X="25" Y="1.5" Width="1.5" />
+    <Position X="7.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQAAAAAAAAgAAAUAYAAAAgAAAAAAAAABIAAAAAAA=</HashCode>
       <FileName>Model\UserModell.cs</FileName>
@@ -50,7 +50,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MTCG.Model.BaseClass.PackageModell" Collapsed="true">
-    <Position X="26.75" Y="0.5" Width="1.5" />
+    <Position X="9.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\PackageModell.cs</FileName>
@@ -134,28 +134,28 @@
     </TypeIdentifier>
   </Class>
   <Enum Name="MTCG.Model.BaseClass.ElementType" Collapsed="true">
-    <Position X="26.75" Y="2.75" Width="1.5" />
+    <Position X="9.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\BaseClass\CardModell.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="MTCG.Model.BaseClass.CardType" Collapsed="true">
-    <Position X="25" Y="2.75" Width="1.5" />
+    <Position X="7.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAABA=</HashCode>
       <FileName>Model\BaseClass\CardModell.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="MTCG.Model.BaseClass.CardId" Collapsed="true">
-    <Position X="23.25" Y="2.75" Width="1.5" />
+    <Position X="6" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAQAAAEAAAAAAiAAAEAAAAIEAAAQAQAAABA=</HashCode>
       <FileName>Model\BaseClass\CardModell.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="MTCG.Model.BaseClass.Race" Collapsed="true">
-    <Position X="23.25" Y="3.5" Width="1.5" />
+    <Position X="6" Y="8.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAEAAAAABgAAAABAAAAIAAAgAAIAAAAAAAA=</HashCode>
       <FileName>Model\BaseClass\MonsterCardModell.cs</FileName>

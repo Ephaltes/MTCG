@@ -38,7 +38,7 @@ namespace UnitTest
             //Assert
             Assert.That(result > 0);
         }
-        
+        [Test]
         public void Dragon_Attack_FireElf()
         {
             //Arrange
