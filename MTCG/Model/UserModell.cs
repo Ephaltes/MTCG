@@ -1,16 +1,15 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
+using MTCG.Entity;
+using MTCG.Helpers;
 using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
     public class UserModell
     {
-        public string Username { get;}
-        public double Elo { get; set; }
-        public int Win { get; set; }
-        public int Lose { get; set; }
-        public int Draw { get; set; }
+        public UserEntity UserEntity { get; set; }
         public StackModell Stack { get; }
         public DeckModell Deck { get; }
         public PackageModell Package { get; }
@@ -20,12 +19,9 @@ namespace MTCG.Model
             if (!token.Contains("-mtcgToken"))
                 throw new AuthenticationException("Wrong Token");
 
-            //get everything from DB
-            Username = "username";
-            Elo = 1000;
-            Win = 10;
-            Lose = 10;
-            Draw = 5;
+            //TODO: Mock database connection for UnitTest
+            DatabaseModell database = new DatabaseModell();
+            UserEntity = database.GetUserByToken(token);
             Stack = new StackModell();
             Deck = new DeckModell();
             Package = new PackageModell();
@@ -33,13 +29,22 @@ namespace MTCG.Model
 
       public static string CreateTokenForUser(string username, string password)
         {
-            //check database if username exists
-            //if user exists & passwort same  return token
-            // else return user exists
-            return username + "-mtcgToken";
+            DatabaseModell database = new DatabaseModell();
+
+            if (database.UserExists(username))
+                return "User already exists";
             
+            UserEntity newUser = new UserEntity();
+            newUser.Username = username;
+            var hash = Cryptography.GenerateSaltedHash(password);
+            newUser.Password = hash.Hash;
+            newUser.Salt = hash.Salt;
+            newUser.Token = username + "-mtcgToken";
+
+            if(database.CreateUser(newUser))
+                return newUser.Token;
+            
+            throw new Exception("Error: Create UserToken");
         }
-        
-        
     }
 }
