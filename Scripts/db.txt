@@ -1,0 +1,18 @@
+create database mtcg;
+create user mtcguser with encrypted password 'mtcgpassword';
+grant all privileges on database mtcg to mtcguser;
+create schema mtcg;
+
+
+----------------------------------------------------------------- psql -d mtcg -U mtcguser
+
+CREATE TABLE mtcg.User (
+	username TEXT PRIMARY KEY NOT NULL,
+	password TEXT NOT NULL,
+	token TEXT NOT NULL,
+	elo INTEGER NOT NULL DEFAULT 1000,
+	win INTEGER NOT NULL DEFAULT 0,
+	lose INTEGER NOT NULL DEFAULT 0,
+	draw INTEGER NOT NULL DEFAULT 0
+);
+
