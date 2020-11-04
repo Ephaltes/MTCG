@@ -13,7 +13,7 @@ namespace MTCG.Model.BaseClass
             Count = 1;
         }
 
-        public List<CardModell> Open()
+       /* public List<CardModell> Open()
         {
             List<CardModell> retVal = new List<CardModell>();
 
@@ -29,6 +29,6 @@ namespace MTCG.Model.BaseClass
 
             Count--;
             return retVal;
-        }
+        } */
     }
 }

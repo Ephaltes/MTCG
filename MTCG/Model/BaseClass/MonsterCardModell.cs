@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace MTCG.Model.BaseClass
 {
@@ -15,26 +16,25 @@ namespace MTCG.Model.BaseClass
         Wizard
     }
     
-    public abstract class MonsterCardModell : CardModell
+    public class MonsterCardModell : CardModell
     {
-        public double Health=100;
-        public double AttackSpeed = 1;
-        public Race Race = Race.Unknow;
+        public Race Race { get;protected set; }
 
-        public MonsterCardModell()
+        public MonsterCardModell(CardEntity cardEntity)
         {
-            ElementType = ElementType.Normal;
-            CardType = CardType.MonsterCard;
+            if(cardEntity.CardType != CardType.MonsterCard)
+                throw new InvalidDataException("Card is not a MonsterCard");
+            
+            Id = cardEntity.Id;
+            Name = cardEntity.Name;
+            Damage = cardEntity.Damage;
+            Description = cardEntity.Description;
+            ElementType = cardEntity.ElementType;
+            CardType = cardEntity.CardType;
+            Race = cardEntity.Race;
         }
         public override double CalculateDamge(CardModell enemyCard)
         {
-            Random rand = new Random();
-
-            if (enemyCard.CardType == CardType.SpellCard && EnemyIsWeakAgainstThisElement(enemyCard))
-            {
-                return Damage * AttackSpeed * Constant.WEAKMULTIPLIER * DnDDiceRoll();
-            }
-
             if (enemyCard.CardType == CardType.MonsterCard)
             {
                 if (Race == Race.Goblin && ((MonsterCardModell)enemyCard).Race == Race.Dragon)
@@ -52,7 +52,7 @@ namespace MTCG.Model.BaseClass
                     return 0;
                 }
             }
-            return Damage * AttackSpeed * DnDDiceRoll();
+            return Damage * DnDDiceRoll();
         }
     }
 }
