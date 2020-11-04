@@ -9,6 +9,7 @@ create schema mtcg;
 CREATE TABLE mtcg.User (
 	username TEXT PRIMARY KEY NOT NULL,
 	password TEXT NOT NULL,
+	salt TEXT NOT NULL,
 	token TEXT NOT NULL,
 	description TEXT,
 	displayname TEXT NOT NULL,

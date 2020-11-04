@@ -1,44 +1,57 @@
 ﻿using System;
+using System.Data.Common;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
+using MTCG.Entity;
+using MTCG.Helpers;
+using MTCG.Interface;
 using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
     public class UserModell
     {
-        public string Username { get;}
-        public double Elo { get; set; }
-        public int Win { get; set; }
-        public int Lose { get; set; }
-        public int Draw { get; set; }
+        public UserEntity UserEntity { get; set; }
         public StackModell Stack { get; }
         public DeckModell Deck { get; }
         public int Coins { get; set; }
 
-        public UserModell(string token)
-        {
-            if (!token.Contains("-mtcgToken"))
-                throw new AuthenticationException("Wrong Token");
+        private IDatabase _database;
 
-            //get everything from DB
-            Username = "username";
-            Elo = 1000;
-            Win = 10;
-            Lose = 10;
-            Draw = 5;
+        public UserModell(IDatabase db)
+        {
+
+            _database = db;
             Stack = new StackModell();
             Deck = new DeckModell();
         }
 
-      public static string CreateTokenForUser(string username, string password)
+        public bool VerifyToken(string token)
         {
-            //check database if username exists
-            //if user exists & passwort same  return token
-            // else return user exists
-            return username + "-mtcgToken";
+            if (!token.Contains("-mtcgToken"))
+                throw new AuthenticationException("Wrong Token");
             
+            UserEntity = _database.GetUserByToken(token);
+            return true;
         }
-        
-        
+
+      public string CreateTokenForUser(string username, string password)
+        {
+
+            if (_database.UserExists(username))
+                return "User already exists";
+            
+            UserEntity newUser = new UserEntity();
+            newUser.Username = username;
+            var hash = Cryptography.GenerateSaltedHash(password);
+            newUser.Password = hash.Hash;
+            newUser.Salt = hash.Salt;
+            newUser.Token = username + "-mtcgToken";
+
+            if(_database.CreateUser(newUser))
+                return newUser.Token;
+            
+            throw new Exception("Error: Create UserToken");
+        }
     }
 }
