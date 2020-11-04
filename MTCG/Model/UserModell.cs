@@ -14,8 +14,7 @@ namespace MTCG.Model
         public UserEntity UserEntity { get; set; }
         public StackModell Stack { get; }
         public DeckModell Deck { get; }
-        public int Coins { get; set; }
-
+        
         private IDatabase _database;
 
         public UserModell(IDatabase db)

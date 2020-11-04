@@ -1,7 +1,6 @@
 ﻿using System;
 using MTCG.Entity;
 using MTCG.Interface;
-using MTCG.Model.MonsterTypes.Dragon;
 using Npgsql;
 
 namespace MTCG.Model
@@ -17,13 +16,14 @@ namespace MTCG.Model
         }
         public bool CreateUser(UserEntity userEntity)
         {
-            var sql = "INSERT INTO mtcg.user(username,password,salt,token) VALUES(@username,@password,@salt,@token)";
+            var sql = "INSERT INTO mtcg.user(username,password,salt,token,displayname) VALUES(@username,@password,@salt,@token,@displayname)";
             using var cmd = new NpgsqlCommand(sql,_connection);
 
             cmd.Parameters.AddWithValue("username", userEntity.Username);
             cmd.Parameters.AddWithValue("password", userEntity.Password);
             cmd.Parameters.AddWithValue("salt", userEntity.Salt);
             cmd.Parameters.AddWithValue("token", userEntity.Token);
+            cmd.Parameters.AddWithValue("displayname", userEntity.Username);
 
             try
             {
@@ -82,10 +82,13 @@ namespace MTCG.Model
                     ret.Password = result.GetString(1);
                     ret.Salt = result.GetString(2);
                     ret.Token = result.GetString(3);
-                    ret.Elo = result.GetInt32(4);
-                    ret.Win = result.GetInt32(5);
-                    ret.Lose = result.GetInt32(6);
-                    ret.Draw = result.GetInt32(7);
+                    ret.Description = result.GetString(4);
+                    ret.Image = result.GetString(5);
+                    ret.Elo = result.GetInt32(6);
+                    ret.Win = result.GetInt32(7);
+                    ret.Lose = result.GetInt32(8);
+                    ret.Draw = result.GetInt32(9);
+                    ret.Coins = result.GetInt32(10);
                 }
                 return ret;
             }

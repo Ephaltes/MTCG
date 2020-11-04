@@ -10,5 +10,10 @@
         public int Win;
         public int Lose;
         public int Draw;
+        public int Coins;
+        public string DisplayName;
+        public string Image;
+        public string Description;
+
     }
 }
