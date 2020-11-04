@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using MTCG.Entity;
 using MTCG.Helpers;
+using MTCG.Interface;
 using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
@@ -14,24 +16,30 @@ namespace MTCG.Model
         public DeckModell Deck { get; }
         public PackageModell Package { get; }
 
-        public UserModell(string token)
-        {
-            if (!token.Contains("-mtcgToken"))
-                throw new AuthenticationException("Wrong Token");
+        private IDatabase _database;
 
-            //TODO: Mock database connection for UnitTest
-            DatabaseModell database = new DatabaseModell();
-            UserEntity = database.GetUserByToken(token);
+        public UserModell(IDatabase db)
+        {
+
+            _database = db;
             Stack = new StackModell();
             Deck = new DeckModell();
             Package = new PackageModell();
         }
 
-      public static string CreateTokenForUser(string username, string password)
+        public bool VerifyToken(string token)
         {
-            DatabaseModell database = new DatabaseModell();
+            if (!token.Contains("-mtcgToken"))
+                throw new AuthenticationException("Wrong Token");
+            
+            UserEntity = _database.GetUserByToken(token);
+            return true;
+        }
 
-            if (database.UserExists(username))
+      public string CreateTokenForUser(string username, string password)
+        {
+
+            if (_database.UserExists(username))
                 return "User already exists";
             
             UserEntity newUser = new UserEntity();
@@ -41,7 +49,7 @@ namespace MTCG.Model
             newUser.Salt = hash.Salt;
             newUser.Token = username + "-mtcgToken";
 
-            if(database.CreateUser(newUser))
+            if(_database.CreateUser(newUser))
                 return newUser.Token;
             
             throw new Exception("Error: Create UserToken");

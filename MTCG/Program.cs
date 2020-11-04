@@ -14,8 +14,6 @@ namespace MTCG
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            string token = UserModell.CreateTokenForUser("test", "test");
-            UserModell model = new UserModell("test-mtcgToken");
         }
     }
 }

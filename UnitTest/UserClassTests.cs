@@ -1,4 +1,7 @@
-﻿using MTCG.Model;
+﻿using Moq;
+using MTCG.Entity;
+using MTCG.Interface;
+using MTCG.Model;
 using NUnit.Framework;
 
 namespace UnitTest
@@ -16,25 +19,33 @@ namespace UnitTest
         public void LogIn_IsTrue()
         {
             string token = "username-mtcgToken";
+            Mock<IDatabase> database = new Mock<IDatabase>();
             
-            var user = new UserModell(token);
+            var user = new UserModell(database.Object);
+            var result = user.VerifyToken(token);
             
-            Assert.That(!string.IsNullOrWhiteSpace(user.Username));
+            Assert.That(result);
         }
         
         [Test]
         public void LogIn_IsFalse()
         {
             string token = "username-mtcToken";
-
-            Assert.That(() => new UserModell(token) , Throws.Exception);
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            
+            var user = new UserModell(database.Object);
+            
+            Assert.That(() => user.VerifyToken(token) , Throws.Exception);
         }
         [Test]
         public void CreateTokenForUser()
         {
             string username = "username";
             string suffix = "-mtcgToken";
-            var token = UserModell.CreateTokenForUser(username, "password");
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            database.Setup(x => x.CreateUser(It.IsAny<UserEntity>())).Returns(true);
+            var user = new UserModell(database.Object);
+            var token = user.CreateTokenForUser(username, "password");
 
             bool result = token == username + suffix;
             

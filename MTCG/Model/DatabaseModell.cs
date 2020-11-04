@@ -1,28 +1,20 @@
 ﻿using System;
 using MTCG.Entity;
+using MTCG.Interface;
 using MTCG.Model.MonsterTypes.Dragon;
 using Npgsql;
 
 namespace MTCG.Model
 {
-    public class DatabaseModell
+    public class DatabaseModell : IDatabase
     {
         private readonly NpgsqlConnection _connection;
+
         public DatabaseModell()
         {
             _connection = new NpgsqlConnection(AppSettings.Settings.ConnectionString);
             _connection.Open();
         }
-        public void SelectVersion()
-        {
-            var sql = "SELECT version()";
-
-            using var cmd = new NpgsqlCommand(sql, _connection);
-            
-            var version = cmd.ExecuteScalar().ToString();
-            Console.WriteLine($"PostgreSQL version: {version}");
-        }
-
         public bool CreateUser(UserEntity userEntity)
         {
             var sql = "INSERT INTO mtcg.user(username,password,salt,token) VALUES(@username,@password,@salt,@token)";
