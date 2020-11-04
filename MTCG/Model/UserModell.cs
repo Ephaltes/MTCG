@@ -13,7 +13,7 @@ namespace MTCG.Model
         public int Draw { get; set; }
         public StackModell Stack { get; }
         public DeckModell Deck { get; }
-        public PackageModell Package { get; }
+        public int Coins { get; set; }
 
         public UserModell(string token)
         {
@@ -28,7 +28,6 @@ namespace MTCG.Model
             Draw = 5;
             Stack = new StackModell();
             Deck = new DeckModell();
-            Package = new PackageModell();
         }
 
       public static string CreateTokenForUser(string username, string password)

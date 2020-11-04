@@ -1,18 +1,46 @@
 create database mtcg;
-create user mtcguser with encrypted password 'mtcgpassword';
-grant all privileges on database mtcg to mtcguser;
+create user mtcg with encrypted password 'mtcgpassword';
+grant all privileges on database mtcg to mtcg;
 create schema mtcg;
 
 
------------------------------------------------------------------ psql -d mtcg -U mtcguser
+----------------------------------------------------------------- psql -d mtcg -U mtcg
 
 CREATE TABLE mtcg.User (
 	username TEXT PRIMARY KEY NOT NULL,
 	password TEXT NOT NULL,
 	token TEXT NOT NULL,
+	description TEXT,
+	displayname TEXT NOT NULL,
+	image TEXT,
 	elo INTEGER NOT NULL DEFAULT 1000,
 	win INTEGER NOT NULL DEFAULT 0,
 	lose INTEGER NOT NULL DEFAULT 0,
-	draw INTEGER NOT NULL DEFAULT 0
+	draw INTEGER NOT NULL DEFAULT 0,
+	coins INTEGER NOT NULL DEFAULT 20
 );
 
+CREATE TABLE mtcg.Card (
+	id TEXT  PRIMARY KEY NOT NULL,
+	name TEXT NOT NULL,
+	damage FLOAT8 NOT NULL,
+	weakdamage FLOAT8,
+	description TEXT,
+	elementtype INTEGER NOT NULL,
+	cardtype INTEGER NOT NULL,
+	race INTEGER
+);
+
+CREATE TABLE mtcg.Package (
+	id SERIAL PRIMARY KEY,
+	name TEXT,
+	amount INTEGER NOT NULL
+);
+
+CREATE TABLE mtcg.R_Package_Card (
+	id SERIAL PRIMARY KEY,
+	packageid INTEGER NOT NULL,
+	cardid TEXT NOT NULL,
+	CONSTRAINT fk_packlage_r_package_card FOREIGN KEY(packageid) REFERENCES mtcg.Package (id) ON DELETE CASCADE,
+	CONSTRAINT fk_card_r_package_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
+);
