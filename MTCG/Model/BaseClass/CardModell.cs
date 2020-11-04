@@ -4,9 +4,9 @@ namespace MTCG.Model.BaseClass
 {
     public enum ElementType
     {
+        Normal,
         Fire,
         Water,
-        Normal
     }
 
     public enum CardType
@@ -16,32 +16,16 @@ namespace MTCG.Model.BaseClass
         SpellCard
     }
     
-    public enum CardId
-    {
-        Unknown,
-        RedDragon,
-        WingEggElf,
-        GoblinLackey,
-        GalaxyKnight,
-        DemonKraken,
-        OrcWarrior,
-        FireWizard,
-        Fireball,
-        Light,
-        WaterGun
-    }
     
     public abstract class CardModell
     {
         private static readonly Random _random = new Random();
-        public string Name { get; set; }
-        public double Damage { get; set; }
-        public string Description { get; set; }
-        
-        public CardId CardId { get; set; }
-
-        public ElementType ElementType { get; set; } = ElementType.Normal;
-        public CardType CardType { get; set; } = CardType.Unknown;
+        public string Id { get; protected set; }
+        public string Name { get; protected set; }
+        public double Damage { get;protected set; }
+        public string Description { get;protected set; }
+        public ElementType ElementType { get;protected set; } = ElementType.Normal;
+        public CardType CardType { get;protected set; } = CardType.Unknown;
 
         public abstract double CalculateDamge(CardModell enemyCard);
         

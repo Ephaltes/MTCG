@@ -13,7 +13,7 @@ namespace UnitTest
         {
         }
 
-        [Test]
+      /*  [Test]
         public void Open_Package_IsMAXCARDSPERPACKAGE()
         {
             //Arrange
@@ -33,6 +33,6 @@ namespace UnitTest
             var list = package.Open();
             //Assert
             Assert.That(list.Count == 0);
-        }
-    }
+        }*/
+    } 
 }

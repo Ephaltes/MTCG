@@ -1,7 +1,6 @@
+using MTCG;
 using MTCG.Model;
 using MTCG.Model.BaseClass;
-using MTCG.Model.MonsterTypes.Dragon;
-using MTCG.Model.MonsterTypes.Knight;
 using NUnit.Framework;
 
 namespace UnitTest
@@ -19,10 +18,11 @@ namespace UnitTest
         }
 
         [Test]
-        public void Add_BaseDragon_ToDeck()
+        public void Add_Monster_ToDeck()
         {
             //Arrange
-            var card = new RedDragon();
+            CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
+            var card = new MonsterCardModell(card1Entity);
             //Act
             deck.Add(card);
             var deckList = deck.GetDeck();
@@ -35,7 +35,8 @@ namespace UnitTest
         public void Remove_BaseDragon_FromDeck()
         {
             //Arrange
-            var card = new RedDragon();
+            CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard , ElementType = ElementType.Water};   
+            var card = new MonsterCardModell(card1Entity);
             //Act
             deck.Add(card);
             deck.Remove(card);
@@ -45,13 +46,15 @@ namespace UnitTest
         }
         
         [Test]
-        public void AddTemp_BaseDragon_ToDeck()
+        public void AddTemp_Card_ToDeck()
         {
             //Arrange
-            var card = new GalaxyKnight();
-            var card2 = new RedDragon();
+            CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
+            var card1 = new SpellCardModell(card1Entity);
+            var card2 = new MonsterCardModell(card2Entity);
             //Act
-            deck.Add(card);
+            deck.Add(card1);
             deck.AddTemp(card2);
             var result = deck.GetDeck();
             //Assert
@@ -62,10 +65,12 @@ namespace UnitTest
         public void RemoveTemp_BaseDragon_FromDeck()
         {
             //Arrange
-            var card = new GalaxyKnight();
-            var card2 = new RedDragon();
+            CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
+            var card1 = new SpellCardModell(card1Entity);
+            var card2 = new MonsterCardModell(card2Entity);
             //Act
-            deck.Add(card);
+            deck.Add(card1);
             deck.AddTemp(card2);
             deck.RemoveTempCards();
             var result = deck.GetDeck();

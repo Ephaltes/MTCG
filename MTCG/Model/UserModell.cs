@@ -14,7 +14,7 @@ namespace MTCG.Model
         public UserEntity UserEntity { get; set; }
         public StackModell Stack { get; }
         public DeckModell Deck { get; }
-        public PackageModell Package { get; }
+        public int Coins { get; set; }
 
         private IDatabase _database;
 
@@ -24,7 +24,6 @@ namespace MTCG.Model
             _database = db;
             Stack = new StackModell();
             Deck = new DeckModell();
-            Package = new PackageModell();
         }
 
         public bool VerifyToken(string token)

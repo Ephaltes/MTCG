@@ -1,13 +1,23 @@
 ﻿using System;
+using System.IO;
 
 namespace MTCG.Model.BaseClass
 {
-    public abstract class SpellCardModell : CardModell
+    public class SpellCardModell : CardModell
     {
-        public SpellCardModell()
+        public double WeakDamage { get;protected set; }
+        public SpellCardModell(CardEntity cardEntity)
         {
-            CardType = CardType.SpellCard;
-            ElementType = ElementType.Normal;
+            if(cardEntity.CardType != CardType.SpellCard)
+                throw new InvalidDataException("Card is not a SpellCard");
+            
+            Id = cardEntity.Id;
+            Name = cardEntity.Name;
+            Damage = cardEntity.Damage;
+            Description = cardEntity.Description;
+            ElementType = cardEntity.ElementType;
+            CardType = cardEntity.CardType;
+            WeakDamage = cardEntity.WeakDamage;
         }
         
         public override double CalculateDamge(CardModell enemyCard)
@@ -25,7 +35,7 @@ namespace MTCG.Model.BaseClass
 
             if (EnemyIsWeakAgainstThisElement(enemyCard))
             {
-                return Damage * DnDDiceRoll() * Constant.WEAKMULTIPLIER;
+                return WeakDamage * DnDDiceRoll();
             }
 
             return Damage * DnDDiceRoll();
