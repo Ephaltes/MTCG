@@ -1,0 +1,5 @@
+DROP TABLE mtcg.R_Package_Card;
+DROP TABLE mtcg.R_User_Card;
+DROP TABLE mtcg.User;
+DROP TABLE mtcg.Card;
+DROP TABLE mtcg.Package;

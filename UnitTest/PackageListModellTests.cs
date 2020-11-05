@@ -12,7 +12,7 @@ namespace UnitTest
 {
     [TestFixture]
 
-    public class PackageClassTests
+    public class PackageListModellTests
     {
         [SetUp]
         public void Setup()
@@ -27,82 +27,82 @@ namespace UnitTest
             MonsterCardModell modell = new MonsterCardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
             Mock<IDatabase> database = new Mock<IDatabase>();
             database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
-            //Act
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
             PackageModell package = new PackageModell(entity,database.Object);
-            //Assert
-            Assert.That(package.CardCount == list.Count);
-        }
-        
-        [Test]
-        public void PackageModell_Created_Failed()
-        {
-            //Arrange
-            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
-            PackageEntity entity = new PackageEntity(){Amount = 1 ,CardsInPackage = list};
-            Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
-            //Act
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            //Assert
-            Assert.That(() => new PackageModell(entity,database.Object) , Throws.Exception);
-        }
-        
-        [Test]
-        public void PackageModell_AddCard()
-        {
-            //Arrange
-            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
-            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
-            Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
-            int expectedCount = 6;
-            //Act
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            PackageModell package = new PackageModell(entity,database.Object);
-            package.AddCardToPackage(modell);
-            //Assert
-            Assert.That(package.CardCount == expectedCount);
-        }
-        
-        [Test]
-        public void PackageModell_AddCards()
-        {
-            //Arrange
-            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
-            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
-            Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
-            int expectedCount = 10;
-            //Act
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            list.Add(modell);
-            PackageModell package = new PackageModell(entity,database.Object);
-            package.AddCardsToPackage(list);
-            //Assert
-            Assert.That(package.CardCount == expectedCount);
-        }
+            int expectedCount = 1;
 
+            PackageListModell packageList = new PackageListModell();
+            packageList.AddPackageToList(package);
+            
+            //Assert
+            Assert.That(packageList.PackageModellList.Count == expectedCount);
+        }
+        
+        [Test]
+        public void PackageModell_Open_Successful()
+        {
+            //Arrange
+            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
+            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            List<CardModell> list = new List<CardModell>();
+            PackageEntity entity = new PackageEntity(){Amount = 3,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            PackageModell package = new PackageModell(entity,database.Object);
+            int expectedCount = 1;
+            
+            package.AddCardToPackage(modell);
+            
+            PackageListModell packageList = new PackageListModell();
+            packageList.AddPackageToList(package);
+            packageList.Open();
+            
+            //Assert
+            Assert.That(packageList.PackageModellList.Count == expectedCount);
+        }
+        
+        [Test]
+        public void PackageModell_Open_RemovePacakge()
+        {
+            //Arrange
+            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
+            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            List<CardModell> list = new List<CardModell>();
+            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            PackageModell package = new PackageModell(entity,database.Object);
+            int expectedCount = 0;
+            
+            package.AddCardToPackage(modell);
+            
+            PackageListModell packageList = new PackageListModell();
+            packageList.AddPackageToList(package);
+            var cards = packageList.Open();
+            
+            //Assert
+            Assert.That(packageList.PackageModellList.Count == expectedCount);
+            Assert.That(cards.Count > 0);
+        }
     } 
 }

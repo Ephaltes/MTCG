@@ -20,7 +20,7 @@ namespace MTCG.Model.BaseClass
     public abstract class CardModell
     {
         private static readonly Random _random = new Random();
-        public string Id { get; protected set; }
+        public string Id { get; protected set; } = Guid.NewGuid().ToString();
         public string Name { get; protected set; }
         public double Damage { get;protected set; }
         public string Description { get;protected set; }
@@ -41,6 +41,11 @@ namespace MTCG.Model.BaseClass
                 return true;
 
             return false;
+        }
+
+        public void GenerateRandomId()
+        {
+            Id = Guid.NewGuid().ToString();
         }
 
         protected static double DnDDiceRoll()

@@ -1,4 +1,6 @@
-﻿using MTCG.Entity;
+﻿using System.Collections.Generic;
+using MTCG.Entity;
+using MTCG.Model.BaseClass;
 
 namespace MTCG.Interface
 {
@@ -9,5 +11,10 @@ namespace MTCG.Interface
         public bool UserExists(string username);
 
         public UserEntity GetUserByToken(string token);
+
+
+        public bool AddCardsToDatabase(List<CardModell> cardsToAdd);
+
+        public bool AddCardToDatabase(CardModell cardsToAdd);
     }
 }

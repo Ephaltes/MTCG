@@ -7,7 +7,8 @@ create schema mtcg;
 ----------------------------------------------------------------- psql -d mtcg -U mtcg
 
 CREATE TABLE mtcg.User (
-	username TEXT PRIMARY KEY NOT NULL,
+	id SERIAL PRIMARY KEY NOT NULL,
+	username TEXT NOT NULL,
 	password TEXT NOT NULL,
 	salt TEXT NOT NULL,
 	token TEXT NOT NULL,
@@ -44,4 +45,13 @@ CREATE TABLE mtcg.R_Package_Card (
 	cardid TEXT NOT NULL,
 	CONSTRAINT fk_packlage_r_package_card FOREIGN KEY(packageid) REFERENCES mtcg.Package (id) ON DELETE CASCADE,
 	CONSTRAINT fk_card_r_package_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
+);
+
+CREATE TABLE mtcg.R_User_Card (
+	id SERIAL NOT NULL PRIMARY KEY,
+	userid INTEGER NOT NULL,
+	cardid TEXT NOT NULL,
+	cardplace INTEGER NOT NULL,
+	CONSTRAINT fk_user_deck FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE,
+	CONSTRAINT fk_card_deck FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
 );

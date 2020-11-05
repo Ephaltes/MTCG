@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using MTCG.Entity;
 using MTCG.Interface;
+using MTCG.Model.BaseClass;
 using Npgsql;
 
 namespace MTCG.Model
@@ -97,6 +99,16 @@ namespace MTCG.Model
                 Console.WriteLine(e);
                 throw new NpgsqlException();
             }
+        }
+
+        public bool AddCardsToDatabase(List<CardModell> cardsToAdd)
+        {
+            return true;
+        }
+        
+        public bool AddCardToDatabase(CardModell cardsToAdd)
+        {
+            return true;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace IntegrationTest
         [Test]
         public void OpenPackage_AddToStack()
         {
-            var package = new PackageModell();
+            var package = new PackageListModell();
             var stack =  new StackModell();
 
             var cardList = package.Open();
@@ -26,7 +26,7 @@ namespace IntegrationTest
         [Test]
         public void OpenPackage2x_AddToStack()
         {
-            var package = new PackageModell();
+            var package = new PackageListModell();
             var stack =  new StackModell();
 
             var cardList = package.Open();
