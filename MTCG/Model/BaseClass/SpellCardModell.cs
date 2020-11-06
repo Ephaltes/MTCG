@@ -35,10 +35,10 @@ namespace MTCG.Model.BaseClass
 
             if (EnemyIsWeakAgainstThisElement(enemyCard))
             {
-                return WeakDamage * DnDDiceRoll();
+                return WeakDamage;
             }
 
-            return Damage * DnDDiceRoll();
+            return Damage;
         }
     }
 }

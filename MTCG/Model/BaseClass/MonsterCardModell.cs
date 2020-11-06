@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace MTCG.Model.BaseClass
 {
@@ -33,6 +34,11 @@ namespace MTCG.Model.BaseClass
             CardType = cardEntity.CardType;
             Race = cardEntity.Race;
         }
+
+        public MonsterCardModell()
+        {
+        }
+        
         public override double CalculateDamge(CardModell enemyCard)
         {
             if (enemyCard.CardType == CardType.MonsterCard)
@@ -52,7 +58,7 @@ namespace MTCG.Model.BaseClass
                     return 0;
                 }
             }
-            return Damage * DnDDiceRoll();
+            return Damage;
         }
     }
 }

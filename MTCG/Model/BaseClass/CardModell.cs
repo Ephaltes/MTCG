@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace MTCG.Model.BaseClass
 {
@@ -19,8 +20,7 @@ namespace MTCG.Model.BaseClass
     
     public abstract class CardModell
     {
-        private static readonly Random _random = new Random();
-        public string Id { get; protected set; }
+        public string Id { get; protected set; } = Guid.NewGuid().ToString();
         public string Name { get; protected set; }
         public double Damage { get;protected set; }
         public string Description { get;protected set; }
@@ -43,10 +43,10 @@ namespace MTCG.Model.BaseClass
             return false;
         }
 
-        protected static double DnDDiceRoll()
+        public void GenerateRandomId()
         {
-            return _random.NextDouble() * (Constant.MAXDICEROLL - Constant.MINDICEROLL) + Constant.MINDICEROLL;
+            Id = Guid.NewGuid().ToString();
         }
-        
+
     }
 }
