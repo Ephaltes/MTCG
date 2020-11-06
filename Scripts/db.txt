@@ -34,9 +34,9 @@ CREATE TABLE mtcg.Card (
 );
 
 CREATE TABLE mtcg.Package (
-	id SERIAL PRIMARY KEY,
-	name TEXT,
-	amount INTEGER NOT NULL
+	id TEXT PRIMARY KEY NOT NULL,
+	amount INTEGER NOT NULL,
+	name TEXT
 );
 
 CREATE TABLE mtcg.R_Package_Card (

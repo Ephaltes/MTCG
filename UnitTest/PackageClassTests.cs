@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using MTCG;
 using MTCG.Entity;
@@ -102,6 +103,30 @@ namespace UnitTest
             package.AddCardsToPackage(list);
             //Assert
             Assert.That(package.CardCount == expectedCount);
+        }
+        
+        [Test]
+        public void PackageModell_Open()
+        {
+            //Arrange
+            CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
+            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            List<CardModell> list = new List<CardModell>();
+            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            //Act
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            list.Add(modell);
+            PackageModell package = new PackageModell(entity,database.Object);
+            var result = package.Open();
+            //Assert
+            Assert.That(string.IsNullOrWhiteSpace(modell.Id));
+            Assert.That(result.Count == package.CardCount);
+            Assert.That(!string.IsNullOrWhiteSpace(result[0].Id));
         }
 
     } 

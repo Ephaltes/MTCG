@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using MTCG.Entity;
+using MTCG.Helpers;
 using MTCG.Interface;
 using MTCG.Model.BaseClass;
 
@@ -17,7 +19,7 @@ namespace MTCG.Model
         public string Id => Entity.Id;
 
         private IDatabase _database;
-
+        
         public PackageModell(PackageEntity entity,IDatabase database)
         {
             if (entity.Id == null || entity.Amount == 0 || entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
@@ -25,7 +27,13 @@ namespace MTCG.Model
 
             Entity = entity;
             _database = database;
-            _database.AddCardsToDatabase(Entity.CardsInPackage);
+
+        }
+
+        public PackageModell(IDatabase database)
+        {
+            Entity = new PackageEntity();
+            _database = database;
         }
 
         public bool AddCardToPackage(CardModell card)
@@ -62,10 +70,24 @@ namespace MTCG.Model
         public List<CardModell> Open()
         {
             Entity.Amount--;
-            var list = Entity.CardsInPackage.ToList();
-            foreach (var card in list)
+            var list = new List<CardModell>();
+            foreach (var card in Entity.CardsInPackage)
             {
-                card.GenerateRandomId();
+                CardModell temp;
+                switch (card.CardType)
+                {
+                    case CardType.MonsterCard:
+                        var monster = card as MonsterCardModell;
+                        temp = monster.CloneJson();
+                        break;
+                    case CardType.SpellCard:
+                        temp = (card as SpellCardModell).CloneJson();
+                        break;
+                    default:
+                        return null;
+                }
+                temp.GenerateRandomId();
+                list.Add(temp);
             }
 
             _database.AddCardsToDatabase(list);
