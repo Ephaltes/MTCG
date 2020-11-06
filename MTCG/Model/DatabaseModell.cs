@@ -135,37 +135,15 @@ namespace MTCG.Model
                         "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                     var cmd = new NpgsqlCommand(sql, _connection);
 
-                    switch (card.CardType)
-                    {
-                        case CardType.MonsterCard:
-                            var monstercard = card as MonsterCardModell;
-
-                            cmd.Parameters.AddWithValue("id", monstercard.Id);
-                            cmd.Parameters.AddWithValue("name", monstercard.Name);
-                            cmd.Parameters.AddWithValue("damage", monstercard.Damage);
-                            cmd.Parameters.AddWithValue("weakdamage", 0);
-                            cmd.Parameters.AddWithValue("description", monstercard.Description);
-                            cmd.Parameters.AddWithValue("elementtype", monstercard.ElementType);
-                            cmd.Parameters.AddWithValue("cardtype", monstercard.CardType);
-                            cmd.Parameters.AddWithValue("race", monstercard.Race);
-                            break;
-
-                        case CardType.SpellCard:
-                            var spellcard = card as SpellCardModell;
-
-                            cmd.Parameters.AddWithValue("id", spellcard.Id);
-                            cmd.Parameters.AddWithValue("name", spellcard.Name);
-                            cmd.Parameters.AddWithValue("damage", spellcard.Damage);
-                            cmd.Parameters.AddWithValue("weakdamage", spellcard.WeakDamage);
-                            cmd.Parameters.AddWithValue("description", spellcard.Description);
-                            cmd.Parameters.AddWithValue("elementtype", spellcard.ElementType);
-                            cmd.Parameters.AddWithValue("cardtype", spellcard.CardType);
-                            cmd.Parameters.AddWithValue("race", 0);
-                            break;
-                        default:
-                            return false;
-                    }
-
+                    cmd.Parameters.AddWithValue("id", card.Entity.Id);
+                    cmd.Parameters.AddWithValue("name", card.Entity.Name);
+                    cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
+                    cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
+                    cmd.Parameters.AddWithValue("description", card.Entity.Description);
+                    cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
+                    cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
+                    cmd.Parameters.AddWithValue("race", card.Entity.Race);
+                    
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
                     transaction.Commit();
@@ -196,36 +174,14 @@ namespace MTCG.Model
                     "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                 var cmd = new NpgsqlCommand(sql, _connection);
 
-                switch (card.CardType)
-                {
-                    case CardType.MonsterCard:
-                        var monstercard = card as MonsterCardModell;
-
-                        cmd.Parameters.AddWithValue("id", monstercard.Id);
-                        cmd.Parameters.AddWithValue("name", monstercard.Name);
-                        cmd.Parameters.AddWithValue("damage", monstercard.Damage);
-                        cmd.Parameters.AddWithValue("weakdamage", 0);
-                        cmd.Parameters.AddWithValue("description", monstercard.Description);
-                        cmd.Parameters.AddWithValue("elementtype", monstercard.ElementType);
-                        cmd.Parameters.AddWithValue("cardtype", monstercard.CardType);
-                        cmd.Parameters.AddWithValue("race", monstercard.Race);
-                        break;
-
-                    case CardType.SpellCard:
-                        var spellcard = card as SpellCardModell;
-
-                        cmd.Parameters.AddWithValue("id", spellcard.Id);
-                        cmd.Parameters.AddWithValue("name", spellcard.Name);
-                        cmd.Parameters.AddWithValue("damage", spellcard.Damage);
-                        cmd.Parameters.AddWithValue("weakdamage", spellcard.WeakDamage);
-                        cmd.Parameters.AddWithValue("description", spellcard.Description);
-                        cmd.Parameters.AddWithValue("elementtype", spellcard.ElementType);
-                        cmd.Parameters.AddWithValue("cardtype", spellcard.CardType);
-                        cmd.Parameters.AddWithValue("race", 0);
-                        break;
-                    default:
-                        return false;
-                }
+                cmd.Parameters.AddWithValue("id", card.Entity.Id);
+                cmd.Parameters.AddWithValue("name", card.Entity.Name);
+                cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
+                cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
+                cmd.Parameters.AddWithValue("description", card.Entity.Description);
+                cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
+                cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
+                cmd.Parameters.AddWithValue("race", card.Entity.Race);
 
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -367,7 +323,7 @@ namespace MTCG.Model
                         entity.Race = (Race)result.GetInt32(7);
                     }
 
-                    var model = ConvertToCardModell(entity);
+                    var model = new CardModell(entity);
                      
                      if(model == null)
                          throw new InvalidDataException();
@@ -386,21 +342,6 @@ namespace MTCG.Model
             {
                 _connection.Close();
             }
-        }
-
-        protected CardModell ConvertToCardModell(CardEntity entity)
-        {
-            if (entity.CardType == CardType.MonsterCard)
-            {
-                return new MonsterCardModell(entity);
-            }
-
-            if (entity.CardType == CardType.SpellCard)
-            {
-                return new SpellCardModell(entity);
-            }
-
-            return null;
         }
     }
 }
