@@ -212,7 +212,7 @@ namespace MTCG.Model
                 
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
-                cmd.Parameters.AddWithValue("cardid", card.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Entity.Id);
                 cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
                 
                 cmd.Prepare();
@@ -241,7 +241,7 @@ namespace MTCG.Model
                 
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
-                cmd.Parameters.AddWithValue("cardid", card.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Entity.Id);
                 cmd.Parameters.AddWithValue("cardplace", cardPlace);
                 
                 cmd.Prepare();

@@ -52,7 +52,7 @@ namespace UnitTest
         {
             DeckModell deck = new DeckModell();
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard , ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             deck.DeckList.Add(card);
 
             var deck2 = deck.CloneJson();

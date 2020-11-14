@@ -26,7 +26,7 @@ namespace UnitTest
             var card1 = new CardModell(card1Entity);
             //Act
             stack.Add(card1);
-            var stackList = stack.GetDeck();
+            var stackList = stack.GetStack();
             var result = stackList[0].Entity.Race == Race.Dragon;
             //Assert
             Assert.That(result);

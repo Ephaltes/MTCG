@@ -21,11 +21,11 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             
             //Arrange
             CardEntity card2Entity = new CardEntity() { Damage = 1,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card2 = new MonsterCardModell(card2Entity);
+            var card2 = new CardModell(card2Entity);
             
             DeckModell deck1 = new DeckModell();
             DeckModell deck2 = new DeckModell();
@@ -51,11 +51,11 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             
             //Arrange
             CardEntity card2Entity = new CardEntity() { Damage = 1,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card2 = new MonsterCardModell(card2Entity);
+            var card2 = new CardModell(card2Entity);
             
             DeckModell deck1 = new DeckModell();
             DeckModell deck2 = new DeckModell();
@@ -81,11 +81,11 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             
             //Arrange
             CardEntity card2Entity = new CardEntity() { Damage = 1,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card2 = new MonsterCardModell(card2Entity);
+            var card2 = new CardModell(card2Entity);
             
             DeckModell deck1 = new DeckModell();
             DeckModell deck2 = new DeckModell();
