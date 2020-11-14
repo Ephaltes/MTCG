@@ -20,7 +20,7 @@ namespace UnitTest
         }
 
         [Test]
-        public void PackageModell_Created_Successful()
+        public void PackageListModell_Created_Successful()
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
@@ -45,7 +45,7 @@ namespace UnitTest
         }
         
         [Test]
-        public void PackageModell_Open_Successful()
+        public void PackageListModell_Open_Successful()
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
@@ -74,7 +74,7 @@ namespace UnitTest
         }
         
         [Test]
-        public void PackageModell_Open_RemovePacakge()
+        public void PackageListModell_Open_RemovePacakge()
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
