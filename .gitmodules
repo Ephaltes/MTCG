@@ -1,0 +1,3 @@
+[submodule "vendor/WebServer"]
+	path = vendor/WebServer
+	url = https://github.com/Ephaltes/Webserver_Technikum.git
