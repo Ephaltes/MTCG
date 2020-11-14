@@ -23,11 +23,11 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,Race = Race.Dragon,CardType = CardType.MonsterCard};   
-            var card1 = new MonsterCardModell(card1Entity);
+            var card1 = new CardModell(card1Entity);
             //Act
             stack.Add(card1);
-            var stackList = stack.GetStack();
-            var result = ((MonsterCardModell) stackList[0]).Race == Race.Dragon;
+            var stackList = stack.GetDeck();
+            var result = stackList[0].Entity.Race == Race.Dragon;
             //Assert
             Assert.That(result);
         }
@@ -38,8 +38,8 @@ namespace UnitTest
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
             CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new SpellCardModell(card1Entity);
-            var card2 = new MonsterCardModell(card2Entity);
+            var card1 = new CardModell(card1Entity);
+            var card2 = new CardModell(card2Entity);
             var list = new List<CardModell>();
             //Act
             list.Add(card1);
