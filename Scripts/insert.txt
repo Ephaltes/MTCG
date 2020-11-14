@@ -1,4 +1,6 @@
- insert into mtcg.card ("guid1","NameOfCard1",23.3,40.3,"description Card1",2,1,2);
- insert into mtcg.package (id,amount) VALUES("packageid1",5);
- insert into mtcg.r_package_card (packageid,cardid) VALUES(1,'guid1');
- select package.id,name,amount,packageid,cardid from package INNER JOIN r_package_card ON package.id=r_package_card.packageid WHERE package.id = 2;
+insert into mtcg.card ("guid1","NameOfCard1",23.3,40.3,"description Card1",2,1,2);
+insert into mtcg.package (id,amount) VALUES("packageid1",5);
+insert into mtcg.r_package_card (packageid,cardid) VALUES(1,'guid1');
+INSERT INTO mtcg.user(username,password,salt,token,displayname) VALUES('testuser','password ghash','longsalt','salt','markus')
+select package.id,name,amount,packageid,cardid from package INNER JOIN r_package_card ON package.id=r_package_card.packageid WHERE package.id = 2;
+INSERT INTO mtcg.r_user_card(userid, cardid, cardplace) VALUES(1,'guid1',3)

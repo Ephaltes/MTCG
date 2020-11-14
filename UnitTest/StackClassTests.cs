@@ -46,7 +46,7 @@ namespace UnitTest
             list.Add(card2);
             list.Add(card1);
             stack.Add(list);
-            var stackList = stack.GetDeck();
+            var stackList = stack.GetStack();
             //Assert
             Assert.That(stackList.Count == 3 );
         }
