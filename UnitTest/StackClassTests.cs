@@ -26,7 +26,7 @@ namespace UnitTest
             var card1 = new MonsterCardModell(card1Entity);
             //Act
             stack.Add(card1);
-            var stackList = stack.GetDeck();
+            var stackList = stack.GetStack();
             var result = ((MonsterCardModell) stackList[0]).Race == Race.Dragon;
             //Assert
             Assert.That(result);
@@ -46,7 +46,7 @@ namespace UnitTest
             list.Add(card2);
             list.Add(card1);
             stack.Add(list);
-            var stackList = stack.GetDeck();
+            var stackList = stack.GetStack();
             //Assert
             Assert.That(stackList.Count == 3 );
         }
