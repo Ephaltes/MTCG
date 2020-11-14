@@ -49,7 +49,7 @@ namespace MTCG.Model
                 return false;
             } 
         }
-        public List<CardModell> GetDeck()
+        public List<CardModell> GetStack()
         {
             return _stackList;
         }

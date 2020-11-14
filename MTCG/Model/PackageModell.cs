@@ -73,19 +73,7 @@ namespace MTCG.Model
             var list = new List<CardModell>();
             foreach (var card in Entity.CardsInPackage)
             {
-                CardModell temp;
-                switch (card.CardType)
-                {
-                    case CardType.MonsterCard:
-                        var monster = card as MonsterCardModell;
-                        temp = monster.CloneJson();
-                        break;
-                    case CardType.SpellCard:
-                        temp = (card as SpellCardModell).CloneJson();
-                        break;
-                    default:
-                        return null;
-                }
+                CardModell temp = card.CloneJson();
                 temp.GenerateRandomId();
                 list.Add(temp);
             }

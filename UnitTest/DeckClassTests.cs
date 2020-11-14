@@ -23,11 +23,12 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             //Act
+
             deck.DeckList.Add(card);
             var deckList = deck.DeckList;
-            var result = ((MonsterCardModell)deckList[0]).Race == Race.Dragon;;
+            var result = deckList[0].Entity.Race == Race.Dragon;;
             //Assert
             Assert.That(result);
         }
@@ -37,7 +38,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard , ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             //Act
             deck.DeckList.Add(card);
             deck.DeckList.Remove(card);
@@ -45,6 +46,7 @@ namespace UnitTest
             //Assert
             Assert.That(result.Count == 0);
         }
+
         [Test]
         public void CopyDeck()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
@@ -52,5 +53,5 @@ namespace MTCG.Model
             
             throw new Exception("Error: Create UserToken");
         }
-    }
+      }
 }

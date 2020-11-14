@@ -96,17 +96,18 @@ namespace MTCG.Model
 
                 while (result.Read())
                 {
-                    ret.Username = result.GetString(0);
-                    ret.Password = result.GetString(1);
-                    ret.Salt = result.GetString(2);
-                    ret.Token = result.GetString(3);
-                    ret.Description = result.GetString(4);
-                    ret.Image = result.GetString(5);
-                    ret.Elo = result.GetInt32(6);
-                    ret.Win = result.GetInt32(7);
-                    ret.Lose = result.GetInt32(8);
-                    ret.Draw = result.GetInt32(9);
-                    ret.Coins = result.GetInt32(10);
+                    ret.Id = result.GetInt32(0);
+                    ret.Username = result.GetString(1);
+                    ret.Password = result.GetString(2);
+                    ret.Salt = result.GetString(3);
+                    ret.Token = result.GetString(4);
+                    ret.Description = result.GetString(5);
+                    ret.Image = result.GetString(6);
+                    ret.Elo = result.GetInt32(7);
+                    ret.Win = result.GetInt32(8);
+                    ret.Lose = result.GetInt32(9);
+                    ret.Draw = result.GetInt32(10);
+                    ret.Coins = result.GetInt32(11);
                 }
 
                 return ret;
@@ -135,37 +136,15 @@ namespace MTCG.Model
                         "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                     var cmd = new NpgsqlCommand(sql, _connection);
 
-                    switch (card.CardType)
-                    {
-                        case CardType.MonsterCard:
-                            var monstercard = card as MonsterCardModell;
-
-                            cmd.Parameters.AddWithValue("id", monstercard.Id);
-                            cmd.Parameters.AddWithValue("name", monstercard.Name);
-                            cmd.Parameters.AddWithValue("damage", monstercard.Damage);
-                            cmd.Parameters.AddWithValue("weakdamage", 0);
-                            cmd.Parameters.AddWithValue("description", monstercard.Description);
-                            cmd.Parameters.AddWithValue("elementtype", monstercard.ElementType);
-                            cmd.Parameters.AddWithValue("cardtype", monstercard.CardType);
-                            cmd.Parameters.AddWithValue("race", monstercard.Race);
-                            break;
-
-                        case CardType.SpellCard:
-                            var spellcard = card as SpellCardModell;
-
-                            cmd.Parameters.AddWithValue("id", spellcard.Id);
-                            cmd.Parameters.AddWithValue("name", spellcard.Name);
-                            cmd.Parameters.AddWithValue("damage", spellcard.Damage);
-                            cmd.Parameters.AddWithValue("weakdamage", spellcard.WeakDamage);
-                            cmd.Parameters.AddWithValue("description", spellcard.Description);
-                            cmd.Parameters.AddWithValue("elementtype", spellcard.ElementType);
-                            cmd.Parameters.AddWithValue("cardtype", spellcard.CardType);
-                            cmd.Parameters.AddWithValue("race", 0);
-                            break;
-                        default:
-                            return false;
-                    }
-
+                    cmd.Parameters.AddWithValue("id", card.Entity.Id);
+                    cmd.Parameters.AddWithValue("name", card.Entity.Name);
+                    cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
+                    cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
+                    cmd.Parameters.AddWithValue("description", card.Entity.Description);
+                    cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
+                    cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
+                    cmd.Parameters.AddWithValue("race", card.Entity.Race);
+                    
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
                     transaction.Commit();
@@ -196,36 +175,14 @@ namespace MTCG.Model
                     "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                 var cmd = new NpgsqlCommand(sql, _connection);
 
-                switch (card.CardType)
-                {
-                    case CardType.MonsterCard:
-                        var monstercard = card as MonsterCardModell;
-
-                        cmd.Parameters.AddWithValue("id", monstercard.Id);
-                        cmd.Parameters.AddWithValue("name", monstercard.Name);
-                        cmd.Parameters.AddWithValue("damage", monstercard.Damage);
-                        cmd.Parameters.AddWithValue("weakdamage", 0);
-                        cmd.Parameters.AddWithValue("description", monstercard.Description);
-                        cmd.Parameters.AddWithValue("elementtype", monstercard.ElementType);
-                        cmd.Parameters.AddWithValue("cardtype", monstercard.CardType);
-                        cmd.Parameters.AddWithValue("race", monstercard.Race);
-                        break;
-
-                    case CardType.SpellCard:
-                        var spellcard = card as SpellCardModell;
-
-                        cmd.Parameters.AddWithValue("id", spellcard.Id);
-                        cmd.Parameters.AddWithValue("name", spellcard.Name);
-                        cmd.Parameters.AddWithValue("damage", spellcard.Damage);
-                        cmd.Parameters.AddWithValue("weakdamage", spellcard.WeakDamage);
-                        cmd.Parameters.AddWithValue("description", spellcard.Description);
-                        cmd.Parameters.AddWithValue("elementtype", spellcard.ElementType);
-                        cmd.Parameters.AddWithValue("cardtype", spellcard.CardType);
-                        cmd.Parameters.AddWithValue("race", 0);
-                        break;
-                    default:
-                        return false;
-                }
+                cmd.Parameters.AddWithValue("id", card.Entity.Id);
+                cmd.Parameters.AddWithValue("name", card.Entity.Name);
+                cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
+                cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
+                cmd.Parameters.AddWithValue("description", card.Entity.Description);
+                cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
+                cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
+                cmd.Parameters.AddWithValue("race", card.Entity.Race);
 
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -236,6 +193,64 @@ namespace MTCG.Model
             {
                 Console.WriteLine(e);
                 transaction.Rollback();
+                return false;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+        
+        public bool AddCardToStack(CardModell card,UserEntity user)
+        {
+            _connection.Open();
+            try
+            {
+                var sql =
+                    "INSERT INTO mtcg.r_user_card(userid, cardid, cardplace) VALUES(@userid,@cardid,@cardplace)";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                
+
+                cmd.Parameters.AddWithValue("userid", user.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Id);
+                cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
+                
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+        
+        public bool UpdateCardStatus(CardModell card,UserEntity user,CardPlace cardPlace)
+        {
+            _connection.Open();
+            try
+            {
+                var sql =
+                    "UPDATE mtcg.r_user_card set cardplace=@cardplace where cardid=@cardid AND userid=@userid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                
+
+                cmd.Parameters.AddWithValue("userid", user.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Id);
+                cmd.Parameters.AddWithValue("cardplace", cardPlace);
+                
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return false;
             }
             finally
@@ -367,7 +382,7 @@ namespace MTCG.Model
                         entity.Race = (Race)result.GetInt32(7);
                     }
 
-                    var model = ConvertToCardModell(entity);
+                    var model = new CardModell(entity);
                      
                      if(model == null)
                          throw new InvalidDataException();
@@ -386,21 +401,6 @@ namespace MTCG.Model
             {
                 _connection.Close();
             }
-        }
-
-        protected CardModell ConvertToCardModell(CardEntity entity)
-        {
-            if (entity.CardType == CardType.MonsterCard)
-            {
-                return new MonsterCardModell(entity);
-            }
-
-            if (entity.CardType == CardType.SpellCard)
-            {
-                return new SpellCardModell(entity);
-            }
-
-            return null;
         }
     }
 }

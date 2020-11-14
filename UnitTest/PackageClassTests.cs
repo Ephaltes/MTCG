@@ -25,7 +25,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             Mock<IDatabase> database = new Mock<IDatabase>();
@@ -46,7 +46,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1 ,CardsInPackage = list};
             Mock<IDatabase> database = new Mock<IDatabase>();
@@ -64,7 +64,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             Mock<IDatabase> database = new Mock<IDatabase>();
@@ -87,7 +87,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             Mock<IDatabase> database = new Mock<IDatabase>();
@@ -110,7 +110,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             Mock<IDatabase> database = new Mock<IDatabase>();
@@ -124,9 +124,9 @@ namespace UnitTest
             PackageModell package = new PackageModell(entity,database.Object);
             var result = package.Open();
             //Assert
-            Assert.That(string.IsNullOrWhiteSpace(modell.Id));
+            Assert.That(string.IsNullOrWhiteSpace(modell.Entity.Id));
             Assert.That(result.Count == package.CardCount);
-            Assert.That(!string.IsNullOrWhiteSpace(result[0].Id));
+            Assert.That(!string.IsNullOrWhiteSpace(result[0].Entity.Id));
         }
 
     } 

@@ -24,7 +24,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);
@@ -49,7 +49,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 3,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);
@@ -78,7 +78,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
-            MonsterCardModell modell = new MonsterCardModell(cardEntity);
+            CardModell modell = new CardModell(cardEntity);
             List<CardModell> list = new List<CardModell>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);

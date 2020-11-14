@@ -20,7 +20,7 @@ namespace IntegrationTest
             var cardList = package.Open();
             stack.Add(cardList);
             
-            Assert.That(stack.GetDeck().Count == Constant.MAXCARDSPERPACKAGE);
+            Assert.That(stack.GetStack().Count == Constant.MAXCARDSPERPACKAGE);
         }
         
         [Test]
@@ -34,7 +34,7 @@ namespace IntegrationTest
             cardList = package.Open();
             stack.Add(cardList);
             
-            Assert.That(stack.GetDeck().Count == Constant.MAXCARDSPERPACKAGE);
+            Assert.That(stack.GetStack().Count == Constant.MAXCARDSPERPACKAGE);
         }
     }
 }
