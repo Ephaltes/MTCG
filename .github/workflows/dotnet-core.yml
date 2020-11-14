@@ -20,6 +20,10 @@ jobs:
         dotnet-version: 3.1.301
     - name: Install dependencies
       run: dotnet restore
+    - name: checkout submodule
+      run: |
+        git submodule init
+        git submodule update
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
