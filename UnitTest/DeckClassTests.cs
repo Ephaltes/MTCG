@@ -22,11 +22,11 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon, ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             //Act
             deck.Add(card);
             var deckList = deck.GetDeck();
-            var result = ((MonsterCardModell)deckList[0]).Race == Race.Dragon;;
+            var result = deckList[0].Entity.Race == Race.Dragon;;
             //Assert
             Assert.That(result);
         }
@@ -36,7 +36,7 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.MonsterCard , ElementType = ElementType.Water};   
-            var card = new MonsterCardModell(card1Entity);
+            var card = new CardModell(card1Entity);
             //Act
             deck.Add(card);
             deck.Remove(card);
@@ -51,8 +51,8 @@ namespace UnitTest
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
             CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new SpellCardModell(card1Entity);
-            var card2 = new MonsterCardModell(card2Entity);
+            var card1 = new CardModell(card1Entity);
+            var card2 = new CardModell(card2Entity);
             //Act
             deck.Add(card1);
             deck.AddTemp(card2);
@@ -67,8 +67,8 @@ namespace UnitTest
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
             CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new SpellCardModell(card1Entity);
-            var card2 = new MonsterCardModell(card2Entity);
+            var card1 = new CardModell(card1Entity);
+            var card2 = new CardModell(card2Entity);
             //Act
             deck.Add(card1);
             deck.AddTemp(card2);
