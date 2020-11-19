@@ -123,7 +123,7 @@ namespace MTCG.Model
             }
         }
 
-        public bool AddCardsToDatabase(List<CardModell> cardsToAdd)
+        public bool AddCardsToDatabase(List<ICard> cardsToAdd)
         {
             _connection.Open();
             var transaction = _connection.BeginTransaction();
@@ -164,7 +164,7 @@ namespace MTCG.Model
             }
         }
 
-        public bool AddCardToDatabase(CardModell card)
+        public bool AddCardToDatabase(ICard card)
         {
             _connection.Open();
             var transaction = _connection.BeginTransaction();
@@ -201,7 +201,7 @@ namespace MTCG.Model
             }
         }
         
-        public bool AddCardToStack(CardModell card,UserEntity user)
+        public bool AddCardToStack(ICard card,UserEntity user)
         {
             _connection.Open();
             try
@@ -230,7 +230,7 @@ namespace MTCG.Model
             }
         }
         
-        public bool UpdateCardStatus(CardModell card,UserEntity user,CardPlace cardPlace)
+        public bool UpdateCardStatus(ICard card,UserEntity user,CardPlace cardPlace)
         {
             _connection.Open();
             try
@@ -259,13 +259,13 @@ namespace MTCG.Model
             }
         }
 
-        public List<PackageModell> GetPackages()
+        public List<IPackage> GetPackages()
         {
             _connection.Open();
             
             try
             {
-                List<PackageModell> retList = new List<PackageModell>();
+                List<IPackage> retList = new List<IPackage>();
                 var sql ="select id from package";
                 var cmd = new NpgsqlCommand(sql, _connection);
                 
@@ -296,7 +296,7 @@ namespace MTCG.Model
             }
         }
 
-        public PackageModell GetPackage(string packageid)
+        public IPackage GetPackage(string packageid)
         {
             _connection.Open();
             try
@@ -334,13 +334,13 @@ namespace MTCG.Model
             }
         }
 
-        public List<CardModell> GetCardsInPackage(string packageid)
+        public List<ICard> GetCardsInPackage(string packageid)
         {
            _connection.Open();
           
             try
             {
-                List<CardModell> ret = new List<CardModell>();
+                List<ICard> ret = new List<ICard>();
                 var sql =
                     " select cardid from package INNER JOIN r_package_card ON package.id=r_package_card.packageid WHERE package.id = @packageid";
                 var cmd = new NpgsqlCommand(sql, _connection);
@@ -384,7 +384,7 @@ namespace MTCG.Model
 
                     var model = new CardModell(entity);
                      
-                     if(model == null)
+                     if(string.IsNullOrEmpty(entity.Id))
                          throw new InvalidDataException();
                      
                      ret.Add(model);

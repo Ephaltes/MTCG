@@ -9,7 +9,7 @@ using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
-    public class PackageModell
+    public class PackageModell : IPackage
     {
         protected PackageEntity Entity;
 
@@ -36,7 +36,7 @@ namespace MTCG.Model
             _database = database;
         }
 
-        public bool AddCardToPackage(CardModell card)
+        public bool AddCardToPackage(ICard card)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace MTCG.Model
                 return false;
             }
         }
-        public bool AddCardsToPackage(List<CardModell> cards)
+        public bool AddCardsToPackage(List<ICard> cards)
         {
             try
             {
@@ -67,13 +67,13 @@ namespace MTCG.Model
             }
         }
 
-        public List<CardModell> Open()
+        public List<ICard> Open()
         {
             Entity.Amount--;
-            var list = new List<CardModell>();
+            var list = new List<ICard>();
             foreach (var card in Entity.CardsInPackage)
             {
-                CardModell temp = card.CloneJson();
+                ICard temp = card.CloneJson();
                 temp.GenerateRandomId();
                 list.Add(temp);
             }

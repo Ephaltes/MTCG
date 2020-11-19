@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MTCG;
+using MTCG.Interface;
 using MTCG.Model;
 using MTCG.Model.BaseClass;
 using NUnit.Framework;
@@ -40,7 +41,7 @@ namespace UnitTest
             CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
             var card1 = new CardModell(card1Entity);
             var card2 = new CardModell(card2Entity);
-            var list = new List<CardModell>();
+            var list = new List<ICard>();
             //Act
             list.Add(card1);
             list.Add(card2);
