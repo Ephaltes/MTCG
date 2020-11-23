@@ -35,6 +35,11 @@ namespace MTCG.Model
             return true;
         }
 
+        public UserEntity GetUserByUsername(string username)
+        {
+            return _database.GetUserByUsername(username);
+        }
+
       public string CreateTokenForUser(string username, string password)
         {
 
@@ -50,8 +55,8 @@ namespace MTCG.Model
 
             if(_database.CreateUser(newUser))
                 return newUser.Token;
-            
-            throw new Exception("Error: Create UserToken");
+
+            return null;
         }
       }
 }

@@ -18,6 +18,8 @@ namespace MTCG.Interface
 
         public bool AddCardToDatabase(ICard cardsToAdd);
 
+        public UserEntity GetUserByUsername(string username);
+
         public bool AddCardToStack(ICard card, UserEntity user);
 
         public bool UpdateCardStatus(ICard card, UserEntity user, CardPlace cardPlace);

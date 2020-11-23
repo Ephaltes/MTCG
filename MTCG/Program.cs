@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Net;
+using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Model;
 using MTCG.Model.BaseClass;
+using Newtonsoft.Json;
 
 namespace MTCG
 {
@@ -9,8 +12,11 @@ namespace MTCG
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Guid.NewGuid();
+            
+            
+             var webserver = new WebServer.Model.BaseServerModell(IPAddress.Any, 10001);
+             webserver.Start();
+             webserver.Listen(5); 
         }
     }
 }

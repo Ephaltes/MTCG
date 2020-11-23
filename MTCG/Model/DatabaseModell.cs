@@ -122,6 +122,46 @@ namespace MTCG.Model
                 _connection.Close();
             }
         }
+        
+        public UserEntity GetUserByUsername(string username)
+        {
+            try
+            {
+                _connection.Open();
+                var sql = "SELECT * from mtcg.user where username=@username";
+                using var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("username", username);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                UserEntity ret = new UserEntity();
+
+                while (result.Read())
+                {
+                    ret.Username = result.GetString(1);
+                    ret.Description = result.GetString(5);
+                    ret.Image = result.GetString(6);
+                    ret.Win = result.GetInt32(8);
+                    ret.Lose = result.GetInt32(9);
+                    ret.Draw = result.GetInt32(10);
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
 
         public bool AddCardsToDatabase(List<ICard> cardsToAdd)
         {
