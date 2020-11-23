@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using MTCG.Entity;
+using MTCG.Interface;
 
 namespace MTCG.Model.BaseClass
 {
-    public class PackageListModell
+    public class PackageListModell : IPackageList
     {
-        public readonly List<PackageModell> PackageModellList;
+        public List<IPackage> PackageModellList { get; }
 
         public PackageListModell()
         {
-            PackageModellList = new List<PackageModell>();
+            PackageModellList = new List<IPackage>();
         }
 
-        public bool AddPackageToList(PackageModell entity)
+        public bool AddPackageToList(IPackage entity)
         {
             try
             {
@@ -28,9 +29,9 @@ namespace MTCG.Model.BaseClass
             }
         }
 
-        public List<CardModell> Open(string packageId = "")
+        public List<ICard> Open(string packageId = "")
         {
-            PackageModell packageToOpen = null;
+            IPackage packageToOpen = null;
             if (string.IsNullOrWhiteSpace(packageId))
             {
                 var random = new Random();

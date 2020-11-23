@@ -1,4 +1,5 @@
 ﻿using System;
+using MTCG.Interface;
 using Newtonsoft.Json;
 
 namespace MTCG.Model.BaseClass
@@ -28,7 +29,7 @@ namespace MTCG.Model.BaseClass
         Wizard
     }
     
-    public class CardModell
+    public class CardModell : ICard
     {
         public CardEntity Entity { get; set; }
 
@@ -41,7 +42,7 @@ namespace MTCG.Model.BaseClass
         {
             Entity = new CardEntity();
         }
-        public double CalculateDamge(CardModell enemyCard)
+        public double CalculateDamge(ICard enemyCard)
         {
             if (enemyCard.Entity.CardType == CardType.MonsterCard && Entity.CardType == CardType.MonsterCard)
             {
@@ -81,7 +82,7 @@ namespace MTCG.Model.BaseClass
             return Entity.Damage;
         }
         
-        protected bool EnemyIsWeakAgainstThisElement(CardModell enemyCard)
+        public bool EnemyIsWeakAgainstThisElement(ICard enemyCard)
         {
             if (Entity.ElementType == ElementType.Fire && enemyCard.Entity.ElementType == ElementType.Normal)
                 return true;

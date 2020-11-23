@@ -25,7 +25,7 @@ namespace UnitTest
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
+            List<ICard> list = new List<ICard>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
@@ -33,7 +33,7 @@ namespace UnitTest
             list.Add(modell);
             list.Add(modell);
             Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<ICard>>())).Returns(true);
             PackageModell package = new PackageModell(entity,database.Object);
             int expectedCount = 1;
 
@@ -50,7 +50,7 @@ namespace UnitTest
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
+            List<ICard> list = new List<ICard>();
             PackageEntity entity = new PackageEntity(){Amount = 3,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
@@ -59,7 +59,7 @@ namespace UnitTest
             list.Add(modell);
             list.Add(modell);
             Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<ICard>>())).Returns(true);
             PackageModell package = new PackageModell(entity,database.Object);
             int expectedCount = 1;
             
@@ -79,7 +79,7 @@ namespace UnitTest
             //Arrange
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
-            List<CardModell> list = new List<CardModell>();
+            List<ICard> list = new List<ICard>();
             PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
@@ -90,7 +90,7 @@ namespace UnitTest
             list.Add(modell);
             list.Add(modell);
             Mock<IDatabase> database = new Mock<IDatabase>();
-            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<CardModell>>())).Returns(true);
+            database.Setup(x => x.AddCardsToDatabase(It.IsAny<List<ICard>>())).Returns(true);
             PackageModell package = new PackageModell(entity,database.Object);
             int expectedCount = 0;
             

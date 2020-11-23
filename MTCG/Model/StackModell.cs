@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using MTCG.Interface;
 using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
-    public class StackModell
+    public class StackModell : IStack
     {
-        private readonly List<CardModell> _stackList;
-        private readonly List<CardModell> _lockedCardList;
+        private readonly List<ICard> _stackList;
+        private readonly List<ICard> _lockedCardList;
 
         public StackModell()
         {
-            _stackList = new List<CardModell>();
-            _lockedCardList = new List<CardModell>();
+            _stackList = new List<ICard>();
+            _lockedCardList = new List<ICard>();
         }
 
-        public bool Add(CardModell card)
+        public bool Add(ICard card)
         {
             try
             {
@@ -32,7 +33,7 @@ namespace MTCG.Model
             }
         }
 
-        public bool Add(List<CardModell> cards)
+        public bool Add(List<ICard> cards)
         {
             try
             {
@@ -49,7 +50,7 @@ namespace MTCG.Model
                 return false;
             } 
         }
-        public List<CardModell> GetStack()
+        public List<ICard> GetStack()
         {
             return _stackList;
         }
