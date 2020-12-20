@@ -179,7 +179,6 @@ namespace MTCG.Model
                     cmd.Parameters.AddWithValue("id", card.Entity.Id);
                     cmd.Parameters.AddWithValue("name", card.Entity.Name);
                     cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
-                    cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
                     cmd.Parameters.AddWithValue("description", card.Entity.Description);
                     cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
                     cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
@@ -218,7 +217,6 @@ namespace MTCG.Model
                 cmd.Parameters.AddWithValue("id", card.Entity.Id);
                 cmd.Parameters.AddWithValue("name", card.Entity.Name);
                 cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
-                cmd.Parameters.AddWithValue("weakdamage", card.Entity.WeakDamage);
                 cmd.Parameters.AddWithValue("description", card.Entity.Description);
                 cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
                 cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
@@ -415,11 +413,10 @@ namespace MTCG.Model
                         entity.Id = result.GetString(0);
                         entity.Name = result.GetString(1);
                         entity.Damage = result.GetDouble(2);
-                        entity.WeakDamage = result.GetDouble(3);
-                        entity.Description = result.GetString(4);
-                        entity.ElementType = (ElementType)result.GetInt32(5);
-                        entity.CardType = (CardType)result.GetInt32(6);
-                        entity.Race = (Race)result.GetInt32(7);
+                        entity.Description = result.GetString(3);
+                        entity.ElementType = (ElementType)result.GetInt32(4);
+                        entity.CardType = (CardType)result.GetInt32(5);
+                        entity.Race = (Race)result.GetInt32(6);
                     }
 
                     var model = new CardModell(entity);

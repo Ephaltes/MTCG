@@ -26,7 +26,6 @@ CREATE TABLE mtcg.Card (
 	id TEXT  PRIMARY KEY NOT NULL,
 	name TEXT NOT NULL,
 	damage FLOAT8 NOT NULL,
-	weakdamage FLOAT8,
 	description TEXT,
 	elementtype INTEGER NOT NULL,
 	cardtype INTEGER NOT NULL,
@@ -52,6 +51,6 @@ CREATE TABLE mtcg.R_User_Card (
 	userid INTEGER NOT NULL,
 	cardid TEXT NOT NULL,
 	cardplace INTEGER NOT NULL,
-	CONSTRAINT fk_user_deck FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE,
-	CONSTRAINT fk_card_deck FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
+	CONSTRAINT fk_r_user_user FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE,
+	CONSTRAINT fk_r_user_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
 );

@@ -43,7 +43,7 @@ namespace UnitTest
             var result = GameModell.Fight(deck1, deck2);
             
             //Assert
-            Assert.That(result.Item1 == GameEnd.Player1);
+            Assert.That(result.GameEnd == GameEnd.Player1);
         }
         
         [Test]
@@ -73,7 +73,7 @@ namespace UnitTest
             var result = GameModell.Fight(deck1, deck2);
             
             //Assert
-            Assert.That(result.Item1 == GameEnd.Player2);
+            Assert.That(result.GameEnd == GameEnd.Player2);
         }
         
         [Test]
@@ -103,7 +103,7 @@ namespace UnitTest
             var result = GameModell.Fight(deck1, deck2);
             
             //Assert
-            Assert.That(result.Item1 == GameEnd.Draw);
+            Assert.That(result.GameEnd == GameEnd.Draw);
         }
     }
 }
