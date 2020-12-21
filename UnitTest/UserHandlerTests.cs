@@ -4,6 +4,7 @@ using MTCG.API;
 using MTCG.Entity;
 using MTCG.Interface;
 using MTCG.Model;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using WebServer;
 using WebServer.Interface;
@@ -68,7 +69,10 @@ namespace UnitTest
                 Description = "description",
                 Image =  ";)"
             };
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic test-mtcgToken");
             
+            request.SetupGet(x => x.HttpHeader).Returns(header);
             request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.GET);
             request.SetupGet(x => x.HttpRequest).Returns(userrequest);
             database.Setup(x => x.GetUserByUsername(It.IsAny<string>())).Returns(retEntity);
@@ -88,7 +92,10 @@ namespace UnitTest
             Mock<IDatabase> database = new Mock<IDatabase>();
             List<string> userrequest = new List<string>(){"users","testuser"};
             UserEntity test = null;
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic");
             
+            request.SetupGet(x => x.HttpHeader).Returns(header);
             request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.GET);
             request.SetupGet(x => x.HttpRequest).Returns(userrequest);
             database.Setup(x => x.GetUserByUsername(It.IsAny<string>())).Returns(test);
@@ -99,6 +106,87 @@ namespace UnitTest
             var entity = response.ResponseMessage[0].Object as UserEntity;
 
             Assert.That(entity == null);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_failed_token()
+        {
+            Mock<IRequestContext> request = new Mock<IRequestContext>();
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic");
+            UserEntity retEntity = new UserEntity();
+
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            
+            var handler = new UsersHandler(request.Object,database.Object);
+            var response = handler.Handle();
+
+            Assert.That( response.ResponseMessage[0].Status == StatusCodes.Unauthorized);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_failed_verifyToken()
+        {
+            Mock<IRequestContext> request = new Mock<IRequestContext>();
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic wrongmtcgToken");
+            UserEntity retEntity = null;
+
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            
+            var handler = new UsersHandler(request.Object,database.Object);
+            var response = handler.Handle();
+
+            Assert.That( response.ResponseMessage[0].Status == StatusCodes.Unauthorized);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_failed_emptyBody()
+        {
+            Mock<IRequestContext> request = new Mock<IRequestContext>();
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic wrong-mtcgToken");
+            UserEntity retEntity = new UserEntity();
+
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            
+            var handler = new UsersHandler(request.Object,database.Object);
+            var response = handler.Handle();
+
+            Assert.That( response.ResponseMessage[0].Status == StatusCodes.BadRequest);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_success()
+        {
+            Mock<IRequestContext> request = new Mock<IRequestContext>();
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            Dictionary<string,string> header = new Dictionary<string, string>();
+            header.Add("Authorization","Basic wrong-mtcgToken");
+            UserEntity retEntity = new UserEntity()
+            {
+                Description = "test"
+            };
+
+            request.SetupGet(x => x.HttpBody).Returns(JsonConvert.SerializeObject(retEntity));
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.UpdateUser(It.IsAny<UserEntity>())).Returns(true);
+            
+            var handler = new UsersHandler(request.Object,database.Object);
+            var response = handler.Handle();
+
+            Assert.That( response.ResponseMessage[0].Status == StatusCodes.OK);
         }
     }
 }

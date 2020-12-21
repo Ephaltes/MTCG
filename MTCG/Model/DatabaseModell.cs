@@ -5,6 +5,7 @@ using MTCG.Entity;
 using MTCG.Interface;
 using MTCG.Model.BaseClass;
 using Npgsql;
+using Serilog;
 
 namespace MTCG.Model
 {
@@ -155,6 +156,39 @@ namespace MTCG.Model
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public bool UpdateUser(UserEntity user)
+        {
+            try
+            {
+                _connection.Open();
+                var sql = "UPDATE mtcg.user SET password=@password, description=@description, displayname=@displayname, image=@image, salt=@salt where token=@token";
+                using var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("token", user.Token);
+                cmd.Parameters.AddWithValue("password", user.Password);
+                cmd.Parameters.AddWithValue("salt", user.Salt);
+                cmd.Parameters.AddWithValue("description", user.Description);
+                cmd.Parameters.AddWithValue("displayname", user.DisplayName);
+                cmd.Parameters.AddWithValue("image", user.Image);
+                cmd.Prepare();
+                var result = cmd.ExecuteNonQuery();
+
+                if (result > 0)
+                    return true;
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -418,7 +452,6 @@ namespace MTCG.Model
                         entity.CardType = (CardType)result.GetInt32(5);
                         entity.Race = (Race)result.GetInt32(6);
                     }
-
                     var model = new CardModell(entity);
                      
                      if(string.IsNullOrEmpty(entity.Id))

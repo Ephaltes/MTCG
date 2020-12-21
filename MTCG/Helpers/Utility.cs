@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using MTCG.Entity;
 using Newtonsoft.Json;
 
 namespace MTCG.Helpers
@@ -29,6 +31,15 @@ namespace MTCG.Helpers
             var temp = JsonConvert.SerializeObject(source, serializeSettings);
             var ret = JsonConvert.DeserializeObject<T>(temp,serializeSettings);
             return ret;
+        }
+
+        public static AuthorizationEntity HeaderToAuthorizationEntity(this string source)
+        {
+            var splitted = source.Trim().Split(" ");
+            if (splitted.Length < 2)
+                return null;
+            
+            return new AuthorizationEntity(){Type = splitted[0],Value = splitted[1]};
         }
     }
 }

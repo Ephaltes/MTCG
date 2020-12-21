@@ -29,15 +29,24 @@ namespace MTCG.Model
         public bool VerifyToken(string token)
         {
             if (!token.Contains("-mtcgToken"))
-                throw new AuthenticationException("Wrong Token");
+                return false;
             
             UserEntity = _database.GetUserByToken(token);
+
+            if (UserEntity == null)
+                return false;
+            
             return true;
         }
 
         public UserEntity GetUserByUsername(string username)
         {
             return _database.GetUserByUsername(username);
+        }
+
+        public bool UpdateUser()
+        {
+            return _database.UpdateUser(UserEntity);
         }
 
       public string CreateTokenForUser(string username, string password)

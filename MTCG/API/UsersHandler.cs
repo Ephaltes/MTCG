@@ -9,6 +9,7 @@ using WebServer;
 using WebServer.API;
 using WebServer.Interface;
 using WebServer.RessourceHandler;
+using MTCG.Helpers;
 
 namespace MTCG.API
 {
@@ -26,6 +27,19 @@ namespace MTCG.API
         protected override ResponseContext HandleGet()
         {
             ResponseContext responseContext = new ResponseContext();
+            var token = _requestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+
+            if (token == null)
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.Unauthorized,
+                    ErrorMessage = "No UserToken provided"
+                });
+                responseContext.StatusCode = StatusCodes.Unauthorized;
+                return responseContext;
+            }
+            
             if (_requestContext.HttpRequest.Count < 2)
             {
                 responseContext.ResponseMessage.Add(new ResponseMessage()
@@ -33,6 +47,7 @@ namespace MTCG.API
                     Status = StatusCodes.BadRequest,
                     ErrorMessage = "Missing Parameters"
                 });
+                responseContext.StatusCode = StatusCodes.BadRequest;
                 return responseContext;
             }
 
@@ -43,9 +58,9 @@ namespace MTCG.API
 
             if (entity == null)
             {
-                msg.Status = StatusCodes.BadRequest;
+                msg.Status = StatusCodes.NotFound;
                 msg.ErrorMessage = "User not found";
-                responseContext.StatusCode = StatusCodes.BadRequest;
+                responseContext.StatusCode = StatusCodes.NotFound;
             }
             else
             {
@@ -68,7 +83,7 @@ namespace MTCG.API
                    Status = StatusCodes.BadRequest,
                    ErrorMessage = "Body is empty"
                });
-
+               responseContext.StatusCode = StatusCodes.BadRequest;
                return responseContext;
            }
 
@@ -97,8 +112,97 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePut()
         {
-            throw new System.NotImplementedException();
+            ResponseContext responseContext = new ResponseContext();
+            UserModell model = new UserModell(_database);
+
+            
+            var token = _requestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+
+            if (token == null)
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.Unauthorized,
+                    ErrorMessage = "No UserToken provided"
+                });
+                responseContext.StatusCode = StatusCodes.Unauthorized;
+                return responseContext;
+            }
+            
+            var validToken = model.VerifyToken(token.Value);
+            if (!validToken)
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.Unauthorized,
+                    ErrorMessage = "UserToken not valid"
+                });
+                responseContext.StatusCode = StatusCodes.Unauthorized;
+                return responseContext;
+            }
+            
+            if (String.IsNullOrWhiteSpace(_requestContext.HttpBody))
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.BadRequest,
+                    ErrorMessage = "Body is empty"
+                });
+                responseContext.StatusCode = StatusCodes.BadRequest;
+                return responseContext;
+            }
+            
+            ResponseMessage msg = new ResponseMessage();
+            var userToModify = JsonConvert.DeserializeObject<UserEntity>(_requestContext.HttpBody);
+            int changes = 0;
+
+            if (!string.IsNullOrEmpty(userToModify.Description))
+            {
+                model.UserEntity.Description = userToModify.Description;
+                changes++;
+            }
+
+            if (!string.IsNullOrEmpty(userToModify.Image))
+            {
+                model.UserEntity.Image = userToModify.Image;
+                changes++;
+            }
+
+            if (!string.IsNullOrEmpty(userToModify.DisplayName))
+            {
+                model.UserEntity.DisplayName = userToModify.DisplayName;
+                changes++;
+            }
+
+            if (!string.IsNullOrEmpty(userToModify.Password))
+            {
+                var newPassword = Cryptography.GenerateSaltedHash(userToModify.Password);
+
+                model.UserEntity.Password = newPassword.Hash;
+                model.UserEntity.Salt = newPassword.Salt;
+                changes++;
+            }
+
+            bool success = false;
+            if (changes > 0)
+                success = model.UpdateUser();
+
+            if (success)
+            {
+                msg.Status = StatusCodes.OK;
+                msg.Object = "Updated Account Information";
+                responseContext.StatusCode = StatusCodes.OK;
+            }
+            else
+            {
+                msg.Status = StatusCodes.InternalServerError;
+                msg.Object = "Could not Update Account Information";
+                responseContext.StatusCode = StatusCodes.InternalServerError;
+            }
+            responseContext.ResponseMessage.Add(msg);
+            return responseContext;
         }
+        
 
         protected override ResponseContext HandleDelete()
         {

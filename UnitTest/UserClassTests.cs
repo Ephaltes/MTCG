@@ -20,6 +20,8 @@ namespace UnitTest
         {
             string token = "username-mtcgToken";
             Mock<IDatabase> database = new Mock<IDatabase>();
+
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(new UserEntity());
             
             var user = new UserModell(database.Object);
             var result = user.VerifyToken(token);
@@ -34,8 +36,10 @@ namespace UnitTest
             Mock<IDatabase> database = new Mock<IDatabase>();
             
             var user = new UserModell(database.Object);
+
+            bool isValid = user.VerifyToken(token);
             
-            Assert.That(() => user.VerifyToken(token) , Throws.Exception);
+            Assert.That(!isValid);
         }
         [Test]
         public void CreateTokenForUser()
