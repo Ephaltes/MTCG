@@ -16,7 +16,7 @@ namespace MTCG.API
         public CustomApiController(ITcpClient client)
         {
             _client = client;
-            _endpointList = new List<string>(){"users","sessions"};
+            _endpointList = new List<string>(){"users","sessions","packages"};
             Database = new DatabaseModell();
         }
         
@@ -29,15 +29,26 @@ namespace MTCG.API
                 string data = ReceiveFromClient();
 
                 _requestContext.ParseRequestFromHeader(data);
+
+                DefaultRessourceHandler handler=null;
                 
                 switch (GetRequestedEndPoint())
                 {
                     case "users":
-                        UsersHandler handler = new UsersHandler(_requestContext,Database);
-                        _responseContext = handler.Handle();
+                    {
+                        handler = new UsersHandler(_requestContext,Database);
                         break;
+                    }
                     case "sessions":
+                    {
+                        handler = new SessionsHandler(_requestContext,Database);
                         break;
+                    }
+                    case "packages":
+                    {
+                        handler = new PackagesHandler(_requestContext,Database);
+                        break;
+                    }
                     default:
                         _responseContext.ResponseMessage.Add(new ResponseMessage()
                         {
@@ -46,8 +57,9 @@ namespace MTCG.API
                         });
 
                         _responseContext.StatusCode = StatusCodes.InternalServerError;
-                        break;
+                        return _responseContext.BuildResponse();
                 }
+                _responseContext = handler.Handle();
             }
             catch (Exception e)
             {

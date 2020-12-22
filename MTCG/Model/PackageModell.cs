@@ -15,19 +15,21 @@ namespace MTCG.Model
 
         public int CardCount => Entity.CardsInPackage.Count;
         public int PackageAmount => Entity.Amount;
-        
+
         public string Id => Entity.Id;
 
         private IDatabase _database;
-        
-        public PackageModell(PackageEntity entity,IDatabase database)
+
+        public PackageModell(PackageEntity entity, IDatabase database)
         {
-            if (entity.Id == null || entity.Amount == 0 || entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
+            if (entity.Amount == 0 || entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
                 throw new MissingMemberException("Packages doesnt have Id, Amount or Cards");
+
+            if (string.IsNullOrEmpty(Entity.Id))
+                Entity.Id = Guid.NewGuid().ToString();
 
             Entity = entity;
             _database = database;
-
         }
 
         public PackageModell(IDatabase database)
@@ -36,45 +38,57 @@ namespace MTCG.Model
             _database = database;
         }
 
-        public bool AddCardToPackage(ICard card)
+        public bool AddCardToPackage(CardEntity entity)
         {
             try
             {
-                Entity.CardsInPackage.Add(card);
-                _database.AddCardToDatabase(card);
+                if (string.IsNullOrEmpty(entity.Id))
+                    entity.Id = Guid.NewGuid().ToString();
+
+
+                Entity.CardsInPackage.Add(entity);
+                _database.AddCardToDatabase(entity);
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Entity.CardsInPackage.Remove(card);
-                return false;
-            }
-        }
-        public bool AddCardsToPackage(List<ICard> cards)
-        {
-            try
-            {
-                Entity.CardsInPackage.AddRange(cards);
-                _database.AddCardsToDatabase(cards);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Entity.CardsInPackage = Entity.CardsInPackage.Except(cards).ToList();
+                Entity.CardsInPackage.Remove(entity);
                 return false;
             }
         }
 
-        public List<ICard> Open()
+        public bool AddCardsToPackage(List<CardEntity> entity)
+        {
+            try
+            {
+                foreach (var card in entity)
+                {
+                    if (string.IsNullOrEmpty(card.Id))
+                        card.Id = Guid.NewGuid().ToString();
+                }
+
+                Entity.CardsInPackage.AddRange(entity);
+                _database.AddCardsToDatabase(entity);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Entity.CardsInPackage = Entity.CardsInPackage.Except(entity).ToList();
+                return false;
+            }
+        }
+
+        public List<CardEntity> Open()
         {
             Entity.Amount--;
-            var list = new List<ICard>();
+            var list = new List<CardEntity>();
             foreach (var card in Entity.CardsInPackage)
             {
-                ICard temp = card.CloneJson();
-                temp.GenerateRandomId();
+                CardEntity temp = card.CloneJson();
+                temp.Id = Guid.NewGuid().ToString();
                 list.Add(temp);
             }
 
@@ -82,6 +96,5 @@ namespace MTCG.Model
 
             return list;
         }
-        
     }
 }

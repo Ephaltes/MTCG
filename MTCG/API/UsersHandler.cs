@@ -13,21 +13,16 @@ using MTCG.Helpers;
 
 namespace MTCG.API
 {
-    public class UsersHandler : BaseRessourceHandler
+    public class UsersHandler : DefaultRessourceHandler
     {
-        private IRequestContext _requestContext;
-        private IDatabase _database;
-        
-        public UsersHandler(IRequestContext req,IDatabase database)
+        public UsersHandler(IRequestContext req,IDatabase database) : base(req,database)
         {
-            _requestContext = req;
-            _database = database;
         }
         
         protected override ResponseContext HandleGet()
         {
             ResponseContext responseContext = new ResponseContext();
-            var token = _requestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
 
             if (token == null)
             {
@@ -40,7 +35,7 @@ namespace MTCG.API
                 return responseContext;
             }
             
-            if (_requestContext.HttpRequest.Count < 2)
+            if (RequestContext.HttpRequest.Count < 2)
             {
                 responseContext.ResponseMessage.Add(new ResponseMessage()
                 {
@@ -52,8 +47,8 @@ namespace MTCG.API
             }
 
            
-            UserModell model = new UserModell(_database);
-            var entity = model.GetUserByUsername(_requestContext.HttpRequest[1]);
+            UserModell model = new UserModell(Database);
+            var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
             ResponseMessage msg = new ResponseMessage();
 
             if (entity == null)
@@ -65,7 +60,12 @@ namespace MTCG.API
             else
             {
                 msg.Status = StatusCodes.OK;
-                msg.Object = entity;
+                msg.Object = new UserEntity()
+                {
+                    Description = entity.Description,
+                    Image = entity.Image,
+                    DisplayName = entity.DisplayName,
+                };
                 responseContext.StatusCode = StatusCodes.OK;
             }
            
@@ -76,7 +76,7 @@ namespace MTCG.API
         protected override ResponseContext HandlePost()
         {
            ResponseContext responseContext = new ResponseContext();
-           if (String.IsNullOrWhiteSpace(_requestContext.HttpBody))
+           if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
            {
                responseContext.ResponseMessage.Add(new ResponseMessage()
                {
@@ -87,9 +87,9 @@ namespace MTCG.API
                return responseContext;
            }
 
-           var userEntity = JsonConvert.DeserializeObject<UserEntity>(_requestContext.HttpBody);
+           var userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
            
-           UserModell model = new UserModell(_database);
+           UserModell model = new UserModell(Database);
            var token = model.CreateTokenForUser(userEntity.Username, userEntity.Password);
            ResponseMessage msg = new ResponseMessage();
 
@@ -113,10 +113,10 @@ namespace MTCG.API
         protected override ResponseContext HandlePut()
         {
             ResponseContext responseContext = new ResponseContext();
-            UserModell model = new UserModell(_database);
+            UserModell model = new UserModell(Database);
 
             
-            var token = _requestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
 
             if (token == null)
             {
@@ -141,7 +141,7 @@ namespace MTCG.API
                 return responseContext;
             }
             
-            if (String.IsNullOrWhiteSpace(_requestContext.HttpBody))
+            if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {
                 responseContext.ResponseMessage.Add(new ResponseMessage()
                 {
@@ -153,7 +153,7 @@ namespace MTCG.API
             }
             
             ResponseMessage msg = new ResponseMessage();
-            var userToModify = JsonConvert.DeserializeObject<UserEntity>(_requestContext.HttpBody);
+            var userToModify = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
             int changes = 0;
 
             if (!string.IsNullOrEmpty(userToModify.Description))
@@ -200,35 +200,6 @@ namespace MTCG.API
                 responseContext.StatusCode = StatusCodes.InternalServerError;
             }
             responseContext.ResponseMessage.Add(msg);
-            return responseContext;
-        }
-        
-
-        protected override ResponseContext HandleDelete()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override ResponseContext Handle()
-        {
-            ResponseContext responseContext;
-            switch (_requestContext.HttpMethod)
-            {
-                case HttpMethods.GET:
-                    responseContext = HandleGet();
-                    break;
-                case HttpMethods.POST:
-                    responseContext = HandlePost();
-                    break;
-                case HttpMethods.PUT:
-                    responseContext = HandlePut();
-                    break;
-                case HttpMethods.DELETE:
-                    responseContext = HandleDelete();
-                    break;
-                default:
-                    throw new NotImplementedException("HttpMethod not Implemented");
-            }
             return responseContext;
         }
     }

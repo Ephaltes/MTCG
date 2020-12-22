@@ -29,7 +29,7 @@ namespace MTCG.Model.BaseClass
             }
         }
 
-        public List<ICard> Open(string packageId = "")
+        public List<CardEntity> Open(string packageId = "")
         {
             IPackage packageToOpen = null;
             if (string.IsNullOrWhiteSpace(packageId))

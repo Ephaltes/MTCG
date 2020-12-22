@@ -124,6 +124,8 @@ namespace MTCG.Model
             }
         }
         
+        
+        
         public UserEntity GetUserByUsername(string username)
         {
             try
@@ -143,12 +145,18 @@ namespace MTCG.Model
 
                 while (result.Read())
                 {
+                    ret.Id = result.GetInt32(0);
                     ret.Username = result.GetString(1);
+                    ret.Password = result.GetString(2);
+                    ret.Salt = result.GetString(3);
+                    ret.Token = result.GetString(4);
                     ret.Description = result.GetString(5);
                     ret.Image = result.GetString(6);
+                    ret.Elo = result.GetInt32(7);
                     ret.Win = result.GetInt32(8);
                     ret.Lose = result.GetInt32(9);
                     ret.Draw = result.GetInt32(10);
+                    ret.Coins = result.GetInt32(11);
                 }
 
                 return ret;
@@ -197,7 +205,7 @@ namespace MTCG.Model
             }
         }
 
-        public bool AddCardsToDatabase(List<ICard> cardsToAdd)
+        public bool AddCardsToDatabase(List<CardEntity> cardsToAdd)
         {
             _connection.Open();
             var transaction = _connection.BeginTransaction();
@@ -210,13 +218,13 @@ namespace MTCG.Model
                         "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                     var cmd = new NpgsqlCommand(sql, _connection);
 
-                    cmd.Parameters.AddWithValue("id", card.Entity.Id);
-                    cmd.Parameters.AddWithValue("name", card.Entity.Name);
-                    cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
-                    cmd.Parameters.AddWithValue("description", card.Entity.Description);
-                    cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
-                    cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
-                    cmd.Parameters.AddWithValue("race", card.Entity.Race);
+                    cmd.Parameters.AddWithValue("id", card.Id);
+                    cmd.Parameters.AddWithValue("name", card.Name);
+                    cmd.Parameters.AddWithValue("damage", card.Damage);
+                    cmd.Parameters.AddWithValue("description", card.Description);
+                    cmd.Parameters.AddWithValue("elementtype", card.ElementType);
+                    cmd.Parameters.AddWithValue("cardtype", card.CardType);
+                    cmd.Parameters.AddWithValue("race", card.Race);
                     
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
@@ -237,7 +245,7 @@ namespace MTCG.Model
             }
         }
 
-        public bool AddCardToDatabase(ICard card)
+        public bool AddCardToDatabase(CardEntity card)
         {
             _connection.Open();
             var transaction = _connection.BeginTransaction();
@@ -248,13 +256,13 @@ namespace MTCG.Model
                     "INSERT INTO mtcg.Card(id,name,damage,weakdamage,description,elementtype,cardtype,race) VALUES(@id,@name,@damage,@weakdamage,@description,@elementtype,@cardtype,@race)";
                 var cmd = new NpgsqlCommand(sql, _connection);
 
-                cmd.Parameters.AddWithValue("id", card.Entity.Id);
-                cmd.Parameters.AddWithValue("name", card.Entity.Name);
-                cmd.Parameters.AddWithValue("damage", card.Entity.Damage);
-                cmd.Parameters.AddWithValue("description", card.Entity.Description);
-                cmd.Parameters.AddWithValue("elementtype", card.Entity.ElementType);
-                cmd.Parameters.AddWithValue("cardtype", card.Entity.CardType);
-                cmd.Parameters.AddWithValue("race", card.Entity.Race);
+                cmd.Parameters.AddWithValue("id", card.Id);
+                cmd.Parameters.AddWithValue("name", card.Name);
+                cmd.Parameters.AddWithValue("damage", card.Damage);
+                cmd.Parameters.AddWithValue("description", card.Description);
+                cmd.Parameters.AddWithValue("elementtype", card.ElementType);
+                cmd.Parameters.AddWithValue("cardtype", card.CardType);
+                cmd.Parameters.AddWithValue("race", card.Race);
 
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -406,13 +414,13 @@ namespace MTCG.Model
             }
         }
 
-        public List<ICard> GetCardsInPackage(string packageid)
+        public List<CardEntity> GetCardsInPackage(string packageid)
         {
            _connection.Open();
           
             try
             {
-                List<ICard> ret = new List<ICard>();
+                List<CardEntity> ret = new List<CardEntity>();
                 var sql =
                     " select cardid from package INNER JOIN r_package_card ON package.id=r_package_card.packageid WHERE package.id = @packageid";
                 var cmd = new NpgsqlCommand(sql, _connection);
@@ -452,12 +460,10 @@ namespace MTCG.Model
                         entity.CardType = (CardType)result.GetInt32(5);
                         entity.Race = (Race)result.GetInt32(6);
                     }
-                    var model = new CardModell(entity);
-                     
-                     if(string.IsNullOrEmpty(entity.Id))
+                   if(string.IsNullOrEmpty(entity.Id))
                          throw new InvalidDataException();
                      
-                     ret.Add(model);
+                   ret.Add(entity);
                 }
 
                 return ret;

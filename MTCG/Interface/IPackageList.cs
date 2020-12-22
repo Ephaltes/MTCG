@@ -8,6 +8,6 @@ namespace MTCG.Interface
 
         public bool AddPackageToList(IPackage entity);
 
-        public List<ICard> Open(string packageId = "");
+        public List<CardEntity> Open(string packageId = "");
     }
 }

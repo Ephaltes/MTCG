@@ -67,5 +67,18 @@ namespace MTCG.Model
 
             return null;
         }
+
+      public bool VerifyLogin()
+      {
+          var entity = GetUserByUsername(UserEntity.Username);
+
+          if (Cryptography.VerifyPassword(UserEntity.Password, entity.Password, entity.Salt))
+          {
+              UserEntity = entity;
+              return true;
+          }
+          return false;
+      }
+      
       }
 }

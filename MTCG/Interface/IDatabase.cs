@@ -14,9 +14,9 @@ namespace MTCG.Interface
         public UserEntity GetUserByToken(string token);
 
 
-        public bool AddCardsToDatabase(List<ICard> cardsToAdd);
+        public bool AddCardsToDatabase(List<CardEntity> cardsToAdd);
 
-        public bool AddCardToDatabase(ICard cardsToAdd);
+        public bool AddCardToDatabase(CardEntity cardsToAdd);
 
         public UserEntity GetUserByUsername(string username);
 
@@ -30,6 +30,6 @@ namespace MTCG.Interface
 
         public IPackage GetPackage(string packageid);
 
-        public List<ICard> GetCardsInPackage(string packageid);
+        public List<CardEntity> GetCardsInPackage(string packageid);
     }
 }

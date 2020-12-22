@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
  using MTCG.Interface;
  using MTCG.Model.BaseClass;
@@ -9,6 +9,6 @@ namespace MTCG.Entity
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public int Amount { get; set; } = 1;
-        public List<ICard> CardsInPackage;
+        public List<CardEntity> CardsInPackage;
     }
 }

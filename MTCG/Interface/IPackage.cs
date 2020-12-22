@@ -8,11 +8,11 @@ namespace MTCG.Interface
         public int PackageAmount { get; }
         public string Id { get; }
 
-        public bool AddCardToPackage(ICard card);
+        public bool AddCardToPackage(CardEntity card);
 
-        public bool AddCardsToPackage(List<ICard> cards);
+        public bool AddCardsToPackage(List<CardEntity> cards);
 
-        public List<ICard> Open();
+        public List<CardEntity> Open();
 
     }
 }
