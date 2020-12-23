@@ -45,14 +45,14 @@ namespace MTCG.Model.BaseClass
                     return null;
             }
             
-            var ret = packageToOpen.Open();
+           // var ret = packageToOpen.Open();
 
             if (packageToOpen.PackageAmount <= 0)
             {
                 PackageModellList.Remove(packageToOpen);
             }
             
-            return ret;
+            return null;
         }
     }
 }

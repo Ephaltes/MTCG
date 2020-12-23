@@ -22,9 +22,9 @@ namespace MTCG.Interface
 
         public bool UpdateUser(UserEntity user);
 
-        public bool AddCardToStack(ICard card, UserEntity user);
+        public bool AddCardToStack(CardEntity card, UserEntity user);
 
-        public bool UpdateCardStatus(ICard card, UserEntity user, CardPlace cardPlace);
+        public bool UpdateCardStatus(CardEntity card, UserEntity user, CardPlace cardPlace);
 
         public List<IPackage> GetPackages();
 
@@ -34,5 +34,7 @@ namespace MTCG.Interface
 
         public bool AddPackage(PackageEntity packageEntity);
         public bool AddCardToPackage(PackageEntity packageEntity);
+
+        public bool OpenPackage(PackageEntity packageEntity, UserEntity userEntity);
     }
 }

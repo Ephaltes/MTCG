@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
+using System.Transactions;
 using MTCG.Entity;
+using MTCG.Helpers;
 using MTCG.Interface;
 using MTCG.Model.BaseClass;
 using Npgsql;
@@ -99,17 +102,18 @@ namespace MTCG.Model
                 while (result.Read())
                 {
                     ret.Id = result.GetInt32(0);
-                    ret.Username = result.GetString(1);
-                    ret.Password = result.GetString(2);
-                    ret.Salt = result.GetString(3);
-                    ret.Token = result.GetString(4);
-                    ret.Description = result.GetString(5);
-                    ret.Image = result.GetString(6);
-                    ret.Elo = result.GetInt32(7);
-                    ret.Win = result.GetInt32(8);
-                    ret.Lose = result.GetInt32(9);
-                    ret.Draw = result.GetInt32(10);
-                    ret.Coins = result.GetInt32(11);
+                    ret.Username = result.SafeGetString(1);
+                    ret.Password = result.SafeGetString(2);
+                    ret.Salt = result.SafeGetString(3);
+                    ret.Token = result.SafeGetString(4);
+                    ret.Description = result.SafeGetString(5);
+                    ret.DisplayName = result.SafeGetString(6);
+                    ret.Image = result.SafeGetString(7);
+                    ret.Elo = result.GetInt32(8);
+                    ret.Win = result.GetInt32(9);
+                    ret.Lose = result.GetInt32(10);
+                    ret.Draw = result.GetInt32(11);
+                    ret.Coins = result.GetInt32(12);
                 }
 
                 return ret;
@@ -256,7 +260,12 @@ namespace MTCG.Model
 
         public bool AddCardToDatabase(CardEntity card)
         {
-            _connection.Open();
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
 
             try
             {
@@ -283,13 +292,20 @@ namespace MTCG.Model
             }
             finally
             {
-                _connection.Close();
+                if(opened)
+                    _connection.Close();
             }
         }
         
-        public bool AddCardToStack(ICard card,UserEntity user)
+        public bool AddCardToStack(CardEntity card,UserEntity user)
         {
-            _connection.Open();
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+            
             try
             {
                 var sql =
@@ -298,7 +314,7 @@ namespace MTCG.Model
                 
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
-                cmd.Parameters.AddWithValue("cardid", card.Entity.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Id);
                 cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
                 
                 cmd.Prepare();
@@ -312,13 +328,63 @@ namespace MTCG.Model
             }
             finally
             {
-                _connection.Close();
+                if(opened)
+                    _connection.Close();
             }
         }
         
-        public bool UpdateCardStatus(ICard card,UserEntity user,CardPlace cardPlace)
+        public bool AddCardsToStack(List<CardEntity> cards,UserEntity user)
         {
-            _connection.Open();
+            bool opened = false;
+            NpgsqlTransaction transaction = null;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
+                opened = true;
+            }
+
+            try
+            {
+                foreach (var card in cards)
+                {
+                    var sql =
+                        "INSERT INTO mtcg.r_user_card(userid, cardid, cardplace) VALUES(@userid,@cardid,@cardplace)";
+                    var cmd = new NpgsqlCommand(sql, _connection);
+                
+
+                    cmd.Parameters.AddWithValue("userid", user.Id);
+                    cmd.Parameters.AddWithValue("cardid", card.Id);
+                    cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Stack);
+                
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                }
+                transaction?.Commit();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                transaction?.Rollback();
+                return false;
+            }
+            finally
+            {
+                if(opened)
+                    _connection.Close();
+            }
+        }
+        
+        public bool UpdateCardStatus(CardEntity card,UserEntity user,CardPlace cardPlace)
+        {
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
             try
             {
                 var sql =
@@ -327,7 +393,7 @@ namespace MTCG.Model
                 
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
-                cmd.Parameters.AddWithValue("cardid", card.Entity.Id);
+                cmd.Parameters.AddWithValue("cardid", card.Id);
                 cmd.Parameters.AddWithValue("cardplace", cardPlace);
                 
                 cmd.Prepare();
@@ -341,7 +407,8 @@ namespace MTCG.Model
             }
             finally
             {
-                _connection.Close();
+                if(opened)
+                    _connection.Close();
             }
         }
 
@@ -407,6 +474,9 @@ namespace MTCG.Model
                             transaction.Commit();
                             return true;
                         }
+
+                transaction.Rollback();
+                return false;
             }
             catch (Exception e)
             {
@@ -417,11 +487,135 @@ namespace MTCG.Model
             {
                 _connection.Close();
             }
-            return false;
+        }
+
+
+        public bool OpenPackage(PackageEntity packageEntity,UserEntity userEntity)
+        {
+            _connection.Open();
+            var transaction = _connection.BeginTransaction();
+
+            try
+            {
+                var sql = "SELECT amount FROM mtcg.package where id=@packageid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("packageid", packageEntity.Id);
+                
+                cmd.Prepare();
+                var response = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (response < 1)
+                {
+                    transaction.Commit();
+                    return false;
+                }
+              
+                
+                if (GetCoinsFromUser(userEntity) < Constant.PRICEPERPACKAGE)
+                {
+                    transaction.Commit();
+                    return false;
+                }
+
+                if (!SetCoinsFromUser(userEntity))
+                {
+                    transaction.Commit();
+                    return false;
+                }
+
+                sql = "UPDATE mtcg.package set amount=@amount where id=@packageid";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("amount", packageEntity.Amount);
+                cmd.Parameters.AddWithValue("packageid", packageEntity.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                if(AddCardsToDatabase(packageEntity.CardsInPackage))
+                    if (AddCardsToStack(packageEntity.CardsInPackage, userEntity))
+                    {
+                        transaction.Commit();
+                        return true;
+                    }
+
+                transaction.Rollback();
+                return false;
+
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                return false;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public int GetCoinsFromUser(UserEntity user)
+        {
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT coins FROM mtcg.User where id=@userid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("userid", user.Id);
+                cmd.Prepare();
+                var response = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return 0;
+            }
+            finally
+            {
+                if(opened)
+                    _connection.Close();
+            }
         }
         
-        
-        
+        public bool SetCoinsFromUser(UserEntity user)
+        {
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "UPDATE mtcg.User set coins=@newcoins where id=@userid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("userid", user.Id);
+                cmd.Parameters.AddWithValue("newcoins", user.Coins);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
+            finally
+            {
+                if(opened)
+                    _connection.Close();
+            }
+        }
         
         public List<IPackage> GetPackages()
         {
@@ -430,7 +624,7 @@ namespace MTCG.Model
             try
             {
                 List<IPackage> retList = new List<IPackage>();
-                var sql ="select id from package";
+                var sql ="select * from package";
                 var cmd = new NpgsqlCommand(sql, _connection);
                 
                 var result = cmd.ExecuteReader();
@@ -439,8 +633,10 @@ namespace MTCG.Model
                 
                 while (result.Read())
                 {
-                   packageIds.Add(result.GetString(0));
+                   packageIds.Add(result.SafeGetString(0));
                 }
+                
+                result.Close();
 
                 foreach (var id in packageIds)
                 {
@@ -462,17 +658,21 @@ namespace MTCG.Model
 
         public IPackage GetPackage(string packageid)
         {
-            _connection.Open();
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
             try
             {
                 PackageEntity entity = new PackageEntity();
 
-                var sql =
-                    " select * from package where id = @packageid";
+                var sql = "select * from package where id = @packageid";
                 var cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("packageid", packageid);
-            
                 cmd.Prepare();
                 var result = cmd.ExecuteReader();
                 
@@ -481,9 +681,10 @@ namespace MTCG.Model
                     entity.Id = result.GetString(0);
                     entity.Amount = result.GetInt32(1);
                 }
+                result.Close();
 
                 entity.CardsInPackage = GetCardsInPackage(packageid);
-                PackageModell model = new PackageModell(entity, this);
+                PackageModell model = new PackageModell(entity,this);
                 return model;
             }
             catch (Exception e)
@@ -493,14 +694,20 @@ namespace MTCG.Model
             }
             finally
             {
-                _connection.Close();
+                if(opened)
+                    _connection.Close();
             }
         }
 
         public List<CardEntity> GetCardsInPackage(string packageid)
         {
-            if(_connection.State != ConnectionState.Open)
+            bool opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
                 _connection.Open();
+
+            }
           
             try
             {
@@ -522,7 +729,9 @@ namespace MTCG.Model
                 {
                     cardIds.Add(result.GetString(0));
                 }
-
+                result.Close();
+                
+                
                 foreach (var id in cardIds)
                 {
                     sql = "select * from card where id = @cardid";
@@ -536,10 +745,10 @@ namespace MTCG.Model
                     
                     while (result.Read())
                     {
-                        entity.Id = result.GetString(0);
-                        entity.Name = result.GetString(1);
+                        entity.Id = result.SafeGetString(0);
+                        entity.Name = result.SafeGetString(1);
                         entity.Damage = result.GetDouble(2);
-                        entity.Description = result.GetString(3);
+                        entity.Description = result.SafeGetString(3);
                         entity.ElementType = (ElementType)result.GetInt32(4);
                         entity.CardType = (CardType)result.GetInt32(5);
                         entity.Race = (Race)result.GetInt32(6);
@@ -548,6 +757,7 @@ namespace MTCG.Model
                          throw new InvalidDataException();
                      
                     ret.Add(entity);
+                    result.Close();
                 }
 
                 return ret;
@@ -559,7 +769,8 @@ namespace MTCG.Model
             }
             finally
             {
-                _connection.Close();
+                if(opened)
+                    _connection.Close();
             }
         }
     }

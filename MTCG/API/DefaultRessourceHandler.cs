@@ -108,5 +108,17 @@ namespace MTCG.API
             responseContext.StatusCode = StatusCodes.Unauthorized;
             return responseContext;
         }
+
+        protected ResponseContext CustomError(string msg, StatusCodes code)
+        {
+            var responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = code,
+                ErrorMessage = msg
+            });
+            responseContext.StatusCode = code;
+            return responseContext;
+        }
     }
 }

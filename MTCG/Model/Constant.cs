@@ -14,5 +14,6 @@ namespace MTCG.Model
         public const double MINDICEROLL = 0.5;
         public const double MAXDICEROLL = 1;
         public const int MAXROUND = 100;
+        public const int PRICEPERPACKAGE = 5;
     }
 }

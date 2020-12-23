@@ -25,8 +25,8 @@ namespace MTCG.Model
             if (entity.Amount == 0 || entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
                 throw new MissingMemberException("Packages doesnt have Id, Amount or Cards");
 
-            if (string.IsNullOrEmpty(Entity.Id))
-                Entity.Id = Guid.NewGuid().ToString("N");
+            if (string.IsNullOrEmpty(entity.Id))
+                entity.Id = Guid.NewGuid().ToString("N");
 
             Entity = entity;
             _database = database;
@@ -81,20 +81,20 @@ namespace MTCG.Model
             }
         }
 
-        public List<CardEntity> Open()
+        public List<CardEntity> Open(UserEntity user)
         {
             Entity.Amount--;
-            var list = new List<CardEntity>();
+            user.Coins -= 5;
+            
             foreach (var card in Entity.CardsInPackage)
             {
-                CardEntity temp = card.CloneJson();
-                temp.Id = Guid.NewGuid().ToString("N");
-                list.Add(temp);
+               card.GenerateIdForCard();
             }
 
-            _database.AddCardsToDatabase(list);
+            if (_database.OpenPackage(Entity, user))
+                return Entity.CardsInPackage;
 
-            return list;
+            return null;
         }
     }
 }

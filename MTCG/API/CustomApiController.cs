@@ -16,7 +16,7 @@ namespace MTCG.API
         public CustomApiController(ITcpClient client)
         {
             _client = client;
-            _endpointList = new List<string>(){"users","sessions","packages","transaction","cards","deck","stats","battles","score","tradings"};
+            _endpointList = new List<string>(){"users","sessions","packages","transactions","cards","deck","stats","battles","score","tradings"};
             Database = new DatabaseModell();
         }
         
@@ -49,6 +49,9 @@ namespace MTCG.API
                         handler = new PackagesHandler(_requestContext,Database);
                         break;
                     }
+                    case "transactions":
+                        handler = new TransactionsHandler(_requestContext, Database);
+                        break;
                     default:
                         _responseContext.ResponseMessage.Add(new ResponseMessage()
                         {

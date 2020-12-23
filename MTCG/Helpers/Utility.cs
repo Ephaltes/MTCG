@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MTCG.Entity;
 using Newtonsoft.Json;
+using Npgsql;
 
 namespace MTCG.Helpers
 {
@@ -45,6 +46,13 @@ namespace MTCG.Helpers
         public static void GenerateIdForCard(this CardEntity source)
         {
             source.Id = Guid.NewGuid().ToString("N");
+        }
+        
+        public static string SafeGetString(this NpgsqlDataReader reader, int colIndex)
+        {
+            if(!reader.IsDBNull(colIndex))
+                return reader.GetString(colIndex);
+            return string.Empty;
         }
     }
 }

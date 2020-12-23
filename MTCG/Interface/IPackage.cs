@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MTCG.Entity;
 
 namespace MTCG.Interface
 {
@@ -12,7 +13,7 @@ namespace MTCG.Interface
 
         public bool AddCardsToPackage(List<CardEntity> cards);
 
-        public List<CardEntity> Open();
+        public List<CardEntity> Open(UserEntity user);
 
     }
 }
