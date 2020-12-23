@@ -26,7 +26,7 @@ namespace UnitTest
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
             List<ICard> list = new List<ICard>();
-            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString("N"),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
             list.Add(modell);
@@ -51,7 +51,7 @@ namespace UnitTest
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
             List<ICard> list = new List<ICard>();
-            PackageEntity entity = new PackageEntity(){Amount = 3,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            PackageEntity entity = new PackageEntity(){Amount = 3,Id = Guid.NewGuid().ToString("N"),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
             list.Add(modell);
@@ -80,7 +80,7 @@ namespace UnitTest
             CardEntity cardEntity = new CardEntity(){Damage = 10,CardType = CardType.MonsterCard,Race = Race.Dragon};
             CardModell modell = new CardModell(cardEntity);
             List<ICard> list = new List<ICard>();
-            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString(),CardsInPackage = list};
+            PackageEntity entity = new PackageEntity(){Amount = 1,Id = Guid.NewGuid().ToString("N"),CardsInPackage = list};
             list.Add(modell);
             list.Add(modell);
             list.Add(modell);

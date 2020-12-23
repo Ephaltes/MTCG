@@ -72,5 +72,41 @@ namespace MTCG.API
             responseContext.StatusCode = StatusCodes.BadRequest;
             return responseContext;
         }
+        
+        protected ResponseContext SomeThingWrong()
+        {
+            var responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = StatusCodes.InternalServerError,
+                ErrorMessage = "Something went Wrong"
+            });
+            responseContext.StatusCode = StatusCodes.InternalServerError;
+            return responseContext;
+        }
+
+        protected ResponseContext EmptyBody()
+        {
+            var responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = StatusCodes.BadRequest,
+                ErrorMessage = "Body is empty"
+            });
+            responseContext.StatusCode = StatusCodes.BadRequest;
+            return responseContext;
+        }
+
+        protected ResponseContext NotAuthorized()
+        {
+            var responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = StatusCodes.Unauthorized,
+                ErrorMessage = "Not Authorized"
+            });
+            responseContext.StatusCode = StatusCodes.Unauthorized;
+            return responseContext;
+        }
     }
 }

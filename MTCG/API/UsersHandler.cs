@@ -26,13 +26,7 @@ namespace MTCG.API
 
             if (token == null)
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.Unauthorized,
-                    ErrorMessage = "No UserToken provided"
-                });
-                responseContext.StatusCode = StatusCodes.Unauthorized;
-                return responseContext;
+                return NotAuthorized();
             }
             
             if (RequestContext.HttpRequest.Count < 2)
@@ -78,13 +72,7 @@ namespace MTCG.API
            ResponseContext responseContext = new ResponseContext();
            if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
            {
-               responseContext.ResponseMessage.Add(new ResponseMessage()
-               {
-                   Status = StatusCodes.BadRequest,
-                   ErrorMessage = "Body is empty"
-               });
-               responseContext.StatusCode = StatusCodes.BadRequest;
-               return responseContext;
+               return EmptyBody();
            }
 
            var userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
@@ -118,38 +106,14 @@ namespace MTCG.API
             
             var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
 
-            if (token == null)
+            if (token == null || !model.VerifyToken(token.Value) )
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.Unauthorized,
-                    ErrorMessage = "No UserToken provided"
-                });
-                responseContext.StatusCode = StatusCodes.Unauthorized;
-                return responseContext;
-            }
-            
-            var validToken = model.VerifyToken(token.Value);
-            if (!validToken)
-            {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.Unauthorized,
-                    ErrorMessage = "UserToken not valid"
-                });
-                responseContext.StatusCode = StatusCodes.Unauthorized;
-                return responseContext;
+                return NotAuthorized();
             }
             
             if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Body is empty"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
+                return EmptyBody();
             }
             
             ResponseMessage msg = new ResponseMessage();

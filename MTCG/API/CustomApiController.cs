@@ -16,7 +16,7 @@ namespace MTCG.API
         public CustomApiController(ITcpClient client)
         {
             _client = client;
-            _endpointList = new List<string>(){"users","sessions","packages"};
+            _endpointList = new List<string>(){"users","sessions","packages","transaction","cards","deck","stats","battles","score","tradings"};
             Database = new DatabaseModell();
         }
         

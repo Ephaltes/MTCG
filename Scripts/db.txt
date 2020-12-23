@@ -40,7 +40,7 @@ CREATE TABLE mtcg.Package (
 
 CREATE TABLE mtcg.R_Package_Card (
 	id SERIAL PRIMARY KEY,
-	packageid INTEGER NOT NULL,
+	packageid TEXT NOT NULL,
 	cardid TEXT NOT NULL,
 	CONSTRAINT fk_packlage_r_package_card FOREIGN KEY(packageid) REFERENCES mtcg.Package (id) ON DELETE CASCADE,
 	CONSTRAINT fk_card_r_package_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE

@@ -23,13 +23,7 @@ namespace MTCG.API
             
             if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Body is empty"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
+                return EmptyBody();
             }
 
             UserEntity userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
@@ -59,13 +53,7 @@ namespace MTCG.API
                 return responseContext;
             }
             
-            responseContext.ResponseMessage.Add(new ResponseMessage()
-            {
-                Status = StatusCodes.InternalServerError,
-                ErrorMessage = "Something went wrong"
-            });
-            responseContext.StatusCode = StatusCodes.InternalServerError;
-            return responseContext;
+            return SomeThingWrong();
         }
     }
 }

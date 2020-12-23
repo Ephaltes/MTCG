@@ -26,7 +26,7 @@ namespace MTCG.Model
                 throw new MissingMemberException("Packages doesnt have Id, Amount or Cards");
 
             if (string.IsNullOrEmpty(Entity.Id))
-                Entity.Id = Guid.NewGuid().ToString();
+                Entity.Id = Guid.NewGuid().ToString("N");
 
             Entity = entity;
             _database = database;
@@ -43,7 +43,7 @@ namespace MTCG.Model
             try
             {
                 if (string.IsNullOrEmpty(entity.Id))
-                    entity.Id = Guid.NewGuid().ToString();
+                    entity.Id = Guid.NewGuid().ToString("N");
 
 
                 Entity.CardsInPackage.Add(entity);
@@ -65,7 +65,7 @@ namespace MTCG.Model
                 foreach (var card in entity)
                 {
                     if (string.IsNullOrEmpty(card.Id))
-                        card.Id = Guid.NewGuid().ToString();
+                        card.Id = Guid.NewGuid().ToString("N");
                 }
 
                 Entity.CardsInPackage.AddRange(entity);
@@ -88,7 +88,7 @@ namespace MTCG.Model
             foreach (var card in Entity.CardsInPackage)
             {
                 CardEntity temp = card.CloneJson();
-                temp.Id = Guid.NewGuid().ToString();
+                temp.Id = Guid.NewGuid().ToString("N");
                 list.Add(temp);
             }
 

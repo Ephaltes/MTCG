@@ -31,5 +31,8 @@ namespace MTCG.Interface
         public IPackage GetPackage(string packageid);
 
         public List<CardEntity> GetCardsInPackage(string packageid);
+
+        public bool AddPackage(PackageEntity packageEntity);
+        public bool AddCardToPackage(PackageEntity packageEntity);
     }
 }
