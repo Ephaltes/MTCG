@@ -3,6 +3,7 @@ using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Interface;
 using MTCG.Model;
+using MTCG.Model.BaseClass;
 using Newtonsoft.Json;
 using WebServer;
 using WebServer.API;
@@ -20,36 +21,65 @@ namespace MTCG.API
         protected override ResponseContext HandlePost()
         {
             ResponseContext responseContext = new ResponseContext();
+            UserModell model = new UserModell(Database);
             
             var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
 
-           /*  if (token == null)
-            {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.Unauthorized,
-                    ErrorMessage = "No UserToken provided"
-                });
-                responseContext.StatusCode = StatusCodes.Unauthorized;
-                return responseContext;
-            } */
-
-            
+             if (token == null || !model.VerifyToken(token.Value))
+             {
+                 return NotAuthorized();
+             } 
+             
             if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Body is empty"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
+                return EmptyBody();
             }
 
             var packageEntity = JsonConvert.DeserializeObject<PackageEntity>(RequestContext.HttpBody);
 
+            if (packageEntity.CardsInPackage.Count < 1)
+                return CardNotValid();
+            
+            foreach (var card in packageEntity.CardsInPackage)
+            {
+                if(string.IsNullOrEmpty(card.Id))
+                    card.GenerateIdForCard();
 
-            return null;
+
+                if ( (card.CardType == CardType.MonsterCard && card.Race == Race.Unknow)
+                    || card.Damage <= 0)
+                    return CardNotValid();
+              
+            }
+            
+            if (Database.AddPackage(packageEntity))
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.Created,
+                    Object = "Package Created successful"
+                });
+                responseContext.StatusCode = StatusCodes.Created;
+            }
+            else
+            {
+                responseContext = SomeThingWrong();
+            }
+
+            return responseContext;
         }
+
+        private ResponseContext CardNotValid()
+        {
+            ResponseContext responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = StatusCodes.BadRequest,
+                ErrorMessage = "CardEntity is not valid"
+            });
+            responseContext.StatusCode = StatusCodes.BadRequest;
+            return responseContext;
+        }
+        
     }
 }

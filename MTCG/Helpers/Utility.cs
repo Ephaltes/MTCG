@@ -41,5 +41,10 @@ namespace MTCG.Helpers
             
             return new AuthorizationEntity(){Type = splitted[0],Value = splitted[1]};
         }
+
+        public static void GenerateIdForCard(this CardEntity source)
+        {
+            source.Id = Guid.NewGuid().ToString("N");
+        }
     }
 }

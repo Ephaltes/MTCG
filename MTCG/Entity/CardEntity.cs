@@ -15,8 +15,8 @@ namespace MTCG
         public string Name { get; set; }
         public double Damage { get; set; }
         public string Description { get; set; }
-        public ElementType ElementType { get; set; }
-        public CardType CardType { get; set; }
-        public Race Race { get; set; }
+        public ElementType ElementType { get; set; } = ElementType.Normal;
+        public CardType CardType { get; set; } = CardType.MonsterCard;
+        public Race Race { get; set; } = Race.Unknow;
     }
 }
