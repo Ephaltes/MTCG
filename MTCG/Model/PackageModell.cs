@@ -22,7 +22,7 @@ namespace MTCG.Model
 
         public PackageModell(PackageEntity entity, IDatabase database)
         {
-            if (entity.Amount == 0 || entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
+            if (entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
                 throw new MissingMemberException("Packages doesnt have Id, Amount or Cards");
 
             if (string.IsNullOrEmpty(entity.Id))
@@ -45,6 +45,8 @@ namespace MTCG.Model
                 if (string.IsNullOrEmpty(entity.Id))
                     entity.Id = Guid.NewGuid().ToString("N");
 
+                entity.CardPlace = CardPlace.Pack;
+
 
                 Entity.CardsInPackage.Add(entity);
                 _database.AddCardToDatabase(entity);
@@ -66,6 +68,8 @@ namespace MTCG.Model
                 {
                     if (string.IsNullOrEmpty(card.Id))
                         card.Id = Guid.NewGuid().ToString("N");
+
+                    card.CardPlace = CardPlace.Pack;
                 }
 
                 Entity.CardsInPackage.AddRange(entity);
@@ -89,6 +93,7 @@ namespace MTCG.Model
             foreach (var card in Entity.CardsInPackage)
             {
                card.GenerateIdForCard();
+               card.CardPlace = CardPlace.Stack;
             }
 
             if (_database.OpenPackage(Entity, user))

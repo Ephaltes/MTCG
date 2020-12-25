@@ -52,6 +52,12 @@ namespace MTCG.API
                     case "transactions":
                         handler = new TransactionsHandler(_requestContext, Database);
                         break;
+                    case "cards":
+                        handler = new CardsHandler(_requestContext, Database);
+                        break;
+                    case "deck":
+                        handler = new DeckHandler(_requestContext, Database);
+                        break;
                     default:
                         _responseContext.ResponseMessage.Add(new ResponseMessage()
                         {

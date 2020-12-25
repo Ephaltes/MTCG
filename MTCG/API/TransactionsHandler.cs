@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Interface;
@@ -27,30 +28,25 @@ namespace MTCG.API
                 return CustomError("Wrong Parameter",StatusCodes.BadRequest);
                 
             
-            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
 
-             if (token == null || !model.VerifyToken(token.Value))
-             {
-                 return NotAuthorized();
-             }
+            if (token == null || !model.VerifyToken(authorization.Value))
+            {
+                return NotAuthorized();
+            }
 
              if (model.UserEntity.Coins < 5)
                  return CustomError("Not enough coins", StatusCodes.BadRequest);
 
-             var packages = Database.GetPackages();
+             var packages = Database.GetPackages().OrderBy(x=>x.PackageAmount).ToList();
              
              var cards = packages[0].Open(model.UserEntity);
 
              if (cards == null)
-                 return SomeThingWrong();
+                 return CustomError("No Packages available", StatusCodes.NotFound);
              
-             responseContext.ResponseMessage.Add(new ResponseMessage()
-             {
-                 Status = StatusCodes.OK,
-                 Object = cards
-             });
-             responseContext.StatusCode = StatusCodes.OK;
-             return responseContext;
+             return SuccessObject(cards,StatusCodes.OK);
         }
 
     }

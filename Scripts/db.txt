@@ -29,7 +29,8 @@ CREATE TABLE mtcg.Card (
 	description TEXT,
 	elementtype INTEGER NOT NULL,
 	cardtype INTEGER NOT NULL,
-	race INTEGER
+	race INTEGER,
+	cardplace INTEGER NOT NULL
 );
 
 CREATE TABLE mtcg.Package (
@@ -50,7 +51,6 @@ CREATE TABLE mtcg.R_User_Card (
 	id SERIAL NOT NULL PRIMARY KEY,
 	userid INTEGER NOT NULL,
 	cardid TEXT NOT NULL,
-	cardplace INTEGER NOT NULL,
 	CONSTRAINT fk_r_user_user FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE,
 	CONSTRAINT fk_r_user_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
 );

@@ -23,12 +23,13 @@ namespace MTCG.API
             ResponseContext responseContext = new ResponseContext();
             UserModell model = new UserModell(Database);
             
-            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
 
-             if (token == null || !model.VerifyToken(token.Value))
-             {
-                 return NotAuthorized();
-             } 
+            if (token == null || !model.VerifyToken(authorization.Value))
+            {
+                return NotAuthorized();
+            }
              
             if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {

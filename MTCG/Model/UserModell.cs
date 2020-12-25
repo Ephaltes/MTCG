@@ -13,29 +13,29 @@ namespace MTCG.Model
     public class UserModell
     {
         public UserEntity UserEntity { get; set; }
-        public StackModell Stack { get; }
-        public DeckModell Deck { get; }
-        
+        public List<CardEntity> Stack => GetStack();
+        public List<CardEntity> Deck
+        {
+            get => GetDeck();
+        }
+
         private IDatabase _database;
 
         public UserModell(IDatabase db)
         {
-
             _database = db;
-            Stack = new StackModell();
-            Deck = new DeckModell();
         }
 
         public bool VerifyToken(string token)
         {
             if (!token.Contains("-mtcgToken"))
                 return false;
-            
+
             UserEntity = _database.GetUserByToken(token);
 
             if (UserEntity == null)
                 return false;
-            
+
             return true;
         }
 
@@ -49,12 +49,11 @@ namespace MTCG.Model
             return _database.UpdateUser(UserEntity);
         }
 
-      public string CreateTokenForUser(string username, string password)
+        public string CreateTokenForUser(string username, string password)
         {
-
             if (_database.UserExists(username))
-                return "User already exists";
-            
+                return null;
+
             UserEntity newUser = new UserEntity();
             newUser.Username = username;
             var hash = Cryptography.GenerateSaltedHash(password);
@@ -62,23 +61,38 @@ namespace MTCG.Model
             newUser.Salt = hash.Salt;
             newUser.Token = username + "-mtcgToken";
 
-            if(_database.CreateUser(newUser))
+            if (_database.CreateUser(newUser))
                 return newUser.Token;
 
             return null;
         }
 
-      public bool VerifyLogin()
-      {
-          var entity = GetUserByUsername(UserEntity.Username);
+        public bool VerifyLogin()
+        {
+            var entity = GetUserByUsername(UserEntity.Username);
 
-          if (Cryptography.VerifyPassword(UserEntity.Password, entity.Password, entity.Salt))
-          {
-              UserEntity = entity;
-              return true;
-          }
-          return false;
-      }
-      
-      }
+            if (Cryptography.VerifyPassword(UserEntity.Password, entity.Password, entity.Salt))
+            {
+                UserEntity = entity;
+                return true;
+            }
+
+            return false;
+        }
+
+        protected List<CardEntity> GetStack()
+        {
+            return _database.GetStackFromUser(UserEntity);
+        }
+
+        protected List<CardEntity> GetDeck()
+        {
+            return _database.GetDeckFromUser(UserEntity);
+        }
+
+        public bool SetDeckByCardIds(List<string> cardIds)
+        {
+            return _database.SetDeckByCardIds(cardIds,UserEntity);
+        }
+    }
 }

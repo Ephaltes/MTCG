@@ -34,14 +34,7 @@ namespace MTCG.Helpers
             return ret;
         }
 
-        public static AuthorizationEntity HeaderToAuthorizationEntity(this string source)
-        {
-            var splitted = source.Trim().Split(" ");
-            if (splitted.Length < 2)
-                return null;
-            
-            return new AuthorizationEntity(){Type = splitted[0],Value = splitted[1]};
-        }
+      
 
         public static void GenerateIdForCard(this CardEntity source)
         {

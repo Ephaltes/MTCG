@@ -44,16 +44,9 @@ namespace MTCG.API
             model.UserEntity = userEntity;
             if (model.VerifyLogin())
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
-                {
-                  Object = model.UserEntity.Token,
-                  Status = StatusCodes.OK
-                });
-                responseContext.StatusCode = StatusCodes.OK;
-                return responseContext;
+                return SuccessObject(model.UserEntity.Token, StatusCodes.OK);
             }
-            
-            return SomeThingWrong();
+            return NotAuthorized();
         }
     }
 }

@@ -8,6 +8,7 @@ namespace MTCG
         Stack=1,
         Deck=2,
         Transaction=3,
+        Pack=4
     }
     public class CardEntity
     {
@@ -18,5 +19,6 @@ namespace MTCG
         public ElementType ElementType { get; set; } = ElementType.Normal;
         public CardType CardType { get; set; } = CardType.MonsterCard;
         public Race Race { get; set; } = Race.Unknow;
+        public CardPlace CardPlace { get; set; } = CardPlace.Stack;
     }
 }

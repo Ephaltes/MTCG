@@ -1,4 +1,5 @@
 ﻿using System;
+using MTCG.Entity;
 using MTCG.Interface;
 using WebServer;
 using WebServer.API;
@@ -119,6 +120,30 @@ namespace MTCG.API
             });
             responseContext.StatusCode = code;
             return responseContext;
+        }
+        
+        protected ResponseContext SuccessObject(Object msg, StatusCodes code)
+        {
+            var responseContext = new ResponseContext();
+            responseContext.ResponseMessage.Add(new ResponseMessage()
+            {
+                Status = code,
+                Object = msg
+            });
+            responseContext.StatusCode = code;
+            return responseContext;
+        }
+        
+        protected AuthorizationEntity ConvertToAuthorizationEntity(string token)
+        {
+            if (String.IsNullOrEmpty(token))
+                return null;
+            
+            var splitted = token.Trim().Split(" ");
+            if (splitted.Length < 2)
+                return null;
+            
+            return new AuthorizationEntity(){Type = splitted[0],Value = splitted[1]};
         }
     }
 }

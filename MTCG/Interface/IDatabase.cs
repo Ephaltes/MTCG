@@ -36,5 +36,9 @@ namespace MTCG.Interface
         public bool AddCardToPackage(PackageEntity packageEntity);
 
         public bool OpenPackage(PackageEntity packageEntity, UserEntity userEntity);
+
+        public List<CardEntity> GetStackFromUser(UserEntity userEntity);
+        public List<CardEntity> GetDeckFromUser(UserEntity userEntity);
+        public bool SetDeckByCardIds(List<string> cardIDs, UserEntity userEntity);
     }
 }

@@ -22,9 +22,12 @@ namespace MTCG.API
         protected override ResponseContext HandleGet()
         {
             ResponseContext responseContext = new ResponseContext();
-            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            UserModell model = new UserModell(Database);
 
-            if (token == null)
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
+
+            if (token == null || !model.VerifyToken(authorization.Value))
             {
                 return NotAuthorized();
             }
@@ -41,7 +44,6 @@ namespace MTCG.API
             }
 
            
-            UserModell model = new UserModell(Database);
             var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
             ResponseMessage msg = new ResponseMessage();
 
@@ -104,9 +106,10 @@ namespace MTCG.API
             UserModell model = new UserModell(Database);
 
             
-            var token = RequestContext.HttpHeader["Authorization"].HeaderToAuthorizationEntity();
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
 
-            if (token == null || !model.VerifyToken(token.Value) )
+            if (token == null || !model.VerifyToken(authorization.Value))
             {
                 return NotAuthorized();
             }
