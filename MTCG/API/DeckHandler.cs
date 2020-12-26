@@ -63,6 +63,52 @@ namespace MTCG.API
             
             return SomeThingWrong();
         }
+        
+        protected override ResponseContext HandlePost()
+        {
+            UserModell model = new UserModell(Database);
+
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
+
+            if (authorization == null || !model.VerifyToken(authorization.Value))
+            {
+                return NotAuthorized();
+            }
+
+            if (string.IsNullOrEmpty(RequestContext.HttpBody))
+                return EmptyBody();
+
+            var cardid = JsonConvert.DeserializeObject<string>(RequestContext.HttpBody);
+
+            if (model.AddCardToDeckByCardId(cardid))
+                return SuccessObject("Cards added successful", StatusCodes.OK);
+            
+            return SomeThingWrong();
+        }
+        
+        protected override ResponseContext HandleDelete()
+        {
+            UserModell model = new UserModell(Database);
+
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
+
+            if (authorization == null || !model.VerifyToken(authorization.Value))
+            {
+                return NotAuthorized();
+            }
+
+            if (string.IsNullOrEmpty(RequestContext.HttpBody))
+                return EmptyBody();
+
+            var cardid = JsonConvert.DeserializeObject<string>(RequestContext.HttpBody);
+
+            if (model.RemoveCardFromDeckByCardId(cardid))
+                return SuccessObject("Cards added successful", StatusCodes.OK);
+            
+            return SomeThingWrong();
+        }
 
     }
 }

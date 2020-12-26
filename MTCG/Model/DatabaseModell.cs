@@ -1018,5 +1018,116 @@ namespace MTCG.Model
                        _connection.Close();
                }
            }
+           
+           public bool AddCardToDeckByCardId(string cardId,UserEntity userEntity)
+           {
+               bool opened = false;
+            
+               if (_connection.State != ConnectionState.Open)
+               {
+                   _connection.Open();
+                   opened = true;
+               }
+
+               try
+               {
+
+                   var sql = "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                   var cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
+                   NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                   List<string> oldDeckIds = new List<string>();
+
+                   while (reader.Read())
+                   {
+                      oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
+                   }
+                   reader.Close();
+
+                   if (oldDeckIds.Count >= Constant.MAXCARDSINDECK)
+                       return false;
+
+                   sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                   cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
+                   cmd.Parameters.AddWithValue("id",cardId);
+                   var result = cmd.ExecuteNonQuery();
+
+                   if (result == 1)
+                   {                       
+                        return true;
+                   }
+
+                   return false;
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine(e);
+                   return false;
+               }
+               finally
+               {
+                   if(opened)
+                       _connection.Close();
+               }
+           }
+           public bool RemoveCardFromDeckByCardId(string cardId,UserEntity userEntity)
+           {
+               bool opened = false;
+            
+               if (_connection.State != ConnectionState.Open)
+               {
+                   _connection.Open();
+                   opened = true;
+               }
+
+               try
+               {
+
+                   var sql = "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                   var cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
+                   NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                   List<string> oldDeckIds = new List<string>();
+
+                   while (reader.Read())
+                   {
+                      oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
+                   }
+                   reader.Close();
+
+                   foreach (var id in oldDeckIds)
+                   {
+                       if (id == cardId)
+                       {
+                           sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                           cmd = new NpgsqlCommand(sql, _connection);
+
+                           cmd.Parameters.AddWithValue("id", id);
+                           cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Stack);
+
+                           cmd.ExecuteNonQuery();
+                       }
+                   }
+                   return true;
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine(e);
+                   return false;
+               }
+               finally
+               {
+                   if(opened)
+                       _connection.Close();
+               }
+           }
     }
 }

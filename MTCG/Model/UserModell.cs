@@ -94,5 +94,15 @@ namespace MTCG.Model
         {
             return _database.SetDeckByCardIds(cardIds,UserEntity);
         }
+
+        public bool AddCardToDeckByCardId(string cardId)
+        {
+            return _database.AddCardToDeckByCardId(cardId, UserEntity);
+        }
+
+        public bool RemoveCardFromDeckByCardId(string cardId)
+        {
+            return _database.RemoveCardFromDeckByCardId(cardId, UserEntity);
+        }
     }
 }

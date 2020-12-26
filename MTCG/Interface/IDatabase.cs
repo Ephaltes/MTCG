@@ -40,5 +40,8 @@ namespace MTCG.Interface
         public List<CardEntity> GetStackFromUser(UserEntity userEntity);
         public List<CardEntity> GetDeckFromUser(UserEntity userEntity);
         public bool SetDeckByCardIds(List<string> cardIDs, UserEntity userEntity);
+
+        public bool AddCardToDeckByCardId(string cardId, UserEntity userEntity);
+        public bool RemoveCardFromDeckByCardId(string cardId, UserEntity userEntity);
     }
 }
