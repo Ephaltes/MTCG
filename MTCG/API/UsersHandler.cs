@@ -15,23 +15,15 @@ namespace MTCG.API
 {
     public class UsersHandler : DefaultRessourceHandler
     {
-        public UsersHandler(IRequestContext req,IDatabase database) : base(req,database)
+        public UsersHandler(IRequestContext req, IDatabase database) : base(req, database)
         {
         }
-        
+
         protected override ResponseContext HandleGet()
         {
             ResponseContext responseContext = new ResponseContext();
             UserModell model = new UserModell(Database);
 
-            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
-            var authorization = ConvertToAuthorizationEntity(token);
-
-            if (authorization == null || !model.VerifyToken(authorization.Value))
-            {
-                return NotAuthorized();
-            }
-            
             if (RequestContext.HttpRequest.Count < 2)
             {
                 responseContext.ResponseMessage.Add(new ResponseMessage()
@@ -43,82 +35,99 @@ namespace MTCG.API
                 return responseContext;
             }
 
-           
             var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
+
+            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            var authorization = ConvertToAuthorizationEntity(token);
+
+            if (authorization == null || !model.VerifyToken(authorization.Value) || entity == null ||
+                entity.Token != model.UserEntity.Token)
+            {
+                return NotAuthorized();
+            }
+
             ResponseMessage msg = new ResponseMessage();
 
-            if (entity == null)
+            msg.Status = StatusCodes.OK;
+            msg.Object = new UserEntity()
             {
-                msg.Status = StatusCodes.NotFound;
-                msg.ErrorMessage = "User not found";
-                responseContext.StatusCode = StatusCodes.NotFound;
-            }
-            else
-            {
-                msg.Status = StatusCodes.OK;
-                msg.Object = new UserEntity()
-                {
-                    Description = entity.Description,
-                    Image = entity.Image,
-                    DisplayName = entity.DisplayName,
-                };
-                responseContext.StatusCode = StatusCodes.OK;
-            }
-           
+                Description = entity.Description,
+                Image = entity.Image,
+                DisplayName = entity.DisplayName,
+                Elo = entity.Elo,
+                Win = entity.Win,
+                Lose = entity.Lose,
+                Draw = entity.Draw,
+                Coins = entity.Coins
+            };
+            responseContext.StatusCode = StatusCodes.OK;
+
             responseContext.ResponseMessage.Add(msg);
             return responseContext;
         }
 
         protected override ResponseContext HandlePost()
         {
-           ResponseContext responseContext = new ResponseContext();
-           if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
-           {
-               return EmptyBody();
-           }
+            ResponseContext responseContext = new ResponseContext();
+            if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
+            {
+                return EmptyBody();
+            }
 
-           var userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
-           
-           UserModell model = new UserModell(Database);
-           var token = model.CreateTokenForUser(userEntity.Username, userEntity.Password);
-           ResponseMessage msg = new ResponseMessage();
+            var userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
 
-           if (string.IsNullOrWhiteSpace(token))
-           {
-               msg.Status = StatusCodes.BadRequest;
-               msg.ErrorMessage = "User already exists";
-               responseContext.StatusCode = StatusCodes.BadRequest;
-           }
-           else
-           {
-               msg.Status = StatusCodes.Created;
-               msg.Object = $"Token:{token}";
-               responseContext.StatusCode = StatusCodes.Created;
-           }
-           
-           responseContext.ResponseMessage.Add(msg);
-           return responseContext;
+            UserModell model = new UserModell(Database);
+            var token = model.CreateTokenForUser(userEntity.Username, userEntity.Password);
+            ResponseMessage msg = new ResponseMessage();
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                msg.Status = StatusCodes.BadRequest;
+                msg.ErrorMessage = "User already exists";
+                responseContext.StatusCode = StatusCodes.BadRequest;
+            }
+            else
+            {
+                msg.Status = StatusCodes.Created;
+                msg.Object = $"Token:{token}";
+                responseContext.StatusCode = StatusCodes.Created;
+            }
+
+            responseContext.ResponseMessage.Add(msg);
+            return responseContext;
         }
 
         protected override ResponseContext HandlePut()
         {
             ResponseContext responseContext = new ResponseContext();
             UserModell model = new UserModell(Database);
+            if (RequestContext.HttpRequest.Count < 2)
+            {
+                responseContext.ResponseMessage.Add(new ResponseMessage()
+                {
+                    Status = StatusCodes.BadRequest,
+                    ErrorMessage = "Missing Parameters"
+                });
+                responseContext.StatusCode = StatusCodes.BadRequest;
+                return responseContext;
+            }
 
-            
+            var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
+
             RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
             var authorization = ConvertToAuthorizationEntity(token);
 
-            if (authorization == null || !model.VerifyToken(authorization.Value))
+            if (authorization == null || !model.VerifyToken(authorization.Value) ||
+                entity.Token != model.UserEntity.Token)
             {
                 return NotAuthorized();
             }
-            
+
             if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
             {
                 return EmptyBody();
             }
-            
+
             ResponseMessage msg = new ResponseMessage();
             var userToModify = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
             int changes = 0;
@@ -166,6 +175,7 @@ namespace MTCG.API
                 msg.Object = "Could not Update Account Information";
                 responseContext.StatusCode = StatusCodes.InternalServerError;
             }
+
             responseContext.ResponseMessage.Add(msg);
             return responseContext;
         }

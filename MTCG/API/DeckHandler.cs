@@ -10,6 +10,7 @@ using WebServer;
 using WebServer.API;
 using WebServer.Interface;
 using WebServer.RessourceHandler;
+using Constant = MTCG.Model.Constant;
 
 namespace MTCG.API
 {
@@ -36,7 +37,11 @@ namespace MTCG.API
 
             if (deck.Count > 0)
             {
-                return SuccessObject(deck, StatusCodes.OK);
+                if(RequestContext.HttpRequest.Count < 2)
+                    return SuccessObject(deck, StatusCodes.OK);
+
+                if (RequestContext.HttpRequest.Count > 1 && RequestContext.HttpRequest[1] == Constant.PLAINTEXT)
+                    return SuccessObject(deck.ToStringForCardList(), StatusCodes.OK);
             }
             return CustomError("No Cards found", StatusCodes.NotFound);
         }
