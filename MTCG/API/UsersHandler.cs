@@ -27,7 +27,7 @@ namespace MTCG.API
             RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
             var authorization = ConvertToAuthorizationEntity(token);
 
-            if (token == null || !model.VerifyToken(authorization.Value))
+            if (authorization == null || !model.VerifyToken(authorization.Value))
             {
                 return NotAuthorized();
             }
@@ -109,7 +109,7 @@ namespace MTCG.API
             RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
             var authorization = ConvertToAuthorizationEntity(token);
 
-            if (token == null || !model.VerifyToken(authorization.Value))
+            if (authorization == null || !model.VerifyToken(authorization.Value))
             {
                 return NotAuthorized();
             }

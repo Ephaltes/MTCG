@@ -67,7 +67,8 @@ namespace UnitTest
             {
                 Username = userrequest[1],
                 Description = "description",
-                Image =  ";)"
+                Image =  ";)",
+                Token = "test-mtcgToken"
             };
             Dictionary<string,string> header = new Dictionary<string, string>();
             header.Add("Authorization","Basic test-mtcgToken");
@@ -76,13 +77,16 @@ namespace UnitTest
             request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.GET);
             request.SetupGet(x => x.HttpRequest).Returns(userrequest);
             database.Setup(x => x.GetUserByUsername(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
             
             var handler = new UsersHandler(request.Object,database.Object);
             var response = handler.Handle();
 
             var entity = response.ResponseMessage[0].Object as UserEntity;
 
-            Assert.That(entity == retEntity);
+            Assert.That(entity?.Description == retEntity.Description);
+            Assert.That(entity?.Image == retEntity.Image);
+            Assert.That(entity?.DisplayName == retEntity.DisplayName);
         }
         
         [Test]
@@ -103,9 +107,9 @@ namespace UnitTest
             var handler = new UsersHandler(request.Object,database.Object);
             var response = handler.Handle();
 
-            var entity = response.ResponseMessage[0].Object as UserEntity;
+            var status = response.ResponseMessage[0].Status;
 
-            Assert.That(entity == null);
+            Assert.That(status == StatusCodes.Unauthorized);
         }
         
         [Test]

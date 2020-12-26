@@ -23,10 +23,8 @@ namespace UnitTest
             //Arrange
             CardEntity dragonEntity = new CardEntity() { Damage = 10,Race = Race.Dragon,CardType = CardType.MonsterCard};   
             CardEntity elfEntity = new CardEntity() { Damage = 10,Race = Race.FireElf,CardType = CardType.MonsterCard};   
-            var dragon = new CardModell(dragonEntity);
-            var elf = new CardModell(elfEntity);
             //Act
-            var result = GameModell.CalculateDamge(dragon, elf);
+            var result = GameModell.CalculateDamge(dragonEntity, elfEntity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -36,11 +34,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,Race = Race.Goblin,CardType = CardType.MonsterCard};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Dragon,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Dragon,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -49,11 +45,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Wizard,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Wizard,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -62,11 +56,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -75,11 +67,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Normal};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -88,11 +78,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Knight,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Knight,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 9999);
         }
@@ -101,11 +89,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Kraken,CardType = CardType.MonsterCard};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result <= 0);
         }
@@ -115,11 +101,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Fire};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Fire};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 20);
         }
@@ -129,11 +113,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 20,CardType = CardType.SpellCard , ElementType = ElementType.Water};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Normal};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Normal};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 10);
         }
@@ -143,11 +125,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Fire};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Normal};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Normal};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 20);
         }
@@ -157,11 +137,9 @@ namespace UnitTest
         {
             //Arrange
             CardEntity card1Entity = new CardEntity() { Damage = 10,CardType = CardType.SpellCard , ElementType = ElementType.Normal};   
-            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Water};   
-            var card1 = new CardModell(card1Entity);
-            var card2 = new CardModell(card2Entity);
+            CardEntity card2Entity = new CardEntity() { Damage = 10,Race = Race.Orc,CardType = CardType.MonsterCard , ElementType = ElementType.Water};
             //Act
-            var result = GameModell.CalculateDamge(card1, card2);
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 20);
         }
