@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Interface;
-using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
     public class PackageModell : IPackage
     {
+        private readonly IDatabase _database;
         protected PackageEntity Entity;
-
-        public int CardCount => Entity.CardsInPackage.Count;
-        public int PackageAmount => Entity.Amount;
-
-        public string Id => Entity.Id;
-
-        private IDatabase _database;
 
         public PackageModell(PackageEntity entity, IDatabase database)
         {
@@ -37,6 +29,11 @@ namespace MTCG.Model
             Entity = new PackageEntity();
             _database = database;
         }
+
+        public int CardCount => Entity.CardsInPackage.Count;
+        public int PackageAmount => Entity.Amount;
+
+        public string Id => Entity.Id;
 
         public bool AddCardToPackage(CardEntity entity)
         {
@@ -89,11 +86,11 @@ namespace MTCG.Model
         {
             Entity.Amount--;
             user.Coins -= 5;
-            
+
             foreach (var card in Entity.CardsInPackage)
             {
-               card.GenerateIdForCard();
-               card.CardPlace = CardPlace.Stack;
+                card.GenerateIdForCard();
+                card.CardPlace = CardPlace.Stack;
             }
 
             if (_database.OpenPackage(Entity, user))

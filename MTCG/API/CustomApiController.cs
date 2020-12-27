@@ -6,47 +6,51 @@ using Serilog;
 using WebServer;
 using WebServer.API;
 using WebServer.Interface;
-using WebServer.RessourceHandler;
 
 namespace MTCG.API
 {
     public class CustomApiController : BaseApiController
     {
-        public IDatabase Database { get; set; }
         public CustomApiController(ITcpClient client)
         {
             _client = client;
-            _endpointList = new List<string>(){"users","sessions","packages","transactions","cards","deck","stats","battles","score","tradings"};
+            _endpointList = new List<string>
+            {
+                "users", "sessions", "packages", "transactions", "cards", "deck", "stats", "battles", "score",
+                "tradings"
+            };
             Database = new DatabaseModell();
         }
-        
+
+        public IDatabase Database { get; set; }
+
         public override string ForwardToEndPointHandler()
         {
             _responseContext = new ResponseContext();
             try
             {
                 _requestContext = new RequestContext();
-                string data = ReceiveFromClient();
+                var data = ReceiveFromClient();
 
                 _requestContext.ParseRequestFromHeader(data);
 
-                DefaultRessourceHandler handler=null;
-                
+                DefaultRessourceHandler handler = null;
+
                 switch (GetRequestedEndPoint())
                 {
                     case "users":
                     {
-                        handler = new UsersHandler(_requestContext,Database);
+                        handler = new UsersHandler(_requestContext, Database);
                         break;
                     }
                     case "sessions":
                     {
-                        handler = new SessionsHandler(_requestContext,Database);
+                        handler = new SessionsHandler(_requestContext, Database);
                         break;
                     }
                     case "packages":
                     {
-                        handler = new PackagesHandler(_requestContext,Database);
+                        handler = new PackagesHandler(_requestContext, Database);
                         break;
                     }
                     case "transactions":
@@ -68,7 +72,7 @@ namespace MTCG.API
                         handler = new BattlesHandler(_requestContext, Database);
                         break;
                     default:
-                        _responseContext.ResponseMessage.Add(new ResponseMessage()
+                        _responseContext.ResponseMessage.Add(new ResponseMessage
                         {
                             ErrorMessage = "Unknown Endpoint",
                             Status = StatusCodes.InternalServerError
@@ -77,11 +81,12 @@ namespace MTCG.API
                         _responseContext.StatusCode = StatusCodes.InternalServerError;
                         return _responseContext.BuildResponse();
                 }
+
                 _responseContext = handler.Handle();
             }
             catch (Exception e)
             {
-                _responseContext.ResponseMessage.Add(new ResponseMessage()
+                _responseContext.ResponseMessage.Add(new ResponseMessage
                 {
                     ErrorMessage = e.Message,
                     Status = StatusCodes.InternalServerError
@@ -92,7 +97,6 @@ namespace MTCG.API
             }
 
             return _responseContext.BuildResponse();
-        
         }
     }
 }

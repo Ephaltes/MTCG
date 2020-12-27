@@ -1,15 +1,10 @@
 ﻿using System;
 using MTCG.Interface;
-using Newtonsoft.Json;
 
 namespace MTCG.Model.BaseClass
 {
-
-    
     public class CardModell : ICard
     {
-        public CardEntity Entity { get; set; }
-
         public CardModell(CardEntity entity)
         {
             Entity = entity;
@@ -19,11 +14,12 @@ namespace MTCG.Model.BaseClass
         {
             Entity = new CardEntity();
         }
-        
+
+        public CardEntity Entity { get; set; }
+
         public void GenerateRandomId()
         {
             Entity.Id = Guid.NewGuid().ToString("N");
         }
-
     }
 }

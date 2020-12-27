@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.Transactions;
 using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Interface;
-using MTCG.Model.BaseClass;
 using Npgsql;
-using NpgsqlTypes;
 using Serilog;
 
 namespace MTCG.Model
@@ -25,7 +21,6 @@ namespace MTCG.Model
 
         public bool CreateUser(UserEntity userEntity)
         {
-
             try
             {
                 _connection.Open();
@@ -56,7 +51,6 @@ namespace MTCG.Model
 
         public bool UserExists(string username)
         {
-           
             try
             {
                 _connection.Open();
@@ -64,7 +58,7 @@ namespace MTCG.Model
                 using var cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("username", username);
-                
+
                 cmd.Prepare();
                 var result = cmd.ExecuteScalar();
                 if (result == null)
@@ -76,7 +70,7 @@ namespace MTCG.Model
             {
                 Console.WriteLine(e);
                 throw new NpgsqlException();
-            } 
+            }
             finally
             {
                 _connection.Close();
@@ -98,7 +92,7 @@ namespace MTCG.Model
                 if (!result.HasRows)
                     return null;
 
-                UserEntity ret = new UserEntity();
+                var ret = new UserEntity();
 
                 while (result.Read())
                 {
@@ -129,9 +123,8 @@ namespace MTCG.Model
                 _connection.Close();
             }
         }
-        
-        
-        
+
+
         public UserEntity GetUserByUsername(string username)
         {
             try
@@ -147,7 +140,7 @@ namespace MTCG.Model
                 if (!result.HasRows)
                     return null;
 
-                UserEntity ret = new UserEntity();
+                var ret = new UserEntity();
 
                 while (result.Read())
                 {
@@ -184,7 +177,8 @@ namespace MTCG.Model
             try
             {
                 _connection.Open();
-                var sql = "UPDATE mtcg.user SET password=@password, description=@description, displayname=@displayname, image=@image, salt=@salt where token=@token";
+                var sql =
+                    "UPDATE mtcg.user SET password=@password, description=@description, displayname=@displayname, image=@image, salt=@salt where token=@token";
                 using var cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("token", user.Token);
@@ -214,9 +208,9 @@ namespace MTCG.Model
 
         public bool AddCardsToDatabase(List<CardEntity> cardsToAdd)
         {
-            bool opened = false;
+            var opened = false;
             NpgsqlTransaction transaction = null;
-            
+
             if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
@@ -235,12 +229,12 @@ namespace MTCG.Model
                     cmd.Parameters.AddWithValue("id", card.Id);
                     cmd.Parameters.AddWithValue("name", card.Name);
                     cmd.Parameters.AddWithValue("damage", card.Damage);
-                    cmd.Parameters.AddWithValue("description", card.Description?? string.Empty);
-                    cmd.Parameters.AddWithValue("elementtype", (int)card.ElementType);
-                    cmd.Parameters.AddWithValue("cardtype",(int) card.CardType);
-                    cmd.Parameters.AddWithValue("race", (int)card.Race);
+                    cmd.Parameters.AddWithValue("description", card.Description ?? string.Empty);
+                    cmd.Parameters.AddWithValue("elementtype", (int) card.ElementType);
+                    cmd.Parameters.AddWithValue("cardtype", (int) card.CardType);
+                    cmd.Parameters.AddWithValue("race", (int) card.Race);
                     cmd.Parameters.AddWithValue("cardplace", (int) card.CardPlace);
-                    
+
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
                     transaction?.Commit();
@@ -256,14 +250,14 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
 
         public bool AddCardToDatabase(CardEntity card)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
@@ -295,31 +289,31 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
-        
-        public bool AddCardToStack(CardEntity card,UserEntity user)
+
+        public bool AddCardToStack(CardEntity card, UserEntity user)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
                 opened = true;
             }
-            
+
             try
             {
                 var sql =
                     "INSERT INTO mtcg.r_user_card(userid, cardid, cardplace) VALUES(@userid,@cardid,@cardplace)";
                 var cmd = new NpgsqlCommand(sql, _connection);
-                
+
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
                 cmd.Parameters.AddWithValue("cardid", card.Id);
                 cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
-                
+
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
                 return true;
@@ -331,56 +325,14 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
-        
-        public bool AddCardToUser(List<CardEntity> cards,UserEntity user)
-        {
-            bool opened = false;
-            NpgsqlTransaction transaction = null;
-            if (_connection.State != ConnectionState.Open)
-            {
-                _connection.Open();
-                transaction = _connection.BeginTransaction();
-                opened = true;
-            }
 
-            try
-            {
-                foreach (var card in cards)
-                {
-                    var sql =
-                        "INSERT INTO mtcg.r_user_card(userid, cardid) VALUES(@userid,@cardid)";
-                    var cmd = new NpgsqlCommand(sql, _connection);
-                
-
-                    cmd.Parameters.AddWithValue("userid", user.Id);
-                    cmd.Parameters.AddWithValue("cardid", card.Id);
-                
-                    cmd.Prepare();
-                    cmd.ExecuteNonQuery();
-                }
-                transaction?.Commit();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message);
-                transaction?.Rollback();
-                return false;
-            }
-            finally
-            {
-                if(opened)
-                    _connection.Close();
-            }
-        }
-        
-        public bool UpdateCardStatus(CardEntity card,UserEntity user,CardPlace cardPlace)
+        public bool UpdateCardStatus(CardEntity card, UserEntity user, CardPlace cardPlace)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
@@ -392,12 +344,12 @@ namespace MTCG.Model
                 var sql =
                     "UPDATE mtcg.r_user_card set cardplace=@cardplace where cardid=@cardid AND userid=@userid";
                 var cmd = new NpgsqlCommand(sql, _connection);
-                
+
 
                 cmd.Parameters.AddWithValue("userid", user.Id);
                 cmd.Parameters.AddWithValue("cardid", card.Id);
                 cmd.Parameters.AddWithValue("cardplace", cardPlace);
-                
+
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
                 return true;
@@ -409,7 +361,7 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
@@ -417,7 +369,7 @@ namespace MTCG.Model
 
         public bool AddCardToPackage(PackageEntity packageEntity)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
@@ -448,11 +400,11 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
-        
+
         public bool AddPackage(PackageEntity packageEntity)
         {
             _connection.Open();
@@ -470,7 +422,7 @@ namespace MTCG.Model
                 var response = cmd.ExecuteNonQuery();
 
                 if (response > 0)
-                    if(AddCardsToDatabase(packageEntity.CardsInPackage))
+                    if (AddCardsToDatabase(packageEntity.CardsInPackage))
                         if (AddCardToPackage(packageEntity))
                         {
                             transaction.Commit();
@@ -492,7 +444,7 @@ namespace MTCG.Model
         }
 
 
-        public bool OpenPackage(PackageEntity packageEntity,UserEntity userEntity)
+        public bool OpenPackage(PackageEntity packageEntity, UserEntity userEntity)
         {
             _connection.Open();
             var transaction = _connection.BeginTransaction();
@@ -503,7 +455,7 @@ namespace MTCG.Model
                 var cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("packageid", packageEntity.Id);
-                
+
                 cmd.Prepare();
                 var response = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -512,8 +464,8 @@ namespace MTCG.Model
                     transaction.Commit();
                     return false;
                 }
-              
-                
+
+
                 if (GetCoinsFromUser(userEntity) < Constant.PRICEPERPACKAGE)
                 {
                     transaction.Commit();
@@ -534,7 +486,7 @@ namespace MTCG.Model
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
 
-                if(AddCardsToDatabase(packageEntity.CardsInPackage))
+                if (AddCardsToDatabase(packageEntity.CardsInPackage))
                     if (AddCardToUser(packageEntity.CardsInPackage, userEntity))
                     {
                         transaction.Commit();
@@ -543,7 +495,6 @@ namespace MTCG.Model
 
                 transaction.Rollback();
                 return false;
-
             }
             catch (Exception e)
             {
@@ -556,9 +507,648 @@ namespace MTCG.Model
             }
         }
 
+        public List<IPackage> GetPackages()
+        {
+            _connection.Open();
+
+            try
+            {
+                var retList = new List<IPackage>();
+                var sql = "select * from mtcg.package";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                var result = cmd.ExecuteReader();
+
+                var packageIds = new List<string>();
+
+                while (result.Read()) packageIds.Add(result.SafeGetString(0));
+
+                result.Close();
+
+                foreach (var id in packageIds) retList.Add(GetPackage(id));
+
+                return retList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public IPackage GetPackage(string packageid)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var entity = new PackageEntity();
+
+                var sql = "select * from mtcg.package where id = @packageid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("packageid", packageid);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                while (result.Read())
+                {
+                    entity.Id = result.SafeGetString(0);
+                    entity.Amount = result.GetInt32(1);
+                }
+
+                result.Close();
+
+                entity.CardsInPackage = GetCardsInPackage(packageid);
+                var model = new PackageModell(entity, this);
+                return model;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public List<CardEntity> GetCardsInPackage(string packageid)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var ret = new List<CardEntity>();
+                var sql =
+                    " select cardid from mtcg.package INNER JOIN mtcg.r_package_card ON package.id=r_package_card.packageid WHERE package.id = @packageid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("packageid", packageid);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                var cardIds = new List<string>();
+
+                while (result.Read()) cardIds.Add(result.SafeGetString(0));
+                result.Close();
+
+
+                foreach (var id in cardIds)
+                {
+                    sql = "select * from mtcg.card where id = @cardid";
+                    cmd = new NpgsqlCommand(sql, _connection);
+
+                    cmd.Parameters.AddWithValue("cardid", id);
+                    cmd.Prepare();
+                    cmd.ExecuteReader();
+
+                    CardEntity entity = null;
+
+                    while (result.Read())
+                        entity = new CardEntity
+                        {
+                            Id = result.SafeGetString(0),
+                            Name = result.SafeGetString(1),
+                            Damage = result.GetDouble(2),
+                            Description = result.SafeGetString(3),
+                            ElementType = (ElementType) result.GetInt32(4),
+                            CardType = (CardType) result.GetInt32(5),
+                            Race = (Race) result.GetInt32(6)
+                        };
+
+
+                    if (entity == null)
+                    {
+                        result.Close();
+                        continue;
+                    }
+
+                    if (entity != null && string.IsNullOrEmpty(entity.Id))
+                        throw new InvalidDataException();
+
+                    ret.Add(entity);
+                    result.Close();
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public List<CardEntity> GetStackFromUser(UserEntity userEntity)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var ret = new List<CardEntity>();
+                var sql =
+                    " select cardid from mtcg.r_user_card WHERE userid=@userid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                var cardIds = new List<string>();
+
+                while (result.Read()) cardIds.Add(result.SafeGetString(0));
+
+                result.Close();
+
+
+                foreach (var id in cardIds)
+                {
+                    sql = "select * from mtcg.card where id = @cardid";
+                    cmd = new NpgsqlCommand(sql, _connection);
+
+                    cmd.Parameters.AddWithValue("cardid", id);
+                    cmd.Prepare();
+                    cmd.ExecuteReader();
+
+                    var entity = new CardEntity();
+
+                    while (result.Read())
+                    {
+                        entity.Id = result.SafeGetString(0);
+                        entity.Name = result.SafeGetString(1);
+                        entity.Damage = result.GetDouble(2);
+                        entity.Description = result.SafeGetString(3);
+                        entity.ElementType = (ElementType) result.GetInt32(4);
+                        entity.CardType = (CardType) result.GetInt32(5);
+                        entity.Race = (Race) result.GetInt32(6);
+                        entity.CardPlace = (CardPlace) result.GetInt32(7);
+                    }
+
+                    if (string.IsNullOrEmpty(entity.Id))
+                        throw new InvalidDataException();
+
+                    ret.Add(entity);
+                    result.Close();
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public List<CardEntity> GetDeckFromUser(UserEntity userEntity)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var ret = new List<CardEntity>();
+                var sql =
+                    " select cardid from mtcg.r_user_card WHERE userid=@userid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                var cardIds = new List<string>();
+
+                while (result.Read()) cardIds.Add(result.SafeGetString(0));
+
+                result.Close();
+
+
+                foreach (var id in cardIds)
+                {
+                    sql = "select * from mtcg.card where id = @cardid AND cardplace=@cardplace";
+                    cmd = new NpgsqlCommand(sql, _connection);
+
+                    cmd.Parameters.AddWithValue("cardid", id);
+                    cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                    cmd.Prepare();
+                    cmd.ExecuteReader();
+
+                    CardEntity entity = null;
+
+                    while (result.Read())
+                        entity = new CardEntity
+                        {
+                            Id = result.SafeGetString(0),
+                            Name = result.SafeGetString(1),
+                            Damage = result.GetDouble(2),
+                            Description = result.SafeGetString(3),
+                            ElementType = (ElementType) result.GetInt32(4),
+                            CardType = (CardType) result.GetInt32(5),
+                            Race = (Race) result.GetInt32(6),
+                            CardPlace = (CardPlace) result.GetInt32(7)
+                        };
+
+                    if (entity == null)
+                    {
+                        result.Close();
+                        continue;
+                    }
+
+                    if (entity != null && string.IsNullOrEmpty(entity.Id))
+                        throw new InvalidDataException();
+
+                    ret.Add(entity);
+                    result.Close();
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool SetDeckByCardIds(List<string> cardIDs, UserEntity userEntity)
+        {
+            var opened = false;
+            NpgsqlTransaction transaction = null;
+
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
+                opened = true;
+            }
+
+            try
+            {
+                var sql =
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                var reader = cmd.ExecuteReader();
+
+                var oldDeckIds = new List<string>();
+
+                while (reader.Read())
+                    oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
+                reader.Close();
+
+                foreach (var id in oldDeckIds)
+                {
+                    sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                    cmd = new NpgsqlCommand(sql, _connection);
+
+                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Stack);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = ANY(@list)";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                cmd.Parameters.AddWithValue("list", cardIDs);
+                var result = cmd.ExecuteNonQuery();
+
+                if (result == cardIDs.Count)
+                {
+                    transaction?.Commit();
+                    return true;
+                }
+
+                transaction?.Rollback();
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                transaction?.Rollback();
+                return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool AddCardToDeckByCardId(string cardId, UserEntity userEntity)
+        {
+            var opened = false;
+
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
+            try
+            {
+                var sql =
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                var reader = cmd.ExecuteReader();
+
+                var oldDeckIds = new List<string>();
+
+                while (reader.Read())
+                    oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
+                reader.Close();
+
+                if (oldDeckIds.Count >= Constant.MAXCARDSINDECK)
+                    return false;
+
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                cmd.Parameters.AddWithValue("id", cardId);
+                var result = cmd.ExecuteNonQuery();
+
+                if (result == 1) return true;
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool RemoveCardFromDeckByCardId(string cardId, UserEntity userEntity)
+        {
+            var opened = false;
+
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
+            try
+            {
+                var sql =
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
+                var reader = cmd.ExecuteReader();
+
+                var oldDeckIds = new List<string>();
+
+                while (reader.Read())
+                    oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
+                reader.Close();
+
+                foreach (var id in oldDeckIds)
+                    if (id == cardId)
+                    {
+                        sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                        cmd = new NpgsqlCommand(sql, _connection);
+
+                        cmd.Parameters.AddWithValue("id", id);
+                        cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Stack);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public List<UserEntity> LoadScoreBoard()
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
+            try
+            {
+                var sql = "SELECT * FROM mtcg.user order by elo desc limit @limit";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("limit", Constant.TOP10);
+
+                var reader = cmd.ExecuteReader();
+                var retList = new List<UserEntity>();
+
+                while (reader.Read())
+                {
+                    var entity = new UserEntity
+                    {
+                        Id = reader.GetInt32(0),
+                        Username = reader.SafeGetString(1),
+                        Password = reader.SafeGetString(2),
+                        Salt = reader.SafeGetString(3),
+                        Token = reader.SafeGetString(4),
+                        Description = reader.SafeGetString(5),
+                        DisplayName = reader.SafeGetString(6),
+                        Image = reader.SafeGetString(7),
+                        Elo = reader.GetInt32(8),
+                        Win = reader.GetInt32(9),
+                        Lose = reader.GetInt32(10),
+                        Draw = reader.GetInt32(11),
+                        Coins = reader.GetInt32(12)
+                    };
+
+                    retList.Add(entity);
+                }
+
+                reader.Close();
+
+                if (retList.Count < 1)
+                    return null;
+
+                return retList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        //
+        public bool UpdateElo(UserEntity me, UserEntity enemy, bool won = true)
+        {
+            //Formel : https://medium.com/purple-theory/what-is-elo-rating-c4eb7a9061e0
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
+            try
+            {
+                var sql = "SELECT elo from mtcg.user where id=@enemyid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("enemyid", enemy.Id);
+
+                var enemyElo = (int) cmd.ExecuteScalar();
+
+                sql = "SELECT elo from mtcg.user where id=@id";
+                cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("id", me.Id);
+
+                var myElo = (int) cmd.ExecuteScalar();
+
+                double estimatedFactor = 1 / ((1 + 10) ^ ((enemyElo - myElo) / 400));
+                var newScore = Convert.ToInt32(myElo + Constant.kFactor * (won ? 1 : 0 - estimatedFactor));
+
+                sql = "UPDATE mtcg.user SET elo=@newscore where id=@id";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("newscore", newScore);
+                cmd.Parameters.AddWithValue("id", me.Id);
+
+                cmd.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool AddCardToUser(List<CardEntity> cards, UserEntity user)
+        {
+            var opened = false;
+            NpgsqlTransaction transaction = null;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
+                opened = true;
+            }
+
+            try
+            {
+                foreach (var card in cards)
+                {
+                    var sql =
+                        "INSERT INTO mtcg.r_user_card(userid, cardid) VALUES(@userid,@cardid)";
+                    var cmd = new NpgsqlCommand(sql, _connection);
+
+
+                    cmd.Parameters.AddWithValue("userid", user.Id);
+                    cmd.Parameters.AddWithValue("cardid", card.Id);
+
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                }
+
+                transaction?.Commit();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                transaction?.Rollback();
+                return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
         public int GetCoinsFromUser(UserEntity user)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 opened = true;
@@ -582,14 +1172,14 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
-        
+
         public bool SetCoinsFromUser(UserEntity user)
         {
-            bool opened = false;
+            var opened = false;
             if (_connection.State != ConnectionState.Open)
             {
                 opened = true;
@@ -614,633 +1204,9 @@ namespace MTCG.Model
             }
             finally
             {
-                if(opened)
+                if (opened)
                     _connection.Close();
             }
         }
-        
-        public List<IPackage> GetPackages()
-        {
-            _connection.Open();
-            
-            try
-            {
-                List<IPackage> retList = new List<IPackage>();
-                var sql ="select * from mtcg.package";
-                var cmd = new NpgsqlCommand(sql, _connection);
-                
-                var result = cmd.ExecuteReader();
-                
-                List<string> packageIds = new List<string>();
-                
-                while (result.Read())
-                {
-                   packageIds.Add(result.SafeGetString(0));
-                }
-                
-                result.Close();
-
-                foreach (var id in packageIds)
-                {
-                    retList.Add(GetPackage(id));
-                }
-
-                return retList;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            finally
-            {
-                _connection.Close();
-            }
-        }
-
-        public IPackage GetPackage(string packageid)
-        {
-            bool opened = false;
-            if (_connection.State != ConnectionState.Open)
-            {
-                opened = true;
-                _connection.Open();
-            }
-
-            try
-            {
-                PackageEntity entity = new PackageEntity();
-
-                var sql = "select * from mtcg.package where id = @packageid";
-                var cmd = new NpgsqlCommand(sql, _connection);
-
-                cmd.Parameters.AddWithValue("packageid", packageid);
-                cmd.Prepare();
-                var result = cmd.ExecuteReader();
-                
-                while (result.Read())
-                {
-                    entity.Id = result.SafeGetString(0);
-                    entity.Amount = result.GetInt32(1);
-                }
-                result.Close();
-
-                entity.CardsInPackage = GetCardsInPackage(packageid);
-                PackageModell model = new PackageModell(entity,this);
-                return model;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw new NpgsqlException();
-            }
-            finally
-            {
-                if(opened)
-                    _connection.Close();
-            }
-        }
-
-        public List<CardEntity> GetCardsInPackage(string packageid)
-        {
-            bool opened = false;
-            if (_connection.State != ConnectionState.Open)
-            {
-                opened = true;
-                _connection.Open();
-
-            }
-          
-            try
-            {
-                List<CardEntity> ret = new List<CardEntity>();
-                var sql =
-                    " select cardid from mtcg.package INNER JOIN mtcg.r_package_card ON package.id=r_package_card.packageid WHERE package.id = @packageid";
-                var cmd = new NpgsqlCommand(sql, _connection);
-
-                cmd.Parameters.AddWithValue("packageid", packageid);
-                cmd.Prepare();
-                var result = cmd.ExecuteReader();
-
-                if (!result.HasRows)
-                    return null;
-
-                List<string> cardIds = new List<string>();
-
-                while (result.Read())
-                {
-                    cardIds.Add(result.SafeGetString(0));
-                }
-                result.Close();
-                
-                
-                foreach (var id in cardIds)
-                {
-                    sql = "select * from mtcg.card where id = @cardid";
-                    cmd = new NpgsqlCommand(sql,_connection);
-
-                    cmd.Parameters.AddWithValue("cardid", id);
-                    cmd.Prepare();
-                    cmd.ExecuteReader();
-
-                    CardEntity entity = null;
-                    
-                    while (result.Read())
-                    {
-                        entity = new CardEntity
-                        {
-                            Id = result.SafeGetString(0),
-                            Name = result.SafeGetString(1),
-                            Damage = result.GetDouble(2),
-                            Description = result.SafeGetString(3),
-                            ElementType = (ElementType) result.GetInt32(4),
-                            CardType = (CardType) result.GetInt32(5),
-                            Race = (Race) result.GetInt32(6)
-                        };
-                    }
-                    
-                    
-                    if (entity == null)
-                    {
-                        result.Close();
-                        continue;
-                    }
-                    
-                    if(entity != null && string.IsNullOrEmpty(entity.Id))
-                        throw new InvalidDataException();
-                     
-                    ret.Add(entity);
-                    result.Close();
-                }
-
-                return ret;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw new NpgsqlException();
-            }
-            finally
-            {
-                if(opened)
-                    _connection.Close();
-            }
-        }
-        
-         public List<CardEntity> GetStackFromUser(UserEntity userEntity)
-        {
-            bool opened = false;
-            if (_connection.State != ConnectionState.Open)
-            {
-                opened = true;
-                _connection.Open();
-            }
-          
-            try
-            {
-                List<CardEntity> ret = new List<CardEntity>();
-                var sql =
-                    " select cardid from mtcg.r_user_card WHERE userid=@userid";
-                var cmd = new NpgsqlCommand(sql, _connection);
-
-                cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                cmd.Prepare();
-                var result = cmd.ExecuteReader();
-
-                if (!result.HasRows)
-                    return null;
-
-                List<string> cardIds = new List<string>();
-
-                while (result.Read())
-                {
-                    cardIds.Add(result.SafeGetString(0));
-                }
-                
-                result.Close();
-                
-                
-                foreach (var id in cardIds)
-                {
-                    sql = "select * from mtcg.card where id = @cardid";
-                    cmd = new NpgsqlCommand(sql,_connection);
-
-                    cmd.Parameters.AddWithValue("cardid", id);
-                    cmd.Prepare();
-                    cmd.ExecuteReader();
-
-                    CardEntity entity = new CardEntity();
-                    
-                    while (result.Read())
-                    {
-                        entity.Id = result.SafeGetString(0);
-                        entity.Name = result.SafeGetString(1);
-                        entity.Damage = result.GetDouble(2);
-                        entity.Description = result.SafeGetString(3);
-                        entity.ElementType = (ElementType)result.GetInt32(4);
-                        entity.CardType = (CardType)result.GetInt32(5);
-                        entity.Race = (Race)result.GetInt32(6);
-                        entity.CardPlace = (CardPlace) result.GetInt32(7);
-                    }
-                    if(string.IsNullOrEmpty(entity.Id))
-                         throw new InvalidDataException();
-                     
-                    ret.Add(entity);
-                    result.Close();
-                }
-
-                return ret;
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message);
-                throw new NpgsqlException();
-            }
-            finally
-            {
-                if(opened)
-                    _connection.Close();
-            }
-        }
-         
-           public List<CardEntity> GetDeckFromUser(UserEntity userEntity)
-        {
-            bool opened = false;
-            if (_connection.State != ConnectionState.Open)
-            {
-                opened = true;
-                _connection.Open();
-            }
-          
-            try
-            {
-                List<CardEntity> ret = new List<CardEntity>();
-                var sql =
-                    " select cardid from mtcg.r_user_card WHERE userid=@userid";
-                var cmd = new NpgsqlCommand(sql, _connection);
-
-                cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                cmd.Prepare();
-                var result = cmd.ExecuteReader();
-
-                if (!result.HasRows)
-                    return null;
-
-                List<string> cardIds = new List<string>();
-
-                while (result.Read())
-                {
-                    cardIds.Add(result.SafeGetString(0));
-                }
-                
-                result.Close();
-                
-                
-                foreach (var id in cardIds)
-                {
-                    sql = "select * from mtcg.card where id = @cardid AND cardplace=@cardplace";
-                    cmd = new NpgsqlCommand(sql,_connection);
-
-                    cmd.Parameters.AddWithValue("cardid", id);
-                    cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                    cmd.Prepare();
-                    cmd.ExecuteReader();
-
-                    CardEntity entity = null;
-                    
-                    while (result.Read())
-                    {
-                        entity = new CardEntity
-                        {
-                            Id = result.SafeGetString(0),
-                            Name = result.SafeGetString(1),
-                            Damage = result.GetDouble(2),
-                            Description = result.SafeGetString(3),
-                            ElementType = (ElementType) result.GetInt32(4),
-                            CardType = (CardType) result.GetInt32(5),
-                            Race = (Race) result.GetInt32(6),
-                            CardPlace = (CardPlace) result.GetInt32(7)
-                        };
-                    }
-
-                    if (entity == null)
-                    {
-                        result.Close();
-                        continue;
-                    }
-                    
-                    if(entity != null && string.IsNullOrEmpty(entity.Id))
-                         throw new InvalidDataException();
-                    
-                    ret.Add(entity);
-                    result.Close();
-                }
-
-                return ret;
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message);
-                throw new NpgsqlException();
-            }
-            finally
-            {
-                if(opened)
-                    _connection.Close();
-            }
-        }
-           public bool SetDeckByCardIds(List<string> cardIDs,UserEntity userEntity)
-           {
-               bool opened = false;
-               NpgsqlTransaction transaction = null;
-            
-               if (_connection.State != ConnectionState.Open)
-               {
-                   _connection.Open();
-                   transaction = _connection.BeginTransaction();
-                   opened = true;
-               }
-
-               try
-               {
-
-                   var sql = "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
-                   var cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                   NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                   List<string> oldDeckIds = new List<string>();
-
-                   while (reader.Read())
-                   {
-                      oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
-                   }
-                   reader.Close();
-
-                   foreach (var id in oldDeckIds)
-                   {
-                       sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
-                       cmd = new NpgsqlCommand(sql, _connection);
-
-                       cmd.Parameters.AddWithValue("id", id);
-                       cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Stack);
-
-                       cmd.ExecuteNonQuery();
-                   }
-
-                   sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = ANY(@list)";
-                   cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                   cmd.Parameters.AddWithValue("list",cardIDs);
-                   var result =cmd.ExecuteNonQuery();
-
-                   if (result == cardIDs.Count)
-                   {                       
-                        transaction?.Commit();
-                        return true;
-                   }
-
-                   transaction?.Rollback();
-                   return false;
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   transaction?.Rollback();
-                   return false;
-               }
-               finally
-               {
-                   if(opened)
-                       _connection.Close();
-               }
-           }
-           
-           public bool AddCardToDeckByCardId(string cardId,UserEntity userEntity)
-           {
-               bool opened = false;
-            
-               if (_connection.State != ConnectionState.Open)
-               {
-                   _connection.Open();
-                   opened = true;
-               }
-
-               try
-               {
-
-                   var sql = "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
-                   var cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                   NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                   List<string> oldDeckIds = new List<string>();
-
-                   while (reader.Read())
-                   {
-                      oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
-                   }
-                   reader.Close();
-
-                   if (oldDeckIds.Count >= Constant.MAXCARDSINDECK)
-                       return false;
-
-                   sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
-                   cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                   cmd.Parameters.AddWithValue("id",cardId);
-                   var result = cmd.ExecuteNonQuery();
-
-                   if (result == 1)
-                   {                       
-                        return true;
-                   }
-
-                   return false;
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   return false;
-               }
-               finally
-               {
-                   if(opened)
-                       _connection.Close();
-               }
-           }
-           public bool RemoveCardFromDeckByCardId(string cardId,UserEntity userEntity)
-           {
-               bool opened = false;
-            
-               if (_connection.State != ConnectionState.Open)
-               {
-                   _connection.Open();
-                   opened = true;
-               }
-
-               try
-               {
-
-                   var sql = "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
-                   var cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                   cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Deck);
-                   NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                   List<string> oldDeckIds = new List<string>();
-
-                   while (reader.Read())
-                   {
-                      oldDeckIds.Add(reader.SafeGetString(0)); // Cause Reader is blocking execution from code
-                   }
-                   reader.Close();
-
-                   foreach (var id in oldDeckIds)
-                   {
-                       if (id == cardId)
-                       {
-                           sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
-                           cmd = new NpgsqlCommand(sql, _connection);
-
-                           cmd.Parameters.AddWithValue("id", id);
-                           cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Stack);
-
-                           cmd.ExecuteNonQuery();
-                       }
-                   }
-                   return true;
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   return false;
-               }
-               finally
-               {
-                   if(opened)
-                       _connection.Close();
-               }
-           }
-
-           public List<UserEntity> LoadScoreBoard()
-           {
-               bool opened = false;
-               if (_connection.State != ConnectionState.Open)
-               {
-                   _connection.Open();
-                   opened = true;
-               }
-
-               try
-               {
-
-                   var sql = "SELECT * FROM mtcg.user order by elo desc limit @limit";
-                   var cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("limit", Constant.TOP10);
-                   
-                   NpgsqlDataReader reader = cmd.ExecuteReader();
-                   List<UserEntity> retList = new List<UserEntity>();
-                   
-                   while (reader.Read())
-                   {
-                       UserEntity entity = new UserEntity
-                       {
-                           Id = reader.GetInt32(0),
-                           Username = reader.SafeGetString(1),
-                           Password = reader.SafeGetString(2),
-                           Salt = reader.SafeGetString(3),
-                           Token = reader.SafeGetString(4),
-                           Description = reader.SafeGetString(5),
-                           DisplayName = reader.SafeGetString(6),
-                           Image = reader.SafeGetString(7),
-                           Elo = reader.GetInt32(8),
-                           Win = reader.GetInt32(9),
-                           Lose = reader.GetInt32(10),
-                           Draw = reader.GetInt32(11),
-                           Coins = reader.GetInt32(12)
-                       };
-                       
-                       retList.Add(entity);
-                   }
-                   reader.Close();
-
-                   if (retList.Count < 1)
-                       return null;
-                   
-                   return retList;
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   return null;
-               }
-               finally
-               {
-                   if(opened)
-                       _connection.Close();
-               }
-           }
-
-           //
-           public bool UpdateElo(UserEntity me, UserEntity enemy, bool won = true)
-           {
-               //Formel : https://medium.com/purple-theory/what-is-elo-rating-c4eb7a9061e0
-               bool opened = false;
-               if (_connection.State != ConnectionState.Open)
-               {
-                   _connection.Open();
-                   opened = true;
-               }
-
-               try
-               {
-
-                   var sql = "SELECT elo from mtcg.user where id=@enemyid";
-                   var cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("enemyid", enemy.Id);
-                   
-                   int enemyElo = (int) cmd.ExecuteScalar();
-
-                   sql = "SELECT elo from mtcg.user where id=@id";
-                   cmd = new NpgsqlCommand(sql, _connection);
-                   cmd.Parameters.AddWithValue("id", me.Id);
-
-                   int myElo = (int) cmd.ExecuteScalar();
-
-                   double estimatedFactor = 1 / (1 + 10 ^ ((enemyElo - myElo) / 400));
-                   int newScore = Convert.ToInt32(myElo + Constant.kFactor * (won?1:0 - estimatedFactor));
-
-                   sql = "UPDATE mtcg.user SET elo=@newscore where id=@id";
-                   cmd = new NpgsqlCommand(sql, _connection);
-
-                   cmd.Parameters.AddWithValue("newscore", newScore);
-                   cmd.Parameters.AddWithValue("id", me.Id);
-
-                   cmd.ExecuteNonQuery();
-
-                   return true;
-
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   return false;
-               }
-               finally
-               {
-                   if(opened)
-                       _connection.Close();
-               }
-           }
     }
 }

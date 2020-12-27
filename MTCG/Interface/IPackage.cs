@@ -14,6 +14,5 @@ namespace MTCG.Interface
         public bool AddCardsToPackage(List<CardEntity> cards);
 
         public List<CardEntity> Open(UserEntity user);
-
     }
 }

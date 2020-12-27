@@ -1,21 +1,32 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.Extensions.Configuration;
 
 namespace MTCG
 {
     public class AppSettings
     {
-        private static AppSettings _settings = null;
+        private static AppSettings _settings;
 
         private static readonly object lockobject = new object();
 
         private readonly string _ConnectionString;
 
+        private AppSettings()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true);
+
+            var root = configurationBuilder.Build();
+
+            var server = root.GetSection("Settings");
+            _ConnectionString = server.GetSection("ConnectionString").Value;
+        }
+
         public string ConnectionString => Settings._ConnectionString;
 
         /// <summary>
-        /// Singleton Instance of AppSettings
+        ///     Singleton Instance of AppSettings
         /// </summary>
         public static AppSettings Settings
         {
@@ -27,18 +38,6 @@ namespace MTCG
                     return _settings ??= new AppSettings();
                 }
             }
-        }
-
-        private AppSettings()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            var root = configurationBuilder.Build();
-
-            var server = root.GetSection("Settings");
-            _ConnectionString = server.GetSection("ConnectionString").Value;
         }
     }
 }

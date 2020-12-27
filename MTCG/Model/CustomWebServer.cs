@@ -2,11 +2,11 @@
 using System.Net;
 using MTCG.API;
 using Serilog;
-using WebServer.API;
+using WebServer.Model;
 
 namespace MTCG.Model
 {
-    public class CustomWebServer : WebServer.Model.BaseServerModell
+    public class CustomWebServer : BaseServerModell
     {
         public CustomWebServer(IPAddress ipAddress, int port) : base(ipAddress, port)
         {
@@ -17,10 +17,10 @@ namespace MTCG.Model
             Log.Debug("Waiting for a connection... ");
             try
             {
-                WebServer.Model.TcpClient client = new WebServer.Model.TcpClient(_listener.AcceptTcpClient());
+                var client = new TcpClient(_listener.AcceptTcpClient());
                 Log.Debug($"Client {client.RemoteEndPoint} connected");
 
-                CustomApiController controller = new CustomApiController(client);
+                var controller = new CustomApiController(client);
                 controller.Respond(controller.ForwardToEndPointHandler());
 
                 Log.Debug($"Client {client.RemoteEndPoint} disconnected\r\n");

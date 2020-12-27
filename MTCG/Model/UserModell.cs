@@ -1,30 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
-using System.Security.Authentication;
+﻿using System.Collections.Generic;
 using MTCG.Entity;
 using MTCG.Helpers;
 using MTCG.Interface;
-using MTCG.Model.BaseClass;
 
 namespace MTCG.Model
 {
     public class UserModell
     {
-        public UserEntity UserEntity { get; set; }
-        public List<CardEntity> Stack => GetStack();
-        public List<CardEntity> Deck
-        {
-            get => GetDeck();
-        }
-
-        private IDatabase _database;
+        private readonly IDatabase _database;
 
         public UserModell(IDatabase db)
         {
             _database = db;
         }
+
+        public UserEntity UserEntity { get; set; }
+        public List<CardEntity> Stack => GetStack();
+
+        public List<CardEntity> Deck => GetDeck();
 
         public bool VerifyToken(string token)
         {
@@ -54,7 +47,7 @@ namespace MTCG.Model
             if (_database.UserExists(username))
                 return null;
 
-            UserEntity newUser = new UserEntity();
+            var newUser = new UserEntity();
             newUser.Username = username;
             var hash = Cryptography.GenerateSaltedHash(password);
             newUser.Password = hash.Hash;
@@ -92,7 +85,7 @@ namespace MTCG.Model
 
         public bool SetDeckByCardIds(List<string> cardIds)
         {
-            return _database.SetDeckByCardIds(cardIds,UserEntity);
+            return _database.SetDeckByCardIds(cardIds, UserEntity);
         }
 
         public bool AddCardToDeckByCardId(string cardId)
@@ -112,7 +105,7 @@ namespace MTCG.Model
 
         public void LostFightAgainst(UserEntity enemy)
         {
-            _database.UpdateElo(UserEntity, enemy,false);
+            _database.UpdateElo(UserEntity, enemy, false);
         }
     }
 }

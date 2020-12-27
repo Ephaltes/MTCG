@@ -1,5 +1,4 @@
 ﻿using MTCG.Entity;
-using MTCG.Model;
 
 namespace MTCG.Interface
 {

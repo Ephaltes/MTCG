@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MTCG.Entity;
 using Newtonsoft.Json;
 using Npgsql;
 
@@ -9,7 +8,7 @@ namespace MTCG.Helpers
     public static class Utility
     {
         /// <summary>
-        /// https://stackoverflow.com/questions/78536/deep-cloning-objects
+        ///     https://stackoverflow.com/questions/78536/deep-cloning-objects
         /// </summary>
         /// <param name="source"></param>
         /// <typeparam name="T"></typeparam>
@@ -17,10 +16,7 @@ namespace MTCG.Helpers
         public static T CloneJson<T>(this T source)
         {
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
-            {
-                return default(T);
-            }
+            if (ReferenceEquals(source, null)) return default;
 
             // initialize inner objects individually
             // for example in default constructor some list property initialized with some values,
@@ -62,11 +58,8 @@ namespace MTCG.Helpers
 
         public static string ToStringForCardList(this List<CardEntity> source)
         {
-            string ret = "";
-            foreach (var card in source)
-            {
-                ret += ToStringForCard(card) + "\r\n";
-            }
+            var ret = "";
+            foreach (var card in source) ret += ToStringForCard(card) + "\r\n";
             return ret;
         }
     }

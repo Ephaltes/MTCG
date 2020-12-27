@@ -1,5 +1,4 @@
-﻿using System;
-using MTCG.Entity;
+﻿using MTCG.Entity;
 using MTCG.Interface;
 using WebServer;
 using WebServer.API;
@@ -10,14 +9,15 @@ namespace MTCG.API
 {
     public class DefaultRessourceHandler : BaseRessourceHandler
     {
-        protected IRequestContext RequestContext;
         protected IDatabase Database;
-        
-        public DefaultRessourceHandler(IRequestContext req,IDatabase database)
+        protected IRequestContext RequestContext;
+
+        public DefaultRessourceHandler(IRequestContext req, IDatabase database)
         {
             RequestContext = req;
             Database = database;
         }
+
         protected override ResponseContext HandleGet()
         {
             return NotImplemented();
@@ -59,13 +59,14 @@ namespace MTCG.API
                     responseContext = NotImplemented();
                     break;
             }
+
             return responseContext;
         }
-        
+
         protected ResponseContext NotImplemented()
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = StatusCodes.BadRequest,
                 ErrorMessage = "Not Implemented"
@@ -73,11 +74,11 @@ namespace MTCG.API
             responseContext.StatusCode = StatusCodes.BadRequest;
             return responseContext;
         }
-        
+
         protected ResponseContext SomeThingWrong()
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = StatusCodes.InternalServerError,
                 ErrorMessage = "Something went Wrong"
@@ -89,7 +90,7 @@ namespace MTCG.API
         protected ResponseContext EmptyBody()
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = StatusCodes.BadRequest,
                 ErrorMessage = "Body is empty"
@@ -101,7 +102,7 @@ namespace MTCG.API
         protected ResponseContext NotAuthorized()
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = StatusCodes.Unauthorized,
                 ErrorMessage = "Not Authorized"
@@ -113,7 +114,7 @@ namespace MTCG.API
         protected ResponseContext CustomError(string msg, StatusCodes code)
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = code,
                 ErrorMessage = msg
@@ -121,11 +122,11 @@ namespace MTCG.API
             responseContext.StatusCode = code;
             return responseContext;
         }
-        
-        protected ResponseContext SuccessObject(Object msg, StatusCodes code)
+
+        protected ResponseContext SuccessObject(object msg, StatusCodes code)
         {
             var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage()
+            responseContext.ResponseMessage.Add(new ResponseMessage
             {
                 Status = code,
                 Object = msg
@@ -133,17 +134,17 @@ namespace MTCG.API
             responseContext.StatusCode = code;
             return responseContext;
         }
-        
+
         protected AuthorizationEntity ConvertToAuthorizationEntity(string token)
         {
-            if (String.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
                 return null;
-            
+
             var splitted = token.Trim().Split(" ");
             if (splitted.Length < 2)
                 return null;
-            
-            return new AuthorizationEntity(){Type = splitted[0],Value = splitted[1]};
+
+            return new AuthorizationEntity {Type = splitted[0], Value = splitted[1]};
         }
     }
 }

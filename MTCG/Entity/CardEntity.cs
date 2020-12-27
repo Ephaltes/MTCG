@@ -1,21 +1,18 @@
-﻿using System;
-using MTCG.Model.BaseClass;
-
-namespace MTCG
+﻿namespace MTCG
 {
     public enum CardPlace
     {
-        Stack=1,
-        Deck=2,
-        Transaction=3,
-        Pack=4
+        Stack = 1,
+        Deck = 2,
+        Transaction = 3,
+        Pack = 4
     }
-    
+
     public enum ElementType
     {
         Normal = 0,
         Fire = 1,
-        Water = 2,
+        Water = 2
     }
 
     public enum CardType
@@ -24,6 +21,7 @@ namespace MTCG
         MonsterCard = 1,
         SpellCard = 2
     }
+
     public enum Race
     {
         Unknow = 0,
@@ -35,6 +33,7 @@ namespace MTCG
         Orc = 6,
         Wizard = 7
     }
+
     public class CardEntity
     {
         public string Id { get; set; }

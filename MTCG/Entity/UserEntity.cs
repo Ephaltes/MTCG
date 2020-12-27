@@ -2,19 +2,18 @@
 {
     public class UserEntity
     {
+        public int Coins;
+        public string Description;
+        public string DisplayName;
+        public int Draw;
+        public int Elo;
         public int Id;
-        public string Username;
+        public string Image;
+        public int Lose;
         public string Password;
         public string Salt;
         public string Token;
-        public int Elo;
+        public string Username;
         public int Win;
-        public int Lose;
-        public int Draw;
-        public int Coins;
-        public string DisplayName;
-        public string Image;
-        public string Description;
-
     }
 }

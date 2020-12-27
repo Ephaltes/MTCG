@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using MTCG.Entity;
-using MTCG.Model;
-using MTCG.Model.BaseClass;
 
 namespace MTCG.Interface
 {

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using MTCG.Entity;
+﻿using MTCG.Entity;
+using MTCG.Helpers;
 using MTCG.Interface;
 using MTCG.Model;
 using Newtonsoft.Json;
 using WebServer;
 using WebServer.API;
 using WebServer.Interface;
-using WebServer.RessourceHandler;
-using MTCG.Helpers;
 
 namespace MTCG.API
 {
@@ -21,12 +17,12 @@ namespace MTCG.API
 
         protected override ResponseContext HandleGet()
         {
-            ResponseContext responseContext = new ResponseContext();
-            UserModell model = new UserModell(Database);
+            var responseContext = new ResponseContext();
+            var model = new UserModell(Database);
 
             if (RequestContext.HttpRequest.Count < 2)
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
+                responseContext.ResponseMessage.Add(new ResponseMessage
                 {
                     Status = StatusCodes.BadRequest,
                     ErrorMessage = "Missing Parameters"
@@ -35,39 +31,34 @@ namespace MTCG.API
                 return responseContext;
             }
 
-            string user = RequestContext.HttpRequest[1];
+            var user = RequestContext.HttpRequest[1];
 
-            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            RequestContext.HttpHeader.TryGetValue("Authorization", out var token);
             var authorization = ConvertToAuthorizationEntity(token);
 
             if (authorization == null || !model.VerifyToken(authorization.Value) || string.IsNullOrEmpty(user) ||
                 user != model.UserEntity.Username)
-            {
                 return NotAuthorized();
-            }
 
             return SuccessObject(new
             {
                 model.UserEntity.DisplayName,
                 model.UserEntity.Username,
                 model.UserEntity.Description,
-                model.UserEntity.Image,
+                model.UserEntity.Image
             }, StatusCodes.OK);
         }
 
         protected override ResponseContext HandlePost()
         {
-            ResponseContext responseContext = new ResponseContext();
-            if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
-            {
-                return EmptyBody();
-            }
+            var responseContext = new ResponseContext();
+            if (string.IsNullOrWhiteSpace(RequestContext.HttpBody)) return EmptyBody();
 
             var userEntity = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
 
-            UserModell model = new UserModell(Database);
+            var model = new UserModell(Database);
             var token = model.CreateTokenForUser(userEntity.Username, userEntity.Password);
-            ResponseMessage msg = new ResponseMessage();
+            var msg = new ResponseMessage();
 
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -88,11 +79,11 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePut()
         {
-            ResponseContext responseContext = new ResponseContext();
-            UserModell model = new UserModell(Database);
+            var responseContext = new ResponseContext();
+            var model = new UserModell(Database);
             if (RequestContext.HttpRequest.Count < 2)
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage()
+                responseContext.ResponseMessage.Add(new ResponseMessage
                 {
                     Status = StatusCodes.BadRequest,
                     ErrorMessage = "Missing Parameters"
@@ -101,24 +92,19 @@ namespace MTCG.API
                 return responseContext;
             }
 
-            string user = RequestContext.HttpRequest[1];
+            var user = RequestContext.HttpRequest[1];
 
-            RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
+            RequestContext.HttpHeader.TryGetValue("Authorization", out var token);
             var authorization = ConvertToAuthorizationEntity(token);
 
             if (authorization == null || !model.VerifyToken(authorization.Value) || string.IsNullOrEmpty(user) ||
                 user != model.UserEntity.Username)
-            {
                 return NotAuthorized();
-            }
 
-            if (String.IsNullOrWhiteSpace(RequestContext.HttpBody))
-            {
-                return EmptyBody();
-            }
+            if (string.IsNullOrWhiteSpace(RequestContext.HttpBody)) return EmptyBody();
 
             var userToModify = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
-            int changes = 0;
+            var changes = 0;
 
             if (!string.IsNullOrEmpty(userToModify.Description))
             {
@@ -147,14 +133,11 @@ namespace MTCG.API
                 changes++;
             }
 
-            bool success = false;
+            var success = false;
             if (changes > 0)
                 success = model.UpdateUser();
 
-            if (success)
-            {
-                return SuccessObject("Updated Account Information", StatusCodes.OK);
-            }
+            if (success) return SuccessObject("Updated Account Information", StatusCodes.OK);
             return SuccessObject("Could not Update Account Information", StatusCodes.OK);
         }
     }

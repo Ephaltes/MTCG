@@ -6,24 +6,23 @@ namespace MTCG.Model
 {
     public class ScoreModell
     {
-        public List<ScoreEntity> ScoreBoard { get => LoadScoreBoard(); }
-
-        private IDatabase _database { get; set; }
-        
         public ScoreModell(IDatabase database)
         {
             _database = database;
         }
 
+        public List<ScoreEntity> ScoreBoard => LoadScoreBoard();
+
+        private IDatabase _database { get; }
+
         protected List<ScoreEntity> LoadScoreBoard()
         {
             var userEntity = _database.LoadScoreBoard();
 
-            List<ScoreEntity> retList = new List<ScoreEntity>();
+            var retList = new List<ScoreEntity>();
 
             foreach (var user in userEntity)
-            {
-                retList.Add(new ScoreEntity()
+                retList.Add(new ScoreEntity
                 {
                     DisplayName = user.DisplayName,
                     Draw = user.Draw,
@@ -31,7 +30,6 @@ namespace MTCG.Model
                     Lose = user.Lose,
                     Win = user.Win
                 });
-            }
 
             if (retList.Count < 1)
                 return null;

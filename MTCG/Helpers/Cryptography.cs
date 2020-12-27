@@ -11,7 +11,7 @@ namespace MTCG.Helpers
 
     public class Cryptography
     {
-        public static HashSalt GenerateSaltedHash(string password,int size=128)
+        public static HashSalt GenerateSaltedHash(string password, int size = 128)
         {
             var saltBytes = new byte[size];
             var provider = new RNGCryptoServiceProvider();
@@ -21,10 +21,10 @@ namespace MTCG.Helpers
             var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
             var hashPassword = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
 
-            HashSalt hashSalt = new HashSalt {Hash = hashPassword, Salt = salt};
+            var hashSalt = new HashSalt {Hash = hashPassword, Salt = salt};
             return hashSalt;
         }
-        
+
         public static bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt)
         {
             var saltBytes = Convert.FromBase64String(storedSalt);
