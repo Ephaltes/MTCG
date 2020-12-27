@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using MTCG.Entity;
 using MTCG.Interface;
 using MTCG.Model.BaseClass;
@@ -16,8 +19,64 @@ namespace MTCG.Model
     }
     public class GameModell
     {
-        public static ReportEntity Fight(List<CardEntity> player1Deck, List<CardEntity> player2Deck)
+        protected static ConcurrentBag<UserModell> PlayerList { get; set; } = 
+            new ConcurrentBag<UserModell>();
+        protected static ConcurrentDictionary<string, ReportEntity> LogList { get; set; } =
+            new ConcurrentDictionary<string, ReportEntity>();
+        
+        protected UserModell _player;
+        private static object _lockobject = new object();
+      
+        public GameModell(UserModell player)
         {
+            PlayerList.Add(player);
+            _player = player;
+        }
+
+        public ReportEntity GetLog()
+        {
+            ReportEntity report = null;
+            while (!LogList.TryRemove(_player.UserEntity.Username, out report))
+            {
+                Thread.Sleep(1000);
+
+                TryFight();
+            }
+
+            return report;
+        }
+
+        protected void TryFight()
+        {
+            UserModell player1=null, player2=null;
+            lock (_lockobject)
+            {
+                if (PlayerList.Count < 2 )
+                {
+                    return;
+                }
+
+                if (PlayerList.TryTake(out player1))
+                {
+                    if (!PlayerList.TryTake(out player2))
+                    {
+                        PlayerList.Add(player1);
+                        return;
+                    }
+                }
+                else
+                    return;
+            }
+
+            Fight(player1, player2);
+        }
+        
+        protected void Fight(UserModell player1, UserModell player2)
+        {
+            var player1Deck = player1.Deck;
+            var player2Deck = player2.Deck;
+            
+            
             string log="Fight started:\n\n";
             int i = 0;
             while (player1Deck.Count > 0 && player2Deck.Count > 0 && i < Constant.MAXROUND)
@@ -51,20 +110,46 @@ namespace MTCG.Model
                 i++;
             }
 
+            ReportEntity report = null;
             if (player1Deck.Count == 0)
             {
                 log += "END: Winner Player2";
-                return new ReportEntity(){GameEnd = GameEnd.Player2,Log = log};
+                report =  new ReportEntity()
+                {
+                    GameEnd = GameEnd.Player2, Log = log, Player1 = player1.UserEntity.DisplayName, Player2 = player2.UserEntity.DisplayName
+                    ,Winner = player2.UserEntity.DisplayName
+                };
+
+                player1.LostFightAgainst(player2.UserEntity);
+                player2.WonFightAgainst(player1.UserEntity);
+                
             }
             if (player2Deck.Count == 0)
             {
                 log += "END: Winner Player1";
-                return new ReportEntity(){GameEnd = GameEnd.Player1,Log = log};
+                report =  new ReportEntity()
+                {
+                    GameEnd = GameEnd.Player1, Log = log, Player1 = player1.UserEntity.DisplayName, Player2 = player2.UserEntity.DisplayName,
+                    Winner = player1.UserEntity.DisplayName
+                };
+
+                player1.WonFightAgainst(player2.UserEntity);
+                player2.LostFightAgainst(player1.UserEntity);
+            }
+
+            if (player1Deck.Count > 0 && player2Deck.Count > 0)
+            {
+                log += "END: Draw";
+                report =  new ReportEntity()
+                {
+                    GameEnd = GameEnd.Draw, Log = log, Player1 = player1.UserEntity.DisplayName, Player2 = player2.UserEntity.DisplayName,
+                };
+                //No Elo change when Draw
             }
             
-            log += "END: Draw";
-            return new ReportEntity(){GameEnd = GameEnd.Draw,Log = log};
-
+            LogList.TryAdd(player1.UserEntity.DisplayName, report);
+            LogList.TryAdd(player2.UserEntity.DisplayName, report);
+            
         }
         
         public static double CalculateDamge(CardEntity attackingCard,CardEntity defendingCard)

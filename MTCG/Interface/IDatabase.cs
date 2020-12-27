@@ -43,5 +43,8 @@ namespace MTCG.Interface
 
         public bool AddCardToDeckByCardId(string cardId, UserEntity userEntity);
         public bool RemoveCardFromDeckByCardId(string cardId, UserEntity userEntity);
+        public List<UserEntity> LoadScoreBoard();
+
+        public bool UpdateElo(UserEntity me, UserEntity enemy, bool won = true);
     }
 }

@@ -35,35 +35,24 @@ namespace MTCG.API
                 return responseContext;
             }
 
-            var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
+            string user = RequestContext.HttpRequest[1];
 
             RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
             var authorization = ConvertToAuthorizationEntity(token);
 
-            if (authorization == null || !model.VerifyToken(authorization.Value) || entity == null ||
-                entity.Token != model.UserEntity.Token)
+            if (authorization == null || !model.VerifyToken(authorization.Value) || string.IsNullOrEmpty(user) ||
+                user != model.UserEntity.Username)
             {
                 return NotAuthorized();
             }
 
-            ResponseMessage msg = new ResponseMessage();
-
-            msg.Status = StatusCodes.OK;
-            msg.Object = new UserEntity()
+            return SuccessObject(new
             {
-                Description = entity.Description,
-                Image = entity.Image,
-                DisplayName = entity.DisplayName,
-                Elo = entity.Elo,
-                Win = entity.Win,
-                Lose = entity.Lose,
-                Draw = entity.Draw,
-                Coins = entity.Coins
-            };
-            responseContext.StatusCode = StatusCodes.OK;
-
-            responseContext.ResponseMessage.Add(msg);
-            return responseContext;
+                model.UserEntity.DisplayName,
+                model.UserEntity.Username,
+                model.UserEntity.Description,
+                model.UserEntity.Image,
+            }, StatusCodes.OK);
         }
 
         protected override ResponseContext HandlePost()
@@ -112,13 +101,13 @@ namespace MTCG.API
                 return responseContext;
             }
 
-            var entity = model.GetUserByUsername(RequestContext.HttpRequest[1]);
+            string user = RequestContext.HttpRequest[1];
 
             RequestContext.HttpHeader.TryGetValue("Authorization", out string token);
             var authorization = ConvertToAuthorizationEntity(token);
 
-            if (authorization == null || !model.VerifyToken(authorization.Value) ||
-                entity.Token != model.UserEntity.Token)
+            if (authorization == null || !model.VerifyToken(authorization.Value) || string.IsNullOrEmpty(user) ||
+                user != model.UserEntity.Username)
             {
                 return NotAuthorized();
             }
@@ -128,7 +117,6 @@ namespace MTCG.API
                 return EmptyBody();
             }
 
-            ResponseMessage msg = new ResponseMessage();
             var userToModify = JsonConvert.DeserializeObject<UserEntity>(RequestContext.HttpBody);
             int changes = 0;
 
@@ -165,19 +153,9 @@ namespace MTCG.API
 
             if (success)
             {
-                msg.Status = StatusCodes.OK;
-                msg.Object = "Updated Account Information";
-                responseContext.StatusCode = StatusCodes.OK;
+                return SuccessObject("Updated Account Information", StatusCodes.OK);
             }
-            else
-            {
-                msg.Status = StatusCodes.InternalServerError;
-                msg.Object = "Could not Update Account Information";
-                responseContext.StatusCode = StatusCodes.InternalServerError;
-            }
-
-            responseContext.ResponseMessage.Add(msg);
-            return responseContext;
+            return SuccessObject("Could not Update Account Information", StatusCodes.OK);
         }
     }
 }

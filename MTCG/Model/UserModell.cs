@@ -104,5 +104,15 @@ namespace MTCG.Model
         {
             return _database.RemoveCardFromDeckByCardId(cardId, UserEntity);
         }
+
+        public void WonFightAgainst(UserEntity enemy)
+        {
+            _database.UpdateElo(UserEntity, enemy);
+        }
+
+        public void LostFightAgainst(UserEntity enemy)
+        {
+            _database.UpdateElo(UserEntity, enemy,false);
+        }
     }
 }

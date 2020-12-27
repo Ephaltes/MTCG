@@ -58,6 +58,15 @@ namespace MTCG.API
                     case "deck":
                         handler = new DeckHandler(_requestContext, Database);
                         break;
+                    case "stats":
+                        handler = new StatsHandler(_requestContext, Database);
+                        break;
+                    case "score":
+                        handler = new ScoreHandler(_requestContext, Database);
+                        break;
+                    case "battles":
+                        handler = new BattlesHandler(_requestContext, Database);
+                        break;
                     default:
                         _responseContext.ResponseMessage.Add(new ResponseMessage()
                         {

@@ -1129,5 +1129,118 @@ namespace MTCG.Model
                        _connection.Close();
                }
            }
+
+           public List<UserEntity> LoadScoreBoard()
+           {
+               bool opened = false;
+               if (_connection.State != ConnectionState.Open)
+               {
+                   _connection.Open();
+                   opened = true;
+               }
+
+               try
+               {
+
+                   var sql = "SELECT * FROM mtcg.user order by elo desc limit @limit";
+                   var cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("limit", Constant.TOP10);
+                   
+                   NpgsqlDataReader reader = cmd.ExecuteReader();
+                   List<UserEntity> retList = new List<UserEntity>();
+                   
+                   while (reader.Read())
+                   {
+                       UserEntity entity = new UserEntity
+                       {
+                           Id = reader.GetInt32(0),
+                           Username = reader.SafeGetString(1),
+                           Password = reader.SafeGetString(2),
+                           Salt = reader.SafeGetString(3),
+                           Token = reader.SafeGetString(4),
+                           Description = reader.SafeGetString(5),
+                           DisplayName = reader.SafeGetString(6),
+                           Image = reader.SafeGetString(7),
+                           Elo = reader.GetInt32(8),
+                           Win = reader.GetInt32(9),
+                           Lose = reader.GetInt32(10),
+                           Draw = reader.GetInt32(11),
+                           Coins = reader.GetInt32(12)
+                       };
+                       
+                       retList.Add(entity);
+                   }
+                   reader.Close();
+
+                   if (retList.Count < 1)
+                       return null;
+                   
+                   return retList;
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine(e);
+                   return null;
+               }
+               finally
+               {
+                   if(opened)
+                       _connection.Close();
+               }
+           }
+
+           //
+           public bool UpdateElo(UserEntity me, UserEntity enemy, bool won = true)
+           {
+               //Formel : https://medium.com/purple-theory/what-is-elo-rating-c4eb7a9061e0
+               bool opened = false;
+               if (_connection.State != ConnectionState.Open)
+               {
+                   _connection.Open();
+                   opened = true;
+               }
+
+               try
+               {
+
+                   var sql = "SELECT elo from mtcg.user where id=@enemyid";
+                   var cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("enemyid", enemy.Id);
+                   
+                   int enemyElo = (int) cmd.ExecuteScalar();
+
+                   sql = "SELECT elo from mtcg.user where id=@id";
+                   cmd = new NpgsqlCommand(sql, _connection);
+                   cmd.Parameters.AddWithValue("id", me.Id);
+
+                   int myElo = (int) cmd.ExecuteScalar();
+
+                   double estimatedFactor = 1 / (1 + 10 ^ ((enemyElo - myElo) / 400));
+                   int newScore = Convert.ToInt32(myElo + Constant.kFactor * (won?1:0 - estimatedFactor));
+
+                   sql = "UPDATE mtcg.user SET elo=@newscore where id=@id";
+                   cmd = new NpgsqlCommand(sql, _connection);
+
+                   cmd.Parameters.AddWithValue("newscore", newScore);
+                   cmd.Parameters.AddWithValue("id", me.Id);
+
+                   cmd.ExecuteNonQuery();
+
+                   return true;
+
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine(e);
+                   return false;
+               }
+               finally
+               {
+                   if(opened)
+                       _connection.Close();
+               }
+           }
     }
 }
