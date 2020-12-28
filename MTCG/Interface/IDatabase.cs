@@ -44,5 +44,12 @@ namespace MTCG.Interface
         public List<UserEntity> LoadScoreBoard();
 
         public bool UpdateElo(UserEntity me, UserEntity enemy, bool won = true);
+        public CardEntity GetCardById(string cardid);
+        public List<TradingEntity> GetAllTradingDeals();
+        public UserEntity GetUserById(int id);
+        public bool RemoveTradeByUserRequest(string tradeId, int userid);
+        public bool AddTrade(TradingEntity entity);
+        public bool TradeCards(string tradeid, string cardToTrade, UserEntity userEntity);
+        public TradingEntity GetTradeById(string tradeid);
     }
 }

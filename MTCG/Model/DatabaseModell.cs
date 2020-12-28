@@ -124,6 +124,61 @@ namespace MTCG.Model
             }
         }
 
+        public UserEntity GetUserById(int id)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT * from mtcg.user where id=@id";
+                using var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                var ret = new UserEntity();
+
+                while (result.Read())
+                {
+                    ret.Id = result.GetInt32(0);
+                    ret.Username = result.SafeGetString(1);
+                    ret.Password = result.SafeGetString(2);
+                    ret.Salt = result.SafeGetString(3);
+                    ret.Token = result.SafeGetString(4);
+                    ret.Description = result.SafeGetString(5);
+                    ret.DisplayName = result.SafeGetString(6);
+                    ret.Image = result.SafeGetString(7);
+                    ret.Elo = result.GetInt32(8);
+                    ret.Win = result.GetInt32(9);
+                    ret.Lose = result.GetInt32(10);
+                    ret.Draw = result.GetInt32(11);
+                    ret.Coins = result.GetInt32(12);
+                }
+
+                result.Close();
+                return ret;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
 
         public UserEntity GetUserByUsername(string username)
         {
@@ -664,6 +719,7 @@ namespace MTCG.Model
             }
         }
 
+
         public List<CardEntity> GetStackFromUser(UserEntity userEntity)
         {
             var opened = false;
@@ -1201,6 +1257,371 @@ namespace MTCG.Model
             {
                 Log.Error(e.Message);
                 return false;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public List<TradingEntity> GetAllTradingDeals()
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT * FROM mtcg.trading";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                var reader = cmd.ExecuteReader();
+
+                List<TradingEntity> tradingList = new List<TradingEntity>();
+
+                while (reader.Read())
+                {
+                    var entity = new TradingEntity()
+                    {
+                        Id = reader.SafeGetString(0),
+                        CardToTrade = new CardEntity()
+                        {
+                            Id = reader.SafeGetString(1),
+                        },
+                        WantCardType = (CardType) reader.GetInt32(2),
+                        WantMinDamage = reader.GetDouble(3),
+                        WantRace = (Race) reader.GetInt32(4),
+                        WantElementType = (ElementType) reader.GetInt32(5),
+                        UserEntity = new UserEntity()
+                        {
+                            Id = reader.GetInt32(6)
+                        }
+                    };
+                    tradingList.Add(entity);
+                }
+
+                reader.Close();
+
+                foreach (var tradingEntity in tradingList)
+                {
+                    tradingEntity.CardToTrade = GetCardById(tradingEntity.CardToTrade.Id);
+                    tradingEntity.UserEntity = GetUserById(tradingEntity.UserEntity.Id);
+
+                    if (tradingEntity.CardToTrade == null || tradingEntity.UserEntity == null)
+                        return null;
+                }
+
+                return tradingList;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return null;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public CardEntity GetCardById(string cardid)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT * FROM mtcg.card where id=@id";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("id", cardid);
+                cmd.Prepare();
+                var result = cmd.ExecuteReader();
+
+                if (!result.HasRows)
+                    return null;
+
+                CardEntity entity = null;
+                while (result.Read())
+                {
+                    entity = new CardEntity
+                    {
+                        Id = result.SafeGetString(0),
+                        Name = result.SafeGetString(1),
+                        Damage = result.GetDouble(2),
+                        Description = result.SafeGetString(3),
+                        ElementType = (ElementType) result.GetInt32(4),
+                        CardType = (CardType) result.GetInt32(5),
+                        Race = (Race) result.GetInt32(6)
+                    };
+                }
+
+                result.Close();
+                return entity;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool RemoveTradeByUserRequest(string tradeId, int userid)
+        {
+            var opened = false;
+            NpgsqlTransaction transaction = null;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
+            }
+
+            try
+            {
+                var tradeEntity = GetTradeById(tradeId);
+                
+                if (tradeEntity == null)
+                    return false;
+                
+                var sql = "DELETE FROM mtcg.trading where userid=@userid AND id=@id";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("id", tradeEntity.Id);
+                cmd.Parameters.AddWithValue("userid", userid);
+                cmd.Prepare();
+                var result = cmd.ExecuteNonQuery();
+
+                if (result == 0)
+                    return false;
+                
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id=@id";
+                cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
+                cmd.Parameters.AddWithValue("id", tradeEntity.CardToTrade.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                transaction?.Commit();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                transaction?.Rollback();
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool AddTrade(TradingEntity entity)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT id FROM mtcg.r_user_card WHERE userid=@userid AND cardid=@cardid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("userid", entity.UserEntity.Id);
+                cmd.Parameters.AddWithValue("cardid", entity.CardToTrade.Id);
+                cmd.Prepare();
+                var result = cmd.ExecuteScalar();
+
+                if (result == null || (int) result < 1)
+                    return false;
+
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id=@id";
+                cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("cardplace", CardPlace.Transaction);
+                cmd.Parameters.AddWithValue("id", entity.CardToTrade.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                sql =
+                    "INSERT INTO mtcg.trading (id,cardtotrade,cardtype,mindamage,race,elementtype,userid) VALUES(@id,@cardtotrade,@cardtype,@mindamage,@race,@elementtype,@userid)";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("id", entity.Id);
+                cmd.Parameters.AddWithValue("cardtotrade", entity.CardToTrade.Id);
+                cmd.Parameters.AddWithValue("cardtype", (int) entity.WantCardType);
+                cmd.Parameters.AddWithValue("mindamage", entity.WantMinDamage);
+                cmd.Parameters.AddWithValue("race", (int) entity.WantRace);
+                cmd.Parameters.AddWithValue("elementtype", (int) entity.WantElementType);
+                cmd.Parameters.AddWithValue("userid", entity.UserEntity.Id);
+                cmd.Prepare();
+                result = cmd.ExecuteNonQuery();
+
+                if ((int) result == 0)
+                    return false;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public TradingEntity GetTradeById(string tradeid)
+        {
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+            }
+
+            try
+            {
+                var sql = "SELECT * FROM mtcg.trading WHERE id=@id";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("id", tradeid);
+                cmd.Prepare();
+                
+                var reader = cmd.ExecuteReader();
+
+                TradingEntity entity = null;
+
+                while (reader.Read())
+                {
+                    entity = new TradingEntity()
+                    {
+                        Id = reader.SafeGetString(0),
+                        CardToTrade = new CardEntity()
+                        {
+                            Id = reader.SafeGetString(1),
+                        },
+                        WantCardType = (CardType) reader.GetInt32(2),
+                        WantMinDamage = reader.GetDouble(3),
+                        WantRace = (Race) reader.GetInt32(4),
+                        WantElementType = (ElementType) reader.GetInt32(5),
+                        UserEntity = new UserEntity()
+                        {
+                            Id = reader.GetInt32(6)
+                        }
+                    };
+                }
+                reader.Close();
+
+                if (entity == null)
+                    return null;
+
+                entity.CardToTrade = GetCardById(entity.CardToTrade.Id);
+                entity.UserEntity = GetUserById(entity.UserEntity.Id);
+
+                if (entity.CardToTrade == null || entity.UserEntity == null)
+                    return null;
+
+                return entity;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return null;
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+
+        public bool TradeCards(string tradeid, string cardToTrade,UserEntity userEntity)
+        {
+            var opened = false;
+            NpgsqlTransaction transaction = null;
+            if (_connection.State != ConnectionState.Open)
+            {
+                opened = true;
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
+            }
+
+            try
+            {
+                var tradeEntity = GetTradeById(tradeid);
+
+                if (tradeEntity.UserEntity.Id == userEntity.Id)
+                    return false;
+                
+                var cardEntity = GetCardById(cardToTrade);
+
+                if (cardEntity.CardPlace == CardPlace.Transaction)
+                    return false;
+
+                if (!(cardEntity.Damage >= tradeEntity.WantMinDamage)) return false;
+
+                if (tradeEntity.WantCardType != CardType.Unknown && tradeEntity.WantCardType != cardEntity.CardType) return false;
+                
+                if (tradeEntity.WantRace != Race.Unknow && tradeEntity.WantRace != cardEntity.Race) return false;
+                
+                if (tradeEntity.WantElementType != ElementType.Unknown && tradeEntity.WantElementType != cardEntity.ElementType) return false;
+
+                var sql = "UPDATE mtcg.r_user_card SET userid=@newuser WHERE cardid=@cardid";
+                var cmd = new NpgsqlCommand(sql, _connection);
+                
+                cmd.Parameters.AddWithValue("newuser", userEntity.Id);
+                cmd.Parameters.AddWithValue("cardid", tradeEntity.CardToTrade.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("newuser", tradeEntity.UserEntity.Id);
+                cmd.Parameters.AddWithValue("cardid", cardEntity.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id=@card1 OR id=@card2";
+                cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Stack);
+                cmd.Parameters.AddWithValue("card1", tradeEntity.CardToTrade.Id);
+                cmd.Parameters.AddWithValue("card2", cardEntity.Id);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                if (RemoveTradeByUserRequest(tradeEntity.Id, tradeEntity.UserEntity.Id))
+                {
+                    transaction?.Commit();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                transaction?.Rollback();
+                throw new NpgsqlException();
             }
             finally
             {

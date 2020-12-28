@@ -71,6 +71,9 @@ namespace MTCG.API
                     case "battles":
                         handler = new BattlesHandler(_requestContext, Database);
                         break;
+                    case "tradings":
+                        handler = new TradingsHandler(_requestContext, Database);
+                        break;
                     default:
                         _responseContext.ResponseMessage.Add(new ResponseMessage
                         {

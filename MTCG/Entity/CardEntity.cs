@@ -10,9 +10,10 @@
 
     public enum ElementType
     {
-        Normal = 0,
-        Fire = 1,
-        Water = 2
+        Unknown = 0,
+        Normal = 1,
+        Fire = 2,
+        Water = 3
     }
 
     public enum CardType
