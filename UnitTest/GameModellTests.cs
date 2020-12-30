@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Moq;
 using MTCG;
 using MTCG.Entity;
@@ -8,9 +10,10 @@ using NUnit.Framework;
 
 namespace UnitTest
 {
-    [TestFixture]
     public class GameModellTests
     {
+
+
         [SetUp]
         public void Setup()
         {
@@ -142,6 +145,28 @@ namespace UnitTest
 
             //Assert
             Assert.That(result.GameEnd == GameEnd.Draw);
+        }
+
+        [Test]
+        public void TryFightNotEnoughPlayer()
+        {
+            UserEntity userEntity = new UserEntity(){Username = "test",DisplayName = "test"};
+            UserEntity userEntity2 = new UserEntity(){Username = "test2",DisplayName = "test2"};
+            Mock<IDatabase> database = new Mock<IDatabase>();
+            UserModell userModell = new UserModell(database.Object);
+            GameModell gameModell = new GameModell(userModell);
+            ReportEntity report1 = null;
+            ReportEntity report2 = null;
+            
+            userModell.UserEntity = userEntity;
+            Task.Run(() =>
+            {
+                GameModell gameModell = new GameModell(new UserModell(database.Object){UserEntity = userEntity2});
+                report1 = gameModell.GetLog();
+            });
+            report2 = gameModell.GetLog();
+            
+            Assert.That(report1 == report2);
         }
     }
 }

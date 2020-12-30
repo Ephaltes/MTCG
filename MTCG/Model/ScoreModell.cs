@@ -19,6 +19,9 @@ namespace MTCG.Model
         {
             var userEntity = _database.LoadScoreBoard();
 
+            if (userEntity == null)
+                return null;
+            
             var retList = new List<ScoreEntity>();
 
             foreach (var user in userEntity)

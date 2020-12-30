@@ -7,7 +7,7 @@ namespace MTCG.Entity
     {
         public List<CardEntity> CardsInPackage;
         public string Name;
-        public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public string Id { get; set; }
         public int Amount { get; set; } = 1;
     }
 }

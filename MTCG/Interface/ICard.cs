@@ -1,4 +1,6 @@
-﻿namespace MTCG.Interface
+﻿using MTCG.Entity;
+
+namespace MTCG.Interface
 {
     public interface ICard
     {

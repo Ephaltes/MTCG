@@ -62,13 +62,10 @@ namespace MTCG.Model
                 {
                     if (!PlayerList.TryTake(out player2))
                     {
+                        //Sollte eig. nicht passieren
                         PlayerList.Add(player1);
                         return;
                     }
-                }
-                else
-                {
-                    return;
                 }
             }
 
@@ -83,7 +80,7 @@ namespace MTCG.Model
 
             var log = "Fight started:\n\n";
             var i = 0;
-            while (player1Deck.Count > 0 && player2Deck.Count > 0 && i < Constant.MAXROUND)
+            while (player1Deck?.Count > 0 && player2Deck?.Count > 0 && i < Constant.MAXROUND)
             {
                 //Get Random Card in Deck
                 var player1Card = player1Deck.OrderBy(x => Guid.NewGuid()).ToList()[0];
@@ -114,7 +111,7 @@ namespace MTCG.Model
             }
 
             ReportEntity report = null;
-            if (player1Deck.Count == 0)
+            if (player1Deck?.Count == 0)
             {
                 log += "END: Winner Player2";
                 report = new ReportEntity
@@ -127,7 +124,7 @@ namespace MTCG.Model
                 player2.WonFightAgainst(player1.UserEntity);
             }
 
-            if (player2Deck.Count == 0)
+            if (player2Deck?.Count == 0)
             {
                 log += "END: Winner Player1";
                 report = new ReportEntity
@@ -141,7 +138,7 @@ namespace MTCG.Model
                 player2.LostFightAgainst(player1.UserEntity);
             }
 
-            if (player1Deck.Count > 0 && player2Deck.Count > 0)
+            if (player1Deck?.Count > 0 && player2Deck?.Count > 0)
             {
                 log += "END: Draw";
                 report = new ReportEntity

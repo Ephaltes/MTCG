@@ -17,7 +17,6 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePost()
         {
-            var responseContext = new ResponseContext();
             var model = new UserModell(Database);
 
             RequestContext.HttpHeader.TryGetValue("Authorization", out var token);
@@ -29,47 +28,24 @@ namespace MTCG.API
 
             var packageEntity = JsonConvert.DeserializeObject<PackageEntity>(RequestContext.HttpBody);
 
-            if (packageEntity.CardsInPackage.Count < 1)
+            var packageModell = new PackageModell(Database);
+
+            var ret = packageModell.AddPackage(packageEntity);
+            
+            if (ret == 1 || ret == 2)
                 return CardNotValid();
 
-            foreach (var card in packageEntity.CardsInPackage)
+            if (ret == 0)
             {
-                if (string.IsNullOrEmpty(card.Id))
-                    card.GenerateIdForCard();
-
-
-                if (card.CardType == CardType.MonsterCard && card.Race == Race.Unknow
-                    || card.Damage <= 0)
-                    return CardNotValid();
+                return SuccessObject("Package created sucessful", StatusCodes.Created);
+               
             }
-
-            if (Database.AddPackage(packageEntity))
-            {
-                responseContext.ResponseMessage.Add(new ResponseMessage
-                {
-                    Status = StatusCodes.Created,
-                    Object = "Package Created successful"
-                });
-                responseContext.StatusCode = StatusCodes.Created;
-            }
-            else
-            {
-                responseContext = SomeThingWrong();
-            }
-
-            return responseContext;
+            return SomeThingWrong();
         }
 
         private ResponseContext CardNotValid()
         {
-            var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage
-            {
-                Status = StatusCodes.BadRequest,
-                ErrorMessage = "CardEntity is not valid"
-            });
-            responseContext.StatusCode = StatusCodes.BadRequest;
-            return responseContext;
+            return CustomError("CardEntity is not valid", StatusCodes.BadRequest);
         }
     }
 }

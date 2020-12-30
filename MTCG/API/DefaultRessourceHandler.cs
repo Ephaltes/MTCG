@@ -65,50 +65,22 @@ namespace MTCG.API
 
         protected ResponseContext NotImplemented()
         {
-            var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage
-            {
-                Status = StatusCodes.BadRequest,
-                ErrorMessage = "Not Implemented"
-            });
-            responseContext.StatusCode = StatusCodes.BadRequest;
-            return responseContext;
+            return CustomError("Not Implemented", StatusCodes.BadRequest);
         }
 
         protected ResponseContext SomeThingWrong()
         {
-            var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage
-            {
-                Status = StatusCodes.InternalServerError,
-                ErrorMessage = "Something went Wrong"
-            });
-            responseContext.StatusCode = StatusCodes.InternalServerError;
-            return responseContext;
+            return CustomError("Something went wrong", StatusCodes.InternalServerError);
         }
 
         protected ResponseContext EmptyBody()
         {
-            var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage
-            {
-                Status = StatusCodes.BadRequest,
-                ErrorMessage = "Body is empty"
-            });
-            responseContext.StatusCode = StatusCodes.BadRequest;
-            return responseContext;
+            return CustomError("Body is empty", StatusCodes.BadRequest);
         }
 
         protected ResponseContext NotAuthorized()
         {
-            var responseContext = new ResponseContext();
-            responseContext.ResponseMessage.Add(new ResponseMessage
-            {
-                Status = StatusCodes.Unauthorized,
-                ErrorMessage = "Not Authorized"
-            });
-            responseContext.StatusCode = StatusCodes.Unauthorized;
-            return responseContext;
+            return CustomError("Not Authorized", StatusCodes.Unauthorized);
         }
 
         protected ResponseContext CustomError(string msg, StatusCodes code)

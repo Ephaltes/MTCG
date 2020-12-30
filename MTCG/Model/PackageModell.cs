@@ -10,77 +10,41 @@ namespace MTCG.Model
     public class PackageModell : IPackage
     {
         private readonly IDatabase _database;
-        protected PackageEntity Entity;
+        public PackageEntity Entity { get; set; }
 
-        public PackageModell(PackageEntity entity, IDatabase database)
-        {
-            if (entity.CardsInPackage.Count < Constant.MAXCARDSPERPACKAGE)
-                throw new MissingMemberException("Packages doesnt have Id, Amount or Cards");
-
-            if (string.IsNullOrEmpty(entity.Id))
-                entity.Id = Guid.NewGuid().ToString("N");
-
-            Entity = entity;
-            _database = database;
-        }
 
         public PackageModell(IDatabase database)
         {
-            Entity = new PackageEntity();
             _database = database;
         }
 
-        public int CardCount => Entity.CardsInPackage.Count;
-        public int PackageAmount => Entity.Amount;
-
-        public string Id => Entity.Id;
-
-        public bool AddCardToPackage(CardEntity entity)
+        public int AddPackage(PackageEntity entity)
         {
-            try
+            Entity = entity;
+
+            if (Entity.CardsInPackage == null || Entity.CardsInPackage.Count < 1)
+                return 1;
+            
+            if (string.IsNullOrEmpty(Entity.Id))
+                Entity.Id = Guid.NewGuid().ToString("N");
+            
+            foreach (var card in Entity.CardsInPackage)
             {
-                if (string.IsNullOrEmpty(entity.Id))
-                    entity.Id = Guid.NewGuid().ToString("N");
+                if (string.IsNullOrEmpty(card.Id))
+                    card.GenerateIdForCard();
 
-                entity.CardPlace = CardPlace.Pack;
-
-
-                Entity.CardsInPackage.Add(entity);
-                _database.AddCardToDatabase(entity);
-                return true;
+                if ( card.CardType == CardType.Unknown
+                     || card.CardType == CardType.MonsterCard && card.Race == Race.Unknow
+                     || card.Damage <= 0)
+                    return 2;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Entity.CardsInPackage.Remove(entity);
-                return false;
-            }
+
+            if(_database.AddPackage(Entity))
+                return 0;
+
+            return 3;
         }
-
-        public bool AddCardsToPackage(List<CardEntity> entity)
-        {
-            try
-            {
-                foreach (var card in entity)
-                {
-                    if (string.IsNullOrEmpty(card.Id))
-                        card.Id = Guid.NewGuid().ToString("N");
-
-                    card.CardPlace = CardPlace.Pack;
-                }
-
-                Entity.CardsInPackage.AddRange(entity);
-                _database.AddCardsToDatabase(entity);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Entity.CardsInPackage = Entity.CardsInPackage.Except(entity).ToList();
-                return false;
-            }
-        }
+        
 
         public List<CardEntity> Open(UserEntity user)
         {

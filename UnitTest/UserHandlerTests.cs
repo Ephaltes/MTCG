@@ -54,6 +54,24 @@ namespace UnitTest
 
             Assert.That(response.StatusCode == StatusCodes.BadRequest);
         }
+        
+        [Test]
+        public void CreateUserFromRequest_Failed_EmptyBody()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+
+            var jsonRequest = "";
+
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.POST);
+            request.SetupGet(x => x.HttpBody).Returns(jsonRequest);
+            database.Setup(x => x.CreateUser(It.IsAny<UserEntity>())).Returns(false);
+
+            var handler = new UsersHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            Assert.That(response.StatusCode == StatusCodes.BadRequest);
+        }
 
         [Test]
         public void GetUserInformation_Success()
@@ -110,6 +128,29 @@ namespace UnitTest
             var status = response.ResponseMessage[0].Status;
 
             Assert.That(status == StatusCodes.Unauthorized);
+        }
+        
+        [Test]
+        public void GetUserInformation_Failed_NoParameter()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+            var userrequest = new List<string> {"users"};
+            UserEntity test = null;
+            var header = new Dictionary<string, string>();
+            header.Add("Authorization", "Basic test-mtcgToken");
+
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.GET);
+            request.SetupGet(x => x.HttpRequest).Returns(userrequest);
+            database.Setup(x => x.GetUserByUsername(It.IsAny<string>())).Returns(test);
+
+            var handler = new UsersHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            var status = response.ResponseMessage[0].Status;
+
+            Assert.That(status == StatusCodes.BadRequest);
         }
 
         [Test]
@@ -173,6 +214,75 @@ namespace UnitTest
             var response = handler.Handle();
 
             Assert.That(response.ResponseMessage[0].Status == StatusCodes.BadRequest);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_failed_missingParameter()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+            var header = new Dictionary<string, string>();
+            header.Add("Authorization", "Basic wrong-mtcgToken");
+            var retEntity = new UserEntity {Username = "wrong", Description = "test"};
+            var httprequest = new List<string> {"test"};
+
+            request.SetupGet(x => x.HttpBody).Returns(JsonConvert.SerializeObject(retEntity));
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            request.SetupGet(x => x.HttpRequest).Returns(httprequest);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.UpdateUser(It.IsAny<UserEntity>())).Returns(true);
+
+            var handler = new UsersHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            Assert.That(response.StatusCode == StatusCodes.BadRequest);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_failed_db()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+            var header = new Dictionary<string, string>();
+            header.Add("Authorization", "Basic wrong-mtcgToken");
+            var retEntity = new UserEntity {Username = "wrong", Description = "test",Image="tt",DisplayName = "name",Password = "newPW"};
+            var httprequest = new List<string> {"test", "wrong"};
+
+            request.SetupGet(x => x.HttpBody).Returns(JsonConvert.SerializeObject(retEntity));
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            request.SetupGet(x => x.HttpRequest).Returns(httprequest);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.UpdateUser(It.IsAny<UserEntity>())).Returns(false);
+
+            var handler = new UsersHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            Assert.That(response.StatusCode == StatusCodes.InternalServerError);
+        }
+        
+        [Test]
+        public void UpdateUserInformation_success_changeEverything()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+            var header = new Dictionary<string, string>();
+            header.Add("Authorization", "Basic wrong-mtcgToken");
+            var retEntity = new UserEntity {Username = "wrong", Description = "test",Image="tt",DisplayName = "name",Password = "newPW"};
+            var httprequest = new List<string> {"test", "wrong"};
+
+            request.SetupGet(x => x.HttpBody).Returns(JsonConvert.SerializeObject(retEntity));
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            request.SetupGet(x => x.HttpRequest).Returns(httprequest);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.UpdateUser(It.IsAny<UserEntity>())).Returns(true);
+
+            var handler = new UsersHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            Assert.That(response.ResponseMessage[0].Status == StatusCodes.OK);
         }
 
         [Test]

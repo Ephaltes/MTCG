@@ -1,4 +1,5 @@
 using MTCG;
+using MTCG.Entity;
 using MTCG.Model;
 using NUnit.Framework;
 
@@ -143,17 +144,61 @@ namespace UnitTest
         }
 
         [Test]
-        public void NormalSpell_Attack_WeakOrc()
+        public void NormalSpell_Attack_Orc()
         {
             //Arrange
             var card1Entity = new CardEntity
                 {Damage = 10, CardType = CardType.SpellCard, ElementType = ElementType.Normal};
             var card2Entity = new CardEntity
-                {Damage = 10, Race = Race.Orc, CardType = CardType.MonsterCard, ElementType = ElementType.Water};
+                {Damage = 10, Race = Race.Orc, CardType = CardType.MonsterCard, ElementType = ElementType.Normal};
+            //Act
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
+            //Assert
+            Assert.That(result >= 10);
+        }
+        
+        [Test]
+        public void NormalOrc_Attack_WeakWaterSpell()
+        {
+            //Arrange
+            var card2Entity = new CardEntity
+                {Damage = 10, CardType = CardType.SpellCard, ElementType = ElementType.Water};
+            var card1Entity = new CardEntity
+                {Damage = 10, Race = Race.Orc, CardType = CardType.MonsterCard, ElementType = ElementType.Normal};
             //Act
             var result = GameModell.CalculateDamge(card1Entity, card2Entity);
             //Assert
             Assert.That(result >= 20);
         }
+        
+        [Test]
+        public void FireOrc_Attack_WaterSpell()
+        {
+            //Arrange
+            var card2Entity = new CardEntity
+                {Damage = 10, CardType = CardType.SpellCard, ElementType = ElementType.Water};
+            var card1Entity = new CardEntity
+                {Damage = 10, Race = Race.Orc, CardType = CardType.MonsterCard, ElementType = ElementType.Fire};
+            //Act
+            var result = GameModell.CalculateDamge(card1Entity, card2Entity);
+            //Assert
+            Assert.That(result >= 5);
+        }
+        
+        [Test]
+        public void NormalOrc_Attack_FireSpell()
+        {
+            //Arrange
+            var card1Entity = new CardEntity
+                {Damage = 10, CardType = CardType.SpellCard, ElementType = ElementType.Fire};
+            var card2Entity = new CardEntity
+                {Damage = 10, Race = Race.Orc, CardType = CardType.MonsterCard, ElementType = ElementType.Normal};
+            //Act
+            var result = GameModell.CalculateDamge(card2Entity,card1Entity);
+            //Assert
+            Assert.That(result >= 5);
+        }
+        
+        
     }
 }

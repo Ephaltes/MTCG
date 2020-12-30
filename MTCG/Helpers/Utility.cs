@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Npgsql;
+using MTCG.Entity;
 
 namespace MTCG.Helpers
 {

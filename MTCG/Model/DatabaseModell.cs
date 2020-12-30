@@ -624,7 +624,7 @@ namespace MTCG.Model
                 result.Close();
 
                 entity.CardsInPackage = GetCardsInPackage(packageid);
-                var model = new PackageModell(entity, this);
+                var model = new PackageModell(this) {Entity = entity};
                 return model;
             }
             catch (Exception e)

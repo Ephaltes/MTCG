@@ -17,19 +17,11 @@ namespace MTCG.API
 
         protected override ResponseContext HandleGet()
         {
-            var responseContext = new ResponseContext();
             var model = new UserModell(Database);
 
             if (RequestContext.HttpRequest.Count < 2)
-            {
-                responseContext.ResponseMessage.Add(new ResponseMessage
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Missing Parameters"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
-            }
+                return CustomError("Missing Parameters", StatusCodes.BadRequest);
+           
 
             var user = RequestContext.HttpRequest[1];
 
@@ -79,18 +71,10 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePut()
         {
-            var responseContext = new ResponseContext();
             var model = new UserModell(Database);
             if (RequestContext.HttpRequest.Count < 2)
-            {
-                responseContext.ResponseMessage.Add(new ResponseMessage
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Missing Parameters"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
-            }
+                return CustomError("Missing Parameter", StatusCodes.BadRequest);
+           
 
             var user = RequestContext.HttpRequest[1];
 
@@ -138,7 +122,7 @@ namespace MTCG.API
                 success = model.UpdateUser();
 
             if (success) return SuccessObject("Updated Account Information", StatusCodes.OK);
-            return SuccessObject("Could not Update Account Information", StatusCodes.OK);
+            return SuccessObject("Could not Update Account Information", StatusCodes.InternalServerError);
         }
     }
 }

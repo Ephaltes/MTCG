@@ -15,10 +15,9 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePost()
         {
-            var responseContext = new ResponseContext();
             var model = new UserModell(Database);
 
-            if (RequestContext.HttpRequest[1].ToLower() != "packages")
+            if ( RequestContext.HttpRequest.Count < 2 ||  RequestContext.HttpRequest[1].ToLower() != "packages")
                 return CustomError("Wrong Parameter", StatusCodes.BadRequest);
 
 
@@ -30,9 +29,8 @@ namespace MTCG.API
             if (model.UserEntity.Coins < 5)
                 return CustomError("Not enough coins", StatusCodes.BadRequest);
 
-            var packages = Database.GetPackages().OrderBy(x => x.PackageAmount).ToList();
-
-            var cards = packages[0].Open(model.UserEntity);
+            var packages = new PackageListModell(Database).Packages;
+            var cards = packages?[0].Open(model.UserEntity);
 
             if (cards == null)
                 return CustomError("No Packages available", StatusCodes.NotFound);

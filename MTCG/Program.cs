@@ -15,6 +15,7 @@ namespace MTCG
             var webserver = new CustomWebServer(IPAddress.Any, 10001);
             webserver.Start();
             webserver.Listen(5);
+            //TODO: unit tests
         }
 
         private static void StartLogger()

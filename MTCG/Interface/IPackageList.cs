@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
+using MTCG.Entity;
 
 namespace MTCG.Interface
 {
     public interface IPackageList
     {
-        public List<IPackage> PackageModellList { get; }
-
-        public bool AddPackageToList(IPackage entity);
-
-        public List<CardEntity> Open(string packageId = "");
+        public List<IPackage> Packages { get; }
+        public List<CardEntity> Open(UserEntity userEntity,string packageId = "");
     }
 }

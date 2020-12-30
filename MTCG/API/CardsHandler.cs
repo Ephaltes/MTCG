@@ -23,7 +23,7 @@ namespace MTCG.API
 
             var stack = model.Stack;
 
-            if (stack.Count > 0) return SuccessObject(stack, StatusCodes.OK);
+            if (stack?.Count > 0) return SuccessObject(stack, StatusCodes.OK);
             return CustomError("No Cards found", StatusCodes.NotFound);
         }
     }

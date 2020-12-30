@@ -1,4 +1,4 @@
-﻿namespace MTCG
+﻿namespace MTCG.Entity
 {
     public enum CardPlace
     {
@@ -18,7 +18,7 @@
 
     public enum CardType
     {
-        Unknown,
+        Unknown = 0,
         MonsterCard = 1,
         SpellCard = 2
     }
@@ -42,7 +42,7 @@
         public double Damage { get; set; }
         public string Description { get; set; }
         public ElementType ElementType { get; set; } = ElementType.Normal;
-        public CardType CardType { get; set; } = CardType.MonsterCard;
+        public CardType CardType { get; set; } = CardType.Unknown;
         public Race Race { get; set; } = Race.Unknow;
         public CardPlace CardPlace { get; set; } = CardPlace.Stack;
     }

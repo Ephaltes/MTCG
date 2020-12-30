@@ -22,7 +22,7 @@ namespace MTCG.API
 
             if (authorization == null || !model.VerifyToken(authorization.Value)) return NotAuthorized();
 
-            if (model.Deck.Count < Constant.MAXCARDSINDECK)
+            if (model.Deck.Count != Constant.MAXCARDSINDECK)
                 return CustomError("Not Enough Cards in Deck", StatusCodes.BadRequest);
 
             var gameModell = new GameModell(model);

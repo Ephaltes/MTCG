@@ -16,7 +16,6 @@ namespace MTCG.API
 
         protected override ResponseContext HandlePost()
         {
-            var responseContext = new ResponseContext();
 
             if (string.IsNullOrWhiteSpace(RequestContext.HttpBody)) return EmptyBody();
 
@@ -25,13 +24,7 @@ namespace MTCG.API
             if (userEntity == null || string.IsNullOrEmpty(userEntity.Username) ||
                 string.IsNullOrEmpty(userEntity.Password))
             {
-                responseContext.ResponseMessage.Add(new ResponseMessage
-                {
-                    Status = StatusCodes.BadRequest,
-                    ErrorMessage = "Missing Password or Username"
-                });
-                responseContext.StatusCode = StatusCodes.BadRequest;
-                return responseContext;
+                return CustomError("Missing Parameter", StatusCodes.BadRequest);
             }
 
             var model = new UserModell(Database);
