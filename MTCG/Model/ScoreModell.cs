@@ -31,7 +31,8 @@ namespace MTCG.Model
                     Draw = user.Draw,
                     Elo = user.Elo,
                     Lose = user.Lose,
-                    Win = user.Win
+                    Win = user.Win,
+                    WRatio = user.WRatio
                 });
 
             if (retList.Count < 1)

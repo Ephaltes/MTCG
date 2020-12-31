@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MTCG.Entity;
+using MTCG.Model;
 
 namespace MTCG.Interface
 {
@@ -51,5 +52,6 @@ namespace MTCG.Interface
         public bool AddTrade(TradingEntity entity);
         public bool TradeCards(string tradeid, string cardToTrade, UserEntity userEntity);
         public TradingEntity GetTradeById(string tradeid);
+        public bool UpdateScore(UserEntity me, ScoreUpdate update);
     }
 }

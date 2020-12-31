@@ -7,5 +7,6 @@
         public int Elo;
         public int Lose;
         public int Win;
+        public double WRatio;
     }
 }

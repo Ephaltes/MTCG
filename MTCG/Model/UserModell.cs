@@ -5,6 +5,13 @@ using MTCG.Interface;
 
 namespace MTCG.Model
 {
+    
+    public enum ScoreUpdate
+    {
+        draw=0,
+        win=1,
+        lose=2,
+    }
     public class UserModell
     {
         private readonly IDatabase _database;
@@ -14,6 +21,7 @@ namespace MTCG.Model
             _database = db;
         }
 
+      
         public UserEntity UserEntity { get; set; }
         public List<CardEntity> Stack => GetStack();
 
@@ -101,11 +109,17 @@ namespace MTCG.Model
         public void WonFightAgainst(UserEntity enemy)
         {
             _database.UpdateElo(UserEntity, enemy);
+            _database.UpdateScore(UserEntity, ScoreUpdate.win);
         }
 
         public void LostFightAgainst(UserEntity enemy)
         {
             _database.UpdateElo(UserEntity, enemy, false);
+            _database.UpdateScore(UserEntity, ScoreUpdate.lose);
+        }
+        public void DrawFight()
+        {
+            _database.UpdateScore(UserEntity, ScoreUpdate.draw);
         }
     }
 }

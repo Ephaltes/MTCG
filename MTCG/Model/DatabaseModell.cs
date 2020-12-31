@@ -40,7 +40,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -68,7 +68,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -115,7 +115,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -169,7 +169,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -218,7 +218,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -299,7 +299,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 transaction?.Rollback();
                 return false;
             }
@@ -375,7 +375,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -411,7 +411,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -586,7 +586,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw;
             }
             finally
@@ -629,7 +629,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -709,7 +709,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -933,7 +933,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 transaction?.Rollback();
                 return false;
             }
@@ -986,7 +986,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -1038,7 +1038,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -1098,7 +1098,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return null;
             }
             finally
@@ -1134,8 +1134,8 @@ namespace MTCG.Model
 
                 var myElo = (int) cmd.ExecuteScalar();
 
-                double estimatedFactor = 1 / ((1 + 10) ^ ((enemyElo - myElo) / 400));
-                var newScore = Convert.ToInt32(myElo + Constant.kFactor * (won ? 1 : 0 - estimatedFactor));
+                double estimatedFactor = 1 / (1 + (10 ^ ((enemyElo - myElo) / 400)));
+                var newScore = Convert.ToInt32(myElo + (Constant.kFactor * (won ? 1 : 0 - estimatedFactor)));
 
                 sql = "UPDATE mtcg.user SET elo=@newscore where id=@id";
                 cmd = new NpgsqlCommand(sql, _connection);
@@ -1149,7 +1149,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 return false;
             }
             finally
@@ -1370,7 +1370,7 @@ namespace MTCG.Model
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e.Message);
                 throw new NpgsqlException();
             }
             finally
@@ -1622,6 +1622,46 @@ namespace MTCG.Model
                 Log.Error(e.Message);
                 transaction?.Rollback();
                 throw new NpgsqlException();
+            }
+            finally
+            {
+                if (opened)
+                    _connection.Close();
+            }
+        }
+        
+        public bool UpdateScore(UserEntity me, ScoreUpdate update)
+        {
+            //Formel : https://medium.com/purple-theory/what-is-elo-rating-c4eb7a9061e0
+            var opened = false;
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+                opened = true;
+            }
+
+            try
+            {
+                var sql = $"SELECT {update.ToString()} from mtcg.user where id=@id";
+                var cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("id", me.Id);
+                var stat =(int) cmd.ExecuteScalar();
+
+
+                sql = $"UPDATE mtcg.user SET {update.ToString()}=@stat where id=@id";
+                cmd = new NpgsqlCommand(sql, _connection);
+
+                cmd.Parameters.AddWithValue("stat", stat+1);
+                cmd.Parameters.AddWithValue("id", me.Id);
+
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
             }
             finally
             {

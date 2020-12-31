@@ -10,9 +10,9 @@ namespace MTCG.Model
     {
         Draw,
         Player1,
-        Player2
+        Player2,
     }
-
+    
     public class GameModell
     {
         public enum WeakAgainst
@@ -147,6 +147,8 @@ namespace MTCG.Model
                     Player2 = player2.UserEntity.DisplayName
                 };
                 //No Elo change when Draw
+                player1.DrawFight();
+                player2.DrawFight();
             }
 
             LogList.TryAdd(player1.UserEntity.DisplayName, report);

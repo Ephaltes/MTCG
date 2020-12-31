@@ -1,4 +1,6 @@
-﻿namespace MTCG.Entity
+﻿using Serilog.Configuration;
+
+namespace MTCG.Entity
 {
     public class UserEntity
     {
@@ -15,5 +17,13 @@
         public string Token;
         public string Username;
         public int Win;
+        public double WRatio
+        {
+            get
+            {
+                var sum = Win + (double) Lose + Draw;
+                return sum == 0 ? 0 : Win / sum;
+            }
+        }
     }
 }

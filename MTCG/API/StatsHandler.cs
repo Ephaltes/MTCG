@@ -28,7 +28,8 @@ namespace MTCG.API
                 model.UserEntity.Elo,
                 model.UserEntity.Win,
                 model.UserEntity.Lose,
-                model.UserEntity.Draw
+                model.UserEntity.Draw,
+                model.UserEntity.WRatio
             }, StatusCodes.OK);
         }
     }
