@@ -83,7 +83,7 @@ namespace MTCG.API
             if (authorization == null || !model.VerifyToken(authorization.Value)) return NotAuthorized();
 
             if (RequestContext.HttpRequest.Count < 2 || string.IsNullOrEmpty(RequestContext.HttpRequest[1])) 
-                return CustomError("Mssing Parameter", StatusCodes.BadRequest);
+                return CustomError("Missing Parameter", StatusCodes.BadRequest);
 
             var tradeid = RequestContext.HttpRequest[1];
 

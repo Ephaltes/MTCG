@@ -39,20 +39,14 @@ namespace MTCG.API
                 switch (GetRequestedEndPoint())
                 {
                     case "users":
-                    {
                         handler = new UsersHandler(_requestContext, Database);
                         break;
-                    }
                     case "sessions":
-                    {
                         handler = new SessionsHandler(_requestContext, Database);
                         break;
-                    }
                     case "packages":
-                    {
                         handler = new PackagesHandler(_requestContext, Database);
                         break;
-                    }
                     case "transactions":
                         handler = new TransactionsHandler(_requestContext, Database);
                         break;
