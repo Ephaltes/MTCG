@@ -80,30 +80,44 @@ namespace MTCG.Model
 
             var log = "Fight started:\n\n";
             var i = 0;
+            bool suddendeath = false;
+            Random rand = new Random();
             while (player1Deck?.Count > 0 && player2Deck?.Count > 0 && i < Constant.MAXROUND)
             {
                 //Get Random Card in Deck
                 var player1Card = player1Deck.OrderBy(x => Guid.NewGuid()).ToList()[0];
                 var player2Card = player2Deck.OrderBy(x => Guid.NewGuid()).ToList()[0];
 
-                var player1dmg = CalculateDamge(player1Card, player2Card);
-                var player2dmg = CalculateDamge(player2Card, player1Card);
+                double[] playerdmg = new double[2];
+                playerdmg[0] = CalculateDamge(player1Card, player2Card);
+                playerdmg[1] = CalculateDamge(player2Card, player1Card);
+
+                if (i + 1 == Constant.SUDDENDEATH)
+                {
+                    suddendeath = true;
+                }
+
+                if (suddendeath)
+                {
+                    if ((i + 1) % 2 == 0)
+                        playerdmg[rand.Next(2)] = 9999;
+                }
 
                 log += $"Round {i + 1}: \n";
-                log += $"Player1 dealing: {player1dmg}\n";
-                log += $"Player2 dealing: {player2dmg}\n";
+                log += $"Player1 dealing: {playerdmg[0]}\n";
+                log += $"Player2 dealing: {playerdmg[1]}\n";
 
-                if (player1dmg > player2dmg)
+                if (playerdmg[0] > playerdmg[1])
                 {
                     player1Deck.Add(player2Card);
                     player2Deck.Remove(player2Card);
-                    log += $"Player1 won the round dealing {player1dmg} Damage\n";
+                    log += $"Player1 won the round dealing {playerdmg[0]} Damage\n";
                 }
-                else if (player2dmg > player1dmg)
+                else if (playerdmg[1] > playerdmg[0])
                 {
                     player2Deck.Add(player1Card);
                     player1Deck.Remove(player1Card);
-                    log += $"Player2 won the round dealing {player2dmg} Damage\n";
+                    log += $"Player2 won the round dealing {playerdmg[1]} Damage\n";
                 }
 
                 log += "\n";

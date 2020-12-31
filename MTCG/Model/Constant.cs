@@ -13,5 +13,7 @@
         public const string PLAINTEXT = "plain";
         public const int TOP10 = 10;
         public const int kFactor = 10;
+
+        public const int SUDDENDEATH = 96;
     }
 }
