@@ -890,13 +890,28 @@ namespace MTCG.Model
 
             try
             {
-                var sql =
-                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                var sql = 
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.id= ANY(@list)";
                 var cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Parameters.AddWithValue("list", cardIDs);
+                var reader = cmd.ExecuteReader();
+                int cardnumber = 0;
+
+                while (reader.Read())
+                    cardnumber++;
+                if (cardnumber != cardIDs.Count)
+                    return false;
+                
+                reader.Close();
+
+                sql =
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("userid", userEntity.Id);
-                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
-                var reader = cmd.ExecuteReader();
+                cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck); 
+                reader = cmd.ExecuteReader();
 
                 var oldDeckIds = new List<string>();
 
@@ -915,11 +930,12 @@ namespace MTCG.Model
                     cmd.ExecuteNonQuery();
                 }
 
-                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = ANY(@list)";
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = ANY(@list) AND cardplace != @transaction";
                 cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
                 cmd.Parameters.AddWithValue("list", cardIDs);
+                cmd.Parameters.AddWithValue("transaction", (int)CardPlace.Transaction);
                 var result = cmd.ExecuteNonQuery();
 
                 if (result == cardIDs.Count)
@@ -956,9 +972,19 @@ namespace MTCG.Model
 
             try
             {
-                var sql =
-                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                var sql = 
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.id= @id";
                 var cmd = new NpgsqlCommand(sql, _connection);
+                cmd.Parameters.AddWithValue("userid", userEntity.Id);
+                cmd.Parameters.AddWithValue("id", cardId);
+                var cardid = (string)cmd.ExecuteScalar();
+
+                if (string.IsNullOrEmpty(cardid))
+                    return false;
+                
+                sql =
+                    "SELECT card.id FROM mtcg.card INNER JOIN mtcg.r_user_card ON card.id=r_user_card.cardid where r_user_card.userid=@userid AND card.cardplace=@cardplace";
+                cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("userid", userEntity.Id);
                 cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
@@ -973,11 +999,12 @@ namespace MTCG.Model
                 if (oldDeckIds.Count >= Constant.MAXCARDSINDECK)
                     return false;
 
-                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id";
+                sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id = @id AND cardplace != @transaction";
                 cmd = new NpgsqlCommand(sql, _connection);
 
                 cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Deck);
                 cmd.Parameters.AddWithValue("id", cardId);
+                cmd.Parameters.AddWithValue("transaction", (int)CardPlace.Transaction);
                 var result = cmd.ExecuteNonQuery();
 
                 if (result == 1) return true;
@@ -1411,7 +1438,7 @@ namespace MTCG.Model
                 
                 sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id=@id";
                 cmd = new NpgsqlCommand(sql, _connection);
-                cmd.Parameters.AddWithValue("cardplace", CardPlace.Stack);
+                cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Stack);
                 cmd.Parameters.AddWithValue("id", tradeEntity.CardToTrade.Id);
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -1449,14 +1476,14 @@ namespace MTCG.Model
                 cmd.Parameters.AddWithValue("userid", entity.UserEntity.Id);
                 cmd.Parameters.AddWithValue("cardid", entity.CardToTrade.Id);
                 cmd.Prepare();
-                var result = cmd.ExecuteScalar();
+                var result = cmd.ExecuteScalar(); //id der karte
 
                 if (result == null || (int) result < 1)
                     return false;
 
                 sql = "UPDATE mtcg.card SET cardplace=@cardplace WHERE id=@id";
                 cmd = new NpgsqlCommand(sql, _connection);
-                cmd.Parameters.AddWithValue("cardplace", CardPlace.Transaction);
+                cmd.Parameters.AddWithValue("cardplace", (int)CardPlace.Transaction);
                 cmd.Parameters.AddWithValue("id", entity.CardToTrade.Id);
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -1642,17 +1669,13 @@ namespace MTCG.Model
 
             try
             {
-                var sql = $"SELECT {update.ToString()} from mtcg.user where id=@id";
+
+                var sql = update == ScoreUpdate.win
+                    ? $"UPDATE mtcg.user SET {update.ToString()}={update.ToString()}+1 , coins=coins+1 where id=@id"
+                    : $"UPDATE mtcg.user SET {update.ToString()}={update.ToString()}+1 where id=@id";
+                
                 var cmd = new NpgsqlCommand(sql, _connection);
 
-                cmd.Parameters.AddWithValue("id", me.Id);
-                var stat =(int) cmd.ExecuteScalar();
-
-
-                sql = $"UPDATE mtcg.user SET {update.ToString()}=@stat where id=@id";
-                cmd = new NpgsqlCommand(sql, _connection);
-
-                cmd.Parameters.AddWithValue("stat", stat+1);
                 cmd.Parameters.AddWithValue("id", me.Id);
 
                 cmd.ExecuteNonQuery();

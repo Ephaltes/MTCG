@@ -37,7 +37,8 @@ namespace MTCG.API
                 model.UserEntity.DisplayName,
                 model.UserEntity.Username,
                 model.UserEntity.Description,
-                model.UserEntity.Image
+                model.UserEntity.Image,
+                model.UserEntity.Coins
             }, StatusCodes.OK);
         }
 

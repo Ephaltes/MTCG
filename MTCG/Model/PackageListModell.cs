@@ -17,7 +17,7 @@ namespace MTCG.Model
 
         protected List<IPackage> GetPackageList()
         {
-            return _database.GetPackages()?.OrderBy(x=>x.Entity.Amount).ToList();
+            return _database.GetPackages()?.OrderByDescending(x=>x.Entity.Amount).ToList();
         }
         public PackageListModell(IDatabase database)
         {

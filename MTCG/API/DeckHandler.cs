@@ -53,6 +53,10 @@ namespace MTCG.API
 
             var cardids = JsonConvert.DeserializeObject<List<string>>(RequestContext.HttpBody);
 
+            if (cardids.Count > Constant.MAXCARDSINDECK || cardids.Count == 0)
+                return CustomError("min/max 1/4 Cards in Deck", StatusCodes.BadRequest);
+            
+
             if (model.SetDeckByCardIds(cardids))
                 return SuccessObject("Cards added successful", StatusCodes.OK);
 

@@ -190,6 +190,32 @@ namespace UnitTest
 
             Assert.That(response.StatusCode == StatusCodes.InternalServerError);
         }
+        [Test]
+        public void PutDeck_failed_5Cards()
+        {
+            var request = new Mock<IRequestContext>();
+            var database = new Mock<IDatabase>();
+            var header = new Dictionary<string, string>();
+            header.Add("Authorization", "Basic user-mtcgToken");
+            var retEntity = new UserEntity {Username = "test", Description = "test"};
+            var httprequest = new List<string> {"deck"};
+            var cardList = new List<CardEntity>();
+            var carddecktoadd = new List<string>() {"1", "2", "3", "4", "5"};
+
+            request.SetupGet(x => x.HttpBody).Returns(JsonConvert.SerializeObject(carddecktoadd));
+            request.SetupGet(x => x.HttpHeader).Returns(header);
+            request.SetupGet(x => x.HttpMethod).Returns(HttpMethods.PUT);
+            request.SetupGet(x => x.HttpRequest).Returns(httprequest);
+            database.Setup(x => x.GetUserByToken(It.IsAny<string>())).Returns(retEntity);
+            database.Setup(x => x.GetDeckFromUser(It.IsAny<UserEntity>())).Returns(cardList);
+            database.Setup(x => x.SetDeckByCardIds(It.IsAny<List<string>>(),It.IsAny<UserEntity>()))
+                .Returns(false);
+
+            var handler = new DeckHandler(request.Object, database.Object);
+            var response = handler.Handle();
+
+            Assert.That(response.StatusCode == StatusCodes.BadRequest);
+        }
         
         [Test]
         public void PutDeck_success()

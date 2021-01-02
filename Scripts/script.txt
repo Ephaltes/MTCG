@@ -85,11 +85,11 @@ echo.
 
 REM --------------------------------------------------
 echo 6) add new packages
-curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\": 10.0}, { \"Name\":\"RegularSpell\", \"CardType\":2, \"ElementType\":0, \"Damage\": 50.0}, {\"Name\":\"Knight\", \"Damage\": 20.0}, { \"Name\":\"RegularSpell\", \"CardType\":2, \"ElementType\":0, \"Damage\": 45.0}, { \"Name\":\"FireElf\", \"Damage\": 25.0}]}"
+curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\": 10.0}, { \"Name\":\"RegularSpell\", \"CardType\":2, \"ElementType\":0, \"Damage\": 50.0}, {\"Name\":\"Knight\", \"Race\":4, \"CardType\":1, \"Damage\": 20.0}, { \"Name\":\"RegularSpell\", \"CardType\":2, \"ElementType\":0, \"Damage\": 45.0}, { \"Name\":\"FireElf\", \"Race\":2, \"CardType\":1, \"Damage\": 25.0}]}"
 echo.
-curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\":  9.0}, { \"Name\":\"FireSpell\", \"CardType\":2, \"ElementType\":1, \"Damage\": 55.0}, {\"Name\":\"Knight\", \"Damage\": 21.0}, { \"Name\":\"FireSpell\", \"CardType\":2, \"ElementType\":1, \"Damage\": 55.0}, {\"Name\":\"FireElf\", \"Damage\": 23.0}]}"
+curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\":  9.0}, { \"Name\":\"FireSpell\", \"CardType\":2, \"ElementType\":1, \"Damage\": 55.0}, {\"Name\":\"Knight\", \"Race\":4, \"CardType\":1, \"Damage\": 21.0}, { \"Name\":\"FireSpell\", \"CardType\":2, \"ElementType\":1, \"Damage\": 55.0}, {\"Name\":\"FireElf\", \"Race\":2, \"CardType\":1, \"Damage\": 23.0}]}"
 echo.
-curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\": 11.0}, { \"Name\":\"Dragon\", \"Race\":1, \"CardType\":1, \"ElementType\":0, \"Damage\": 70.0}, {\"Name\":\"Knight\", \"Damage\": 22.0}, { \"Name\":\"WaterSpell\", \"CardType\":2, \"ElementType\":2, \"Damage\": 40.0}, { \"Name\":\"FireElf\", \"Damage\": 28.0}]}"
+curl -X POST http://localhost:10001/packages --header "Content-Type: application/json" --header "Authorization: Basic admin-mtcgToken" -d "{\"CardsInPackage\":[{\"Name\":\"WaterGoblin\",  \"Race\":3, \"CardType\":1, \"ElementType\":2, \"Damage\": 11.0}, { \"Name\":\"Dragon\", \"Race\":1, \"CardType\":1, \"ElementType\":0, \"Damage\": 70.0}, {\"Name\":\"Knight\", \"Race\":4, \"CardType\":1, \"Damage\": 22.0}, { \"Name\":\"WaterSpell\", \"CardType\":2, \"ElementType\":2, \"Damage\": 40.0}, { \"Name\":\"FireElf\", \"Race\":2, \"CardType\":1, \"Damage\": 28.0}]}"
 echo.
 echo.
 
@@ -128,23 +128,40 @@ echo.
 
 REM --------------------------------------------------
 echo 11) configure deck
-curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "[\"3a708ea87f814b3a9b465ae28d845f04\", \"1a58ae2b8fd84ae4903c8ea9792f0ee7\", \"7e805656b9d149839244709bbe627145\", \"488e5554322844198122a1a87b02830f\"]"
+curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "[\"c699d67f94684956bda4a2a2d360863c\", \"1ddc14000f394bbb847a04a2f96acfeb\", \"95af888dd36e4dcf8d3a373b8c5862ac\", \"5a2c837076d14daaa8e9ada612033023\"]"
 echo.
 curl -X GET http://localhost:10001/deck --header "Authorization: Basic kienboec-mtcgToken"
 echo.
-curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"40691b0bfe1442398a4930b9cf2c0d1e\", \"a93f8dd24b0b4b23b97ae9d074b56f3a\", \"71ef7ab006344d00b674f6ecf5b2ed92\", \"f2528e747781495dabcdb24ce402d353\"]"
+curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"706271a8482843ee9baa37bcecb34ac8\", \"122474a374c14d23acfc21174a779478\", \"d54401d72adf471ea38d655015ab901d\", \"e0a0af2e7b074070a77f81d1405c799d\"]"
 echo.
 curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
 echo.
 echo.
 echo should fail and show original from before:
-curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"845f0dc7-37d0-426e-994e-43fc3ac83c08\", \"99f8f8dc-e25e-4a95-aa2c-782823f36e2a\", \"e85e3976-7c86-4d06-9a80-641c2019a79f\", \"171f6076-4eb5-4a7d-b3f2-2d650cc3d237\"]"
+curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"c699d67f94684956bda4a2a2d360863c\", \"1ddc14000f394bbb847a04a2f96acfeb\", \"95af888dd36e4dcf8d3a373b8c5862ac\", \"5a2c837076d14daaa8e9ada612033023\"]"
 echo.
 curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
 echo.
 echo.
-echo should fail ... only 3 cards set
-curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\"]"
+echo Updating Deck with only 3 Cards and then adding one card after
+curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"706271a8482843ee9baa37bcecb34ac8\", \"122474a374c14d23acfc21174a779478\", \"d54401d72adf471ea38d655015ab901d\"]"
+echo.
+curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
+echo.
+curl -X POST http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "\"e0a0af2e7b074070a77f81d1405c799d\""
+echo.
+curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
+echo.
+echo Should fail 
+curl -X POST http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"e0a0af2e7b074070a77f81d1405c799d\",\"706271a8482843ee9baa37bcecb34ac8\"]"
+echo.
+curl -X DELETE http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "\"e0a0af2e7b074070a77f81d1405c799d\""
+echo.
+curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
+echo.
+curl -X POST http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "\"e0a0af2e7b074070a77f81d1405c799d\""
+echo.
+curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
 echo.
 
 
@@ -238,7 +255,7 @@ echo check trading deals
 curl -X GET http://localhost:10001/tradings --header "Authorization: Basic kienboec-mtcgToken"
 echo.
 echo create trading deal
-curl -X POST http://localhost:10001/tradings --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "{\"CardToTrade\": {\"id\":\"13eb56324a064999a4569bca7fb5f5d3\"}, \"WantCardType\": 1, \"WantMinDamage\": 15, \"WantRace\":3, \"WantElementType\":3 }"
+curl -X POST http://localhost:10001/tradings --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "{\"CardToTrade\": {\"id\":\"25d124058b5e405784cf9b7c2a3895aa\"}, \"WantMinDamage\": 5 }"
 echo.
 echo check trading deals
 curl -X GET http://localhost:10001/tradings --header "Authorization: Basic kienboec-mtcgToken"
@@ -246,7 +263,7 @@ echo.
 curl -X GET http://localhost:10001/tradings --header "Authorization: Basic altenhof-mtcgToken"
 echo.
 echo delete trading deals
-curl -X DELETE http://localhost:10001/tradings/6cd85277-4590-49d4-b0cf-ba0a921faad0 --header "Authorization: Basic kienboec-mtcgToken"
+curl -X DELETE http://localhost:10001/tradings/5e674fa7de0349a8b7a06c4cf69e7640 --header "Authorization: Basic kienboec-mtcgToken"
 echo.
 echo.
 
@@ -254,18 +271,18 @@ REM --------------------------------------------------
 echo 21) check trading deals
 curl -X GET http://localhost:10001/tradings  --header "Authorization: Basic kienboec-mtcgToken"
 echo.
-curl -X POST http://localhost:10001/tradings --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "{\"CardToTrade\": {\"id\":\"4ceea2860c6f42299169f1d9fbfeae91\"},\"WantMinDamage\": 32 }"
+curl -X POST http://localhost:10001/tradings --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "{\"CardToTrade\": {\"id\":\"25d124058b5e405784cf9b7c2a3895aa\"},\"WantMinDamage\": 4 }"
 echo check trading deals
 curl -X GET http://localhost:10001/tradings  --header "Authorization: Basic kienboec-mtcgToken"
 echo.
 curl -X GET http://localhost:10001/tradings  --header "Authorization: Basic altenhof-mtcgToken"
 echo.
 echo try to trade with yourself (should fail)
-curl -X POST http://localhost:10001/tradings/6cd85277-4590-49d4-b0cf-ba0a921faad0 --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "\"4ec8b269-0dfa-4f97-809a-2c63fe2a0025\""
+curl -X POST http://localhost:10001/tradings/29ee8a496002484aaaadbfc6adabc992 --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "\"4ec8b269-0dfa-4f97-809a-2c63fe2a0025\""
 echo.
 echo try to trade 
 echo.
-curl -X POST http://localhost:10001/tradings/6cd85277-4590-49d4-b0cf-ba0a921faad0 --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "\"951e886a-0fbf-425d-8df5-af2ee4830d85\""
+curl -X POST http://localhost:10001/tradings/29ee8a496002484aaaadbfc6adabc992 --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "\"706271a8482843ee9baa37bcecb34ac8\""
 echo.
 curl -X GET http://localhost:10001/tradings --header "Authorization: Basic kienboec-mtcgToken"
 echo.
