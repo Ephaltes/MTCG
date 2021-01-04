@@ -60,7 +60,7 @@ namespace MTCG.Helpers
         public static string ToStringForCardList(this List<CardEntity> source)
         {
             var ret = "";
-            foreach (var card in source) ret += ToStringForCard(card) + "\r\n";
+            foreach (var card in source) ret += ToStringForCard(card) + Environment.NewLine;
             return ret;
         }
     }

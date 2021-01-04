@@ -104,7 +104,7 @@ namespace MTCG.Model
                     ret.Description = result.SafeGetString(5);
                     ret.DisplayName = result.SafeGetString(6);
                     ret.Image = result.SafeGetString(7);
-                    ret.Elo = result.GetInt32(8);
+                    ret.Elo = result.GetDouble(8);
                     ret.Win = result.GetInt32(9);
                     ret.Lose = result.GetInt32(10);
                     ret.Draw = result.GetInt32(11);
@@ -157,7 +157,7 @@ namespace MTCG.Model
                     ret.Description = result.SafeGetString(5);
                     ret.DisplayName = result.SafeGetString(6);
                     ret.Image = result.SafeGetString(7);
-                    ret.Elo = result.GetInt32(8);
+                    ret.Elo = result.GetDouble(8);
                     ret.Win = result.GetInt32(9);
                     ret.Lose = result.GetInt32(10);
                     ret.Draw = result.GetInt32(11);
@@ -207,7 +207,7 @@ namespace MTCG.Model
                     ret.Description = result.SafeGetString(5);
                     ret.DisplayName = result.SafeGetString(6);
                     ret.Image = result.SafeGetString(7);
-                    ret.Elo = result.GetInt32(8);
+                    ret.Elo = result.GetDouble(8);
                     ret.Win = result.GetInt32(9);
                     ret.Lose = result.GetInt32(10);
                     ret.Draw = result.GetInt32(11);
@@ -1059,9 +1059,10 @@ namespace MTCG.Model
                         cmd.Parameters.AddWithValue("cardplace", (int) CardPlace.Stack);
 
                         cmd.ExecuteNonQuery();
+                        return true;
                     }
 
-                return true;
+                return false;
             }
             catch (Exception e)
             {
@@ -1106,7 +1107,7 @@ namespace MTCG.Model
                         Description = reader.SafeGetString(5),
                         DisplayName = reader.SafeGetString(6),
                         Image = reader.SafeGetString(7),
-                        Elo = reader.GetInt32(8),
+                        Elo = reader.GetDouble(8),
                         Win = reader.GetInt32(9),
                         Lose = reader.GetInt32(10),
                         Draw = reader.GetInt32(11),
@@ -1153,16 +1154,16 @@ namespace MTCG.Model
 
                 cmd.Parameters.AddWithValue("enemyid", enemy.Id);
 
-                var enemyElo = (int) cmd.ExecuteScalar();
+                var enemyElo = (double) cmd.ExecuteScalar();
 
                 sql = "SELECT elo from mtcg.user where id=@id";
                 cmd = new NpgsqlCommand(sql, _connection);
                 cmd.Parameters.AddWithValue("id", me.Id);
 
-                var myElo = (int) cmd.ExecuteScalar();
+                var myElo = (double) cmd.ExecuteScalar();
 
-                double estimatedFactor = 1 / (1 + (10 ^ ((enemyElo - myElo) / 400)));
-                var newScore = Convert.ToInt32(myElo + (Constant.kFactor * (won ? 1 : 0 - estimatedFactor)));
+                double estimatedFactor = 1 /(1 +  Math.Pow(10, (enemyElo - myElo) / 400));
+                var newScore = Convert.ToDouble(myElo + Constant.kFactor * ((won ? 1 : 0) - estimatedFactor));
 
                 sql = "UPDATE mtcg.user SET elo=@newscore where id=@id";
                 cmd = new NpgsqlCommand(sql, _connection);

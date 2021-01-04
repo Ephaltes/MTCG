@@ -30,8 +30,13 @@ namespace MTCG.API
 
             if (deck.Count > 0)
             {
-                if (RequestContext.HttpRequest.Count > 1 && RequestContext.HttpRequest[1].ToLower() == Constant.PLAINTEXT)
-                    return SuccessObject(deck.ToStringForCardList(), StatusCodes.OK);
+                if (RequestContext.HttpRequest.Count > 1 &&
+                    RequestContext.HttpRequest[1].ToLower() == Constant.PLAINTEXT)
+                {
+                    var ret = SuccessObject(deck.ToStringForCardList(), StatusCodes.OK);
+                    ret.Mime = MimeTypes.PLAINTEXT;
+                    return ret;
+                }
                 
                 return SuccessObject(deck, StatusCodes.OK);
             }
@@ -98,7 +103,7 @@ namespace MTCG.API
             var cardid = JsonConvert.DeserializeObject<string>(RequestContext.HttpBody);
 
             if (model.RemoveCardFromDeckByCardId(cardid))
-                return SuccessObject("Cards added successful", StatusCodes.OK);
+                return SuccessObject("Card deleted successful", StatusCodes.OK);
 
             return SomeThingWrong();
         }

@@ -4,7 +4,7 @@
     {
         public string DisplayName;
         public int Draw;
-        public int Elo;
+        public double Elo;
         public int Lose;
         public int Win;
         public double WRatio;

@@ -8,7 +8,7 @@ namespace MTCG.Entity
         public string Description;
         public string DisplayName;
         public int Draw;
-        public int Elo;
+        public double Elo;
         public int Id;
         public string Image;
         public int Lose;

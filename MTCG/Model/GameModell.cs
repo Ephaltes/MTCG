@@ -165,8 +165,8 @@ namespace MTCG.Model
                 player2.DrawFight();
             }
 
-            LogList.TryAdd(player1.UserEntity.DisplayName, report);
-            LogList.TryAdd(player2.UserEntity.DisplayName, report);
+            LogList.TryAdd(player1.UserEntity.Username, report);
+            LogList.TryAdd(player2.UserEntity.Username, report);
         }
 
         public static double CalculateDamge(CardEntity attackingCard, CardEntity defendingCard)

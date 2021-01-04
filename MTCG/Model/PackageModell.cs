@@ -33,7 +33,11 @@ namespace MTCG.Model
                 if (string.IsNullOrEmpty(card.Id))
                     card.GenerateIdForCard();
 
+                if (card.ElementType == ElementType.Unknown)
+                    card.ElementType = ElementType.Normal;
+
                 if ( card.CardType == CardType.Unknown
+                     || card.CardType == CardType.Unknown
                      || card.CardType == CardType.MonsterCard && card.Race == Race.Unknow
                      || card.Damage <= 0)
                     return 2;
