@@ -11,6 +11,8 @@ namespace MTCG.API
 {
     public class CustomApiController : BaseApiController
     {
+        public IDatabase Database { get; set; }
+
         public CustomApiController(ITcpClient client)
         {
             _client = client;
@@ -21,8 +23,6 @@ namespace MTCG.API
             };
             Database = new DatabaseModell();
         }
-
-        public IDatabase Database { get; set; }
 
         public override string ForwardToEndPointHandler()
         {
