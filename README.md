@@ -49,3 +49,17 @@ git submodule update --init --recursive --remote
 ## GitHub
 
 https://github.com/Ephaltes/MTCG
+
+## Datenbank
+
+Scripts für die Datenbank/Integrationstest befinden sich im /Scripts ordner
+
+## Video
+
+Es sind 2 Videos vorhanden, beim "mtcg code" gehe ich auf meine Code Basis & den Unit Tests ein
+
+Beim "mtcg integration" gehe ich den Integrationstest von oben nach unten durch 
+
+Beachte: das script funktioniert nicht automatisiert, da die IDs der Karten generiert werden, daher muss an einigen 
+
+stellen händisch IDs eingetragen werden
