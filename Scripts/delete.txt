@@ -1,0 +1,6 @@
+DELETE FROM mtcg.R_Package_Card;
+DELETE FROM mtcg.R_User_Card;
+DELETE FROM mtcg.trading;
+DELETE FROM mtcg.User;
+DELETE FROM mtcg.Card;
+DELETE FROM mtcg.Package;

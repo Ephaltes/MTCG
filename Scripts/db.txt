@@ -1,0 +1,68 @@
+create database mtcg;
+create user mtcg with encrypted password 'mtcgpassword';
+grant all privileges on database mtcg to mtcg;
+create schema mtcg;
+
+
+----------------------------------------------------------------- psql -d mtcg -U mtcg
+
+CREATE TABLE mtcg.User (
+	id SERIAL PRIMARY KEY NOT NULL,
+	username TEXT NOT NULL,
+	password TEXT NOT NULL,
+	salt TEXT NOT NULL,
+	token TEXT NOT NULL,
+	description TEXT,
+	displayname TEXT NOT NULL,
+	image TEXT,
+	elo FLOAT8 NOT NULL DEFAULT 1000,
+	win INTEGER NOT NULL DEFAULT 0,
+	lose INTEGER NOT NULL DEFAULT 0,
+	draw INTEGER NOT NULL DEFAULT 0,
+	coins INTEGER NOT NULL DEFAULT 20
+);
+
+CREATE TABLE mtcg.Card (
+	id TEXT  PRIMARY KEY NOT NULL,
+	name TEXT NOT NULL,
+	damage FLOAT8 NOT NULL,
+	description TEXT,
+	elementtype INTEGER NOT NULL,
+	cardtype INTEGER NOT NULL,
+	race INTEGER,
+	cardplace INTEGER NOT NULL
+);
+
+CREATE TABLE mtcg.Package (
+	id TEXT PRIMARY KEY NOT NULL,
+	amount INTEGER NOT NULL,
+	name TEXT
+);
+
+CREATE TABLE mtcg.R_Package_Card (
+	id SERIAL PRIMARY KEY,
+	packageid TEXT NOT NULL,
+	cardid TEXT NOT NULL,
+	CONSTRAINT fk_packlage_r_package_card FOREIGN KEY(packageid) REFERENCES mtcg.Package (id) ON DELETE CASCADE,
+	CONSTRAINT fk_card_r_package_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
+);
+
+CREATE TABLE mtcg.R_User_Card (
+	id SERIAL NOT NULL PRIMARY KEY,
+	userid INTEGER NOT NULL,
+	cardid TEXT NOT NULL,
+	CONSTRAINT fk_r_user_user FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE,
+	CONSTRAINT fk_r_user_card FOREIGN KEY(cardid) REFERENCES mtcg.Card (id) ON DELETE CASCADE
+);
+
+CREATE TABLE mtcg.trading (
+	id TEXT NOT NULL PRIMARY KEY,
+	cardtotrade TEXT NOT NULL,
+	cardtype INTEGER NOT NULL,
+	mindamage FLOAT8 NOT NULL,
+	race INTEGER,
+	elementtype INTEGER,
+	userid INTEGER NOT NULL,
+	CONSTRAINT fk_r_trading_card FOREIGN KEY(cardtotrade) REFERENCES mtcg.card (id) ON DELETE CASCADE,
+	CONSTRAINT fk_r_trading_user FOREIGN KEY(userid) REFERENCES mtcg.User (id) ON DELETE CASCADE
+);
