@@ -41,6 +41,8 @@ namespace MTCG.Model
                      || card.CardType == CardType.MonsterCard && card.Race == Race.Unknow
                      || card.Damage <= 0)
                     return 2;
+
+                card.CardPlace = CardPlace.Pack;
             }
 
             if(_database.AddPackage(Entity))
