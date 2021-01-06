@@ -49,3 +49,6 @@ git submodule update --init --recursive --remote
 ## GitHub
 
 https://github.com/Ephaltes/MTCG
+
+## Datenbank
+Scripts für die Datenbank/Integrationstest befinden sich im /Scripts ordner
