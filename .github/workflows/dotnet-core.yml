@@ -21,6 +21,8 @@ jobs:
     - name: checkout submodule
       run: |
         git submodule update --init --recursive --remote
+    - name: Clean
+      run: dotnet clean ./MTCG.sln --configuration Release && dotnet nuget locals all --clear
     - name: Install dependencies
       run: dotnet restore
     - name: Build
